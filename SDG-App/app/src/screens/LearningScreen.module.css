@@ -1,0 +1,91 @@
+.cardsStyle {
+  width: 70vw !important;
+  /* ! PLACEHOLDER, so cards dont get too big */
+  max-width: 35em !important;
+  height: auto !important;
+  aspect-ratio: 577 / 827 !important;
+  max-height: 80vh;
+}
+
+/* --- MERGED STYLES START --- */
+
+/* Force the wrapper to handle 3D space correctly */
+.cardsStyle :global(.swiper-wrapper) {
+  transform-style: preserve-3d;
+  /* hardware acceleration hint */
+  will-change: transform;
+}
+
+.cardsStyle :global(.swiper-slide) {
+  background-color: transparent;
+  border-radius: 18px;
+  transform-style: preserve-3d;
+}
+
+/* Aggressive fix for the shadow overlays */
+.cardsStyle :global(.swiper-slide-shadow) {
+  background: #cecece !important;
+  will-change: opacity;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  z-index: 10;
+  pointer-events: none;
+}
+/* --- MERGED STYLES END --- */
+
+/* The card Inner container */
+.cardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Flip state — transition handles the animation automatically */
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Shared styles for front and back faces */
+.cardFace {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  overflow: hidden; /* Ensure image doesn't bleed out */
+}
+
+/* Ensure images fill the card face */
+.cardFace img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateZ(0); /* promote to own layer for smooth compositing */
+}
+
+/* Back face specific styles */
+.cardBack {
+  background-color: #333;
+  color: white;
+  transform: rotateY(180deg);
+}
+
+/* Placeholder for out-of-window slides — no images, just a blank card shape */
+.cardPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background-color: #e5e7eb;
+}

@@ -1,0 +1,28 @@
+# Core FastAPI
+fastapi
+uvicorn[standard]
+starlette
+
+# Database
+sqlalchemy
+pymysql
+cryptography
+alembic
+
+# Authentication
+python-jose[cryptography]
+passlib[argon2]
+pyjwt
+
+# Validation
+pydantic[email]
+pydantic-settings
+email-validator
+
+# Utilities
+python-dotenv
+python-multipart
+
+# Testing
+pytest
+httpx

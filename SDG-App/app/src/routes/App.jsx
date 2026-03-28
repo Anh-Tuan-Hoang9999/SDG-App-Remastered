@@ -8,6 +8,7 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 // Eagerly loaded — lightweight, needed immediately
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import Introduction from "../screens/Introduction";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 // Lazily loaded — deferred until first navigation, keeps initial bundle small
@@ -31,9 +32,9 @@ export default function AppNavigator() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
+        <Route index element={<Introduction />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<DefaultLayout />}>
-          <Route index element={<Navigate to="/login" replace />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
 
@@ -54,3 +55,4 @@ export default function AppNavigator() {
     </Suspense>
   );
 }
+

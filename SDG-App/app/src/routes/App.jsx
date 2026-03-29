@@ -21,6 +21,7 @@ const Profile = lazy(() => import("../screens/Profile"));
 const UserSettings = lazy(() => import("../screens/UserSettings"));
 const ProgressScreen = lazy(() => import("../screens/ProgressScreen"));
 const Resources = lazy(() => import("../screens/Resources"));
+const Dashboard = lazy(() => import("../screens/Dashboard"));
 
 // Shown while a lazy chunk is loading
 const PageLoader = () => (
@@ -47,6 +48,7 @@ export default function AppNavigator() {
           <Route path="activities/:sdgId/:activityId" element={<ProtectedRoute><ActivityContainer /></ProtectedRoute>} />
           <Route path="progress" element={<ProtectedRoute><ProgressScreen /></ProtectedRoute>} />
           <Route path="resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
+          <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Route>
         <Route path="/register" element={<Register />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

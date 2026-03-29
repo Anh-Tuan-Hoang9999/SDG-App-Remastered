@@ -4,7 +4,7 @@ import { Route, Routes, Navigate } from "react-router";
 
 //import layouts
 import DefaultLayout from "../components/layouts/DefaultLayout";
-
+import AppLayout from "../components/layouts/Layout";
 // Eagerly loaded — lightweight, needed immediately
 import Login from "../screens/Login";
 import Register from "../screens/Register";
@@ -34,7 +34,7 @@ export default function AppNavigator() {
       <Routes>
         <Route index element={<Introduction />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<DefaultLayout />}>
+        <Route path="/" element={<AppLayout />}>
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
 

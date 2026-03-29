@@ -22,7 +22,7 @@ const UserSettings = lazy(() => import("../screens/UserSettings"));
 const ProgressScreen = lazy(() => import("../screens/ProgressScreen"));
 const Resources = lazy(() => import("../screens/Resources"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
-
+const SDGCards = lazy(() => import("../screens/SDGCards"));
 // Shown while a lazy chunk is loading
 const PageLoader = () => (
   <div className="flex items-center justify-center w-full h-full">
@@ -40,7 +40,7 @@ export default function AppNavigator() {
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
           <Route path="learning1" element={<ProtectedRoute><Introduction /></ProtectedRoute>} />
-          <Route path="learning2" element={<ProtectedRoute><LearningScreen /></ProtectedRoute>} />
+          <Route path="learning2" element={<ProtectedRoute><Introduction /></ProtectedRoute>} />
 
           <Route path="learning" element={<ProtectedRoute><LearningScreen /></ProtectedRoute>} />
           <Route path="activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
@@ -49,6 +49,7 @@ export default function AppNavigator() {
           <Route path="progress" element={<ProtectedRoute><ProgressScreen /></ProtectedRoute>} />
           <Route path="resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
           <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="sdg-cards" element={<ProtectedRoute><SDGCards /></ProtectedRoute>} />
         </Route>
         <Route path="/register" element={<Register />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

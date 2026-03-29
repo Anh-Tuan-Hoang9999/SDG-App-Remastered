@@ -4,7 +4,7 @@ import { Route, Routes, Navigate } from "react-router";
 
 //import layouts
 import DefaultLayout from "../components/layouts/DefaultLayout";
-
+import AppLayout from "../components/layouts/Layout";
 // Eagerly loaded — lightweight, needed immediately
 import Login from "../screens/Login";
 import Register from "../screens/Register";
@@ -20,6 +20,8 @@ const ActivityContainer = lazy(() => import("../screens/ActivityContainer"));
 const Profile = lazy(() => import("../screens/Profile"));
 const UserSettings = lazy(() => import("../screens/UserSettings"));
 const ProgressScreen = lazy(() => import("../screens/ProgressScreen"));
+const Resources = lazy(() => import("../screens/Resources"));
+const Dashboard = lazy(() => import("../screens/Dashboard"));
 
 // Shown while a lazy chunk is loading
 const PageLoader = () => (
@@ -34,22 +36,21 @@ export default function AppNavigator() {
       <Routes>
         <Route index element={<Introduction />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<DefaultLayout />}>
+        <Route path="/" element={<AppLayout />}>
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
+          <Route path="learning1" element={<ProtectedRoute><Introduction /></ProtectedRoute>} />
+          <Route path="learning2" element={<ProtectedRoute><LearningScreen /></ProtectedRoute>} />
 
           <Route path="learning" element={<ProtectedRoute><LearningScreen /></ProtectedRoute>} />
           <Route path="activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
           <Route path="activities/:sdgId" element={<ProtectedRoute><ActivityLevels /></ProtectedRoute>} />
           <Route path="activities/:sdgId/:activityId" element={<ProtectedRoute><ActivityContainer /></ProtectedRoute>} />
           <Route path="progress" element={<ProtectedRoute><ProgressScreen /></ProtectedRoute>} />
+          <Route path="resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
+          <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Route>
         <Route path="/register" element={<Register />} />
-        {/* Admin Dashboard */}
-        <Route path="/dashboard">
-          <Route path="" />
-          <Route path="" />
-        </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>

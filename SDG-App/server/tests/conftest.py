@@ -28,6 +28,16 @@ def setup_test_db():
     yield
     Base.metadata.drop_all(bind=engine)
 
+# yields a raw db session bound to the test engine — use for seeding data
+@pytest.fixture
+def db():
+    session = TestingSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
 # swap out the real db for the test one so the API uses sqlite instead of mysql
 @pytest.fixture
 def client():

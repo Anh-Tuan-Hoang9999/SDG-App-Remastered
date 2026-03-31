@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
 
     // token now is verified as valid, fetch user data
     try {
-      const res = await client.get("/users/me");
+      const res = await client.get("/api/auth/me");
       setUser(res.data);
     } catch {
       setUser(null);

@@ -1,25 +1,27 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
-
-_server_dir = os.path.dirname(__file__)
-load_dotenv(os.path.join(_server_dir, ".env"))
 from fastapi.middleware.cors import CORSMiddleware
-from api import users, activities, user_activity
-from db.database import engine, Base
-import models  # noqa: F401 - registers all models on Base.metadata
 
-# Create database tables
+load_dotenv()
+
+from api import auth, sdgs, quiz, card_sort, reflections, progress, discussion, coordinator
+from db.database import engine, Base
+import models  # noqa: F401 — registers all models on Base.metadata
+
+# Auto-create all tables on startup
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="SDG App API", version="2.0.0")
 
-# CORS origins — always allow localhost for desktop dev.
-# Set EXTRA_ORIGINS in .env as a comma-separated list to add more origins
-# (e.g. your LAN IP when testing on a phone).
-_extra = os.environ.get("EXTRA_ORIGINS", "")
-_extra_origins = [o.strip() for o in _extra.split(",") if o.strip()]
-allowed_origins = ["http://localhost:5173"] + _extra_origins
+# CORS — allow local dev origins; extend via EXTRA_ORIGINS env var
+_extra_origins = [o.strip() for o in os.getenv("EXTRA_ORIGINS", "").split(",") if o.strip()]
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5175",
+    "http://127.0.0.1:5175",
+] + _extra_origins
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,11 +31,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(users.router)
-app.include_router(activities.router)
-app.include_router(user_activity.router)
+app.include_router(auth.router)
+app.include_router(sdgs.router)
+app.include_router(quiz.router)
+app.include_router(card_sort.router)
+app.include_router(reflections.router)
+app.include_router(progress.router)
+app.include_router(discussion.router)
+app.include_router(coordinator.router)
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def root():
+    return {"message": "SDG App API v2"}

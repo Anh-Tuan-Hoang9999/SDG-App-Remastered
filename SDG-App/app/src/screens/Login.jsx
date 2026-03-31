@@ -35,11 +35,10 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      // OAuth2PasswordRequestForm expects x-www-form-urlencoded
-      const res = await client.post("/users/login", new URLSearchParams({
-        username: form.email,
+      const res = await client.post("/api/auth/login", {
+        email: form.email,
         password: form.password,
-      }));
+      });
       login(res.data.access_token);
     } catch (err) {
       const message = err.response?.data?.detail ?? "Unable to connect to the server. Please check your internet connection and try again.";

@@ -7,11 +7,10 @@ import client from "../api/client";
 const Register = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    course_code: ""
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,11 +28,10 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      await client.post("/users/register", {
-        username: form.username,
+      await client.post("/api/auth/register", {
+        name: form.name,
         email: form.email,
         password: form.password,
-        course_code: form.course_code || undefined,
       });
       navigate("/login");
     } catch (err) {
@@ -63,12 +61,12 @@ const Register = () => {
       </div>
       <div className="w-full bg-[#a2bf87] flex-1 flex items-center justify-center mt-[-150px]">
         <form className="flex flex-col gap-3 w-72" onSubmit={handleSubmit}>
-          <label className="text-black font-bold">Username</label>
+          <label className="text-black font-bold">Name</label>
           <input
             type="text"
-            name="username"
-            placeholder="Username"
-            value={form.username}
+            name="name"
+            placeholder="Your full name"
+            value={form.name}
             onChange={handleChange}
             className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
             required
@@ -102,15 +100,6 @@ const Register = () => {
             onChange={handleChange}
             className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-          />
-          <label className="text-black font-bold">Course Code (optional)</label>
-          <input
-            type="text"
-            name="course_code"
-            placeholder="Course Code"
-            value={form.course_code}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           {error && <div className="text-red-600 text-sm text-center">{error}</div>}
           <button

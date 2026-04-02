@@ -107,7 +107,7 @@ export default function Register() {
 
         {/* Bottom tagline */}
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
-          COIS 4000Y · Capstone Project · Trent University
+          Career Space · Trent University
         </p>
       </aside>
 

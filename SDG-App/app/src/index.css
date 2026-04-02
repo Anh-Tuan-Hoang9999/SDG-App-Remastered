@@ -131,6 +131,55 @@ textarea {
   color: var(--color-text-faint);
 }
 
+/* ============================================================
+   Dropdown menu utilities (DefaultTopNav, Layout avatar menu)
+   ============================================================ */
+
+/* Dropdown open animation (Layout.jsx avatar menu) */
+@keyframes dropdownIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.1s ease;
+}
+.dropdown-item:hover {
+  background: var(--color-surface);
+}
+.dropdown-item.danger {
+  color: var(--color-destructive);
+}
+.dropdown-item.danger:hover {
+  background: #FEF2F2;
+}
+.dropdown-item-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dropdown-item-icon.danger {
+  background: #FEF2F2;
+}
+
 /* Primary button */
 .btn-primary {
   width: 100%;

@@ -1,69 +1,63 @@
 import React from "react";
 import { Link } from "react-router";
 import PropTypes from "prop-types";
-import { ImArrowRight2 } from "react-icons/im";
 
 const ActivityLinkCard = (props) => {
-
-  // Function to darken a hex color
-  const darkenColor = (color, percent = 20) => {
-    const num = parseInt(color.replace("#", ""), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) - amt;
-    const G = (num >> 8 & 0x00FF) - amt;
-    const B = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-      (B < 255 ? B < 1 ? 0 : B : 255))
-      .toString(16).slice(1);
-  };
-
-  const darkerColor = darkenColor(props.colour);
-
-  // Function to lighten a hex color
-  const lightenColor = (color, percent = 40) => {
-    const num = parseInt(color.replace("#", ""), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) + amt;
-    const G = (num >> 8 & 0x00FF) + amt;
-    const B = (num & 0x0000FF) + amt;
-    return "#" + (0x1000000 + (R < 255 ? R : 255) * 0x10000 +
-      (G < 255 ? G : 255) * 0x100 +
-      (B < 255 ? B : 255))
-      .toString(16).slice(1);
-  };
-
-  const lighterColor = lightenColor(props.colour);
-
   return (
-    <>
+    <Link
+      to={`${props.id}`}
+      className="group flex items-center bg-white rounded-2xl overflow-hidden transition-all active:scale-[0.98]"
+      style={{
+        border: '1px solid #EEF2EE',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+        textDecoration: 'none',
+      }}
+    >
+      {/* Left SDG colour accent strip */}
       <div
-        className="h-[5em] p-2 rounded-xl flex gap-x-3 shadow-sm"
-        style={{ backgroundColor: props.colour }}
+        className="w-1 self-stretch flex-shrink-0"
+        style={{ background: props.colour }}
+      />
+
+      {/* SDG number badge */}
+      <div
+        className="w-11 h-11 m-3 flex-shrink-0 rounded-xl flex items-center justify-center text-white font-bold text-sm leading-none"
+        style={{ background: props.colour }}
       >
-        <section className="flex flex-1 justify-between col-start-1 row-start-1 min-w-0 overflow-hidden">
-          <h1
-            className="font-medium text-[1.25em] text-white self-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis"
-            title={props.title}
-          >
-            <span className="pr-2">{props.id}</span>
-            {props.title}
-          </h1>
-        </section>
-
-        <div
-          className="col-start-1 row-start-2 text-[12px] font-medium self-center w-fit px-2 py-1 rounded-2xl"
-          style={{ backgroundColor: darkerColor, color: "#FFF" }}>
-          {/* DEV-NOTE: Replace with actual logic once activities are being saved and stored in db */}
-          0/10
-        </div>
-
-        <Link className="text-[22px] pr-2 col-start-2 row-span-2 flex items-center" style={{ color: lighterColor }} to={`${props.id}`}>
-          <ImArrowRight2 />
-        </Link>
-
+        {props.id}
       </div>
-    </>
+
+      {/* Title + desc */}
+      <div className="flex-1 min-w-0 py-3 pr-2">
+        <h2 className="font-semibold text-sm leading-snug truncate" style={{ color: '#1A2E1A' }}>
+          {props.title}
+        </h2>
+        <p className="text-xs mt-0.5 truncate" style={{ color: '#637063' }}>
+          {props.desc || 'SDG Learning Activity'}
+        </p>
+      </div>
+
+      {/* Progress pill + arrow */}
+      <div className="flex items-center gap-3 pr-4 flex-shrink-0">
+        <span
+          className="text-xs font-semibold px-2 py-1 rounded-lg"
+          style={{
+            background: `${props.colour}22`,
+            color: props.colour,
+          }}
+        >
+          0/10
+        </span>
+        <svg
+          className="w-4 h-4 transition-transform group-hover:translate-x-1"
+          style={{ color: '#36656B' }}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </div>
+    </Link>
   );
 };
 

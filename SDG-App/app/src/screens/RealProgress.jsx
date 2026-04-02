@@ -1,15 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import {
-  CheckCircle2,
-  Circle,
-  BookOpen,
-  Shuffle,
-  FileText,
-  Library,
-  TrendingUp,
-  ChevronRight,
+  CheckCircle2, Circle, BookOpen, Shuffle, FileText,
+  Library, TrendingUp, ChevronRight, Info,
 } from "lucide-react";
 
 const ACTIVITIES = [
@@ -67,10 +60,10 @@ const MOCK_PROGRESS = {
 function ProgressBar({ value }) {
   const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
   return (
-    <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
+    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#EEF2EE' }}>
       <div
-        className="h-full bg-primary transition-all duration-300"
-        style={{ width: `${safeValue}%` }}
+        className="h-full rounded-full transition-all duration-500"
+        style={{ width: `${safeValue}%`, background: '#36656B' }}
       />
     </div>
   );
@@ -85,7 +78,6 @@ export default function RealProgress() {
       setProgress(MOCK_PROGRESS);
       setLoading(false);
     }, 200);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -108,97 +100,150 @@ export default function RealProgress() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+
+      {/* ── Page header ── */}
       <div className="flex items-center gap-2 mb-1">
-        <TrendingUp className="w-5 h-5 text-primary" />
-        <h1 className="font-display text-2xl font-bold text-foreground">Progress Tracker</h1>
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center"
+          style={{ background: '#EEF2EE' }}
+        >
+          <TrendingUp className="w-4 h-4" style={{ color: '#36656B' }} />
+        </div>
+        <h1 className="text-2xl font-bold" style={{ color: '#1A2E1A' }}>Progress Tracker</h1>
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        Frontend mock progress only. This screen does not use backend data.
+      <p className="text-sm mb-5" style={{ color: '#637063' }}>
+        Frontend mock progress only — no backend data is used.
       </p>
 
+      {/* ── Info banner ── */}
+      <div
+        className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-xs mb-6"
+        style={{ background: 'rgba(54,101,107,0.08)', border: '1px solid rgba(54,101,107,0.18)', color: '#36656B' }}
+      >
+        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+        <span>
+          <strong>Mock only:</strong> Progress is simulated from local state and does not persist between sessions.
+        </span>
+      </div>
+
       {loading ? (
-        <p className="text-muted-foreground text-sm">Loading mock progress...</p>
+        <p className="text-sm" style={{ color: '#637063' }}>Loading mock progress…</p>
       ) : (
         <>
+          {/* ── Stat cards ── */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-primary">{completedActivities.length}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">of {ACTIVITIES.length} Tasks</div>
-              <div className="text-xs font-medium text-foreground mt-0.5">Completed</div>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-chart-2">{progressPct}%</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Completion</div>
-              <div className="text-xs font-medium text-foreground mt-0.5">Rate</div>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-chart-3">{totalPoints}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">of {maxPoints} pts</div>
-              <div className="text-xs font-medium text-foreground mt-0.5">Earned</div>
-            </div>
+            {[
+              { value: completedActivities.length, sub: `of ${ACTIVITIES.length} Tasks`, label: "Completed", color: '#36656B' },
+              { value: `${progressPct}%`,           sub: "Completion",                   label: "Rate",       color: '#36656B' },
+              { value: totalPoints,                  sub: `of ${maxPoints} pts`,          label: "Earned",     color: '#C8A951' },
+            ].map(({ value, sub, label, color }) => (
+              <div
+                key={label}
+                className="rounded-2xl p-4 text-center"
+                style={{ background: '#fff', border: '1px solid #DDE6DD', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+              >
+                <div className="text-2xl font-bold" style={{ color }}>{value}</div>
+                <div className="text-xs mt-0.5" style={{ color: '#9BAA9B' }}>{sub}</div>
+                <div className="text-xs font-medium mt-0.5" style={{ color: '#1A2E1A' }}>{label}</div>
+              </div>
+            ))}
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-5 mb-6">
-            <h2 className="font-semibold text-foreground mb-4">Overall Progress</h2>
+          {/* ── Overall progress bars ── */}
+          <div
+            className="rounded-2xl p-5 mb-6"
+            style={{ background: '#fff', border: '1px solid #DDE6DD', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+          >
+            <h2 className="text-sm font-bold mb-4" style={{ color: '#1A2E1A' }}>Overall Progress</h2>
             <div className="space-y-4">
               <div>
-                <div className="flex justify-between text-sm mb-1.5">
-                  <span className="text-muted-foreground">Activities Completed</span>
-                  <span className="font-medium">{completedActivities.length}/{ACTIVITIES.length}</span>
+                <div className="flex justify-between text-xs mb-1.5">
+                  <span style={{ color: '#637063' }}>Activities Completed</span>
+                  <span className="font-semibold" style={{ color: '#1A2E1A' }}>
+                    {completedActivities.length}/{ACTIVITIES.length}
+                  </span>
                 </div>
                 <ProgressBar value={progressPct} />
               </div>
               <div>
-                <div className="flex justify-between text-sm mb-1.5">
-                  <span className="text-muted-foreground">Points Earned</span>
-                  <span className="font-medium">{totalPoints}/{maxPoints} pts</span>
+                <div className="flex justify-between text-xs mb-1.5">
+                  <span style={{ color: '#637063' }}>Points Earned</span>
+                  <span className="font-semibold" style={{ color: '#1A2E1A' }}>
+                    {totalPoints}/{maxPoints} pts
+                  </span>
                 </div>
                 <ProgressBar value={pointsPct} />
               </div>
             </div>
           </div>
 
+          {/* ── Activity checklist ── */}
+          <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#9BAA9B' }}>
+            Activity Checklist
+          </h2>
           <div className="space-y-3">
-            <h2 className="font-semibold text-foreground mb-1">Activity Checklist</h2>
             {ACTIVITIES.map((activity) => {
               const done = isComplete(activity);
               const Icon = activity.icon;
               return (
                 <div
                   key={activity.key}
-                  className={`flex items-center gap-4 p-4 rounded-xl border transition-colors ${
-                    done
-                      ? "bg-primary/5 border-primary/30"
-                      : "bg-card border-border hover:border-primary/20"
-                  }`}
+                  className="flex items-center gap-4 p-4 rounded-2xl transition-colors"
+                  style={{
+                    background: done ? 'rgba(54,101,107,0.05)' : '#fff',
+                    border: done ? '1px solid rgba(54,101,107,0.25)' : '1px solid #DDE6DD',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                  }}
                 >
-                  <div className={`flex-shrink-0 ${done ? "text-primary" : "text-muted-foreground"}`}>
-                    {done ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
+                  {/* Check / circle icon */}
+                  <div className="flex-shrink-0">
+                    {done
+                      ? <CheckCircle2 className="w-5 h-5" style={{ color: '#36656B' }} />
+                      : <Circle className="w-5 h-5" style={{ color: '#DDE6DD' }} />
+                    }
                   </div>
+
+                  {/* Activity icon square */}
                   <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      done ? "bg-primary/10" : "bg-muted"
-                    }`}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: done ? 'rgba(54,101,107,0.12)' : '#EEF2EE' }}
                   >
-                    <Icon className={`w-4 h-4 ${done ? "text-primary" : "text-muted-foreground"}`} />
+                    <Icon className="w-4 h-4" style={{ color: done ? '#36656B' : '#637063' }} />
                   </div>
+
+                  {/* Text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-sm text-foreground">{activity.title}</span>
-                      <Badge variant={done ? "default" : "secondary"} className="text-xs">
+                      <span className="text-sm font-semibold" style={{ color: '#1A2E1A' }}>
+                        {activity.title}
+                      </span>
+                      {/* Points pill */}
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{ background: '#EEF2EE', color: '#36656B' }}
+                      >
                         {activity.points} pts
-                      </Badge>
+                      </span>
+                      {/* Done pill */}
                       {done && (
-                        <Badge className="text-xs bg-green-100 text-green-800 border-green-200">Done</Badge>
+                        <span
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{ background: 'rgba(54,101,107,0.12)', color: '#36656B' }}
+                        >
+                          Done
+                        </span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{activity.desc}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#637063' }}>{activity.desc}</p>
                   </div>
+
+                  {/* Go button */}
                   {!done && (
                     <Link to={activity.path}>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md hover:bg-muted"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 transition-all active:scale-95"
+                        style={{ background: '#EEF2EE', color: '#36656B', border: '1px solid #DDE6DD' }}
                       >
                         Go <ChevronRight className="w-3 h-3" />
                       </button>
@@ -209,12 +254,16 @@ export default function RealProgress() {
             })}
           </div>
 
+          {/* ── Completion banner ── */}
           {progressPct === 100 && (
-            <div className="mt-6 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground rounded-xl p-5 text-center">
-              <div className="text-3xl mb-2">All done</div>
-              <h3 className="font-display font-bold text-lg">All Activities Complete!</h3>
-              <p className="text-primary-foreground/80 text-sm mt-1">
-                You earned all {maxPoints} points in this mock progress tracker.
+            <div
+              className="mt-6 rounded-2xl p-6 text-center"
+              style={{ background: 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)' }}
+            >
+              <div className="text-3xl mb-2">🎉</div>
+              <h3 className="text-lg font-bold text-white">All Activities Complete!</h3>
+              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                You earned all {maxPoints} points. Outstanding work!
               </p>
             </div>
           )}

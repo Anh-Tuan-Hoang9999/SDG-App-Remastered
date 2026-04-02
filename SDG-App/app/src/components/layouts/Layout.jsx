@@ -27,19 +27,19 @@ export default function AppLayout() {
   const isCoordinator = user?.role === "admin";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#F7FAFA] flex flex-col">
       {/* Top Nav */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 bg-white border-b border-[#D6E3E3] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-primary-foreground" />
+            <div className="w-8 h-8 bg-[#36656B] rounded-lg flex items-center justify-center">
+              <Leaf className="w-4 h-4 text-white" />
             </div>
-            <span className="font-display font-bold text-lg text-foreground hidden sm:block">
+            <span className="font-display font-bold text-lg text-[#24484D] hidden sm:block">
               SDG Co-op Portal
             </span>
-            <span className="font-display font-bold text-lg text-foreground sm:hidden">
+            <span className="font-display font-bold text-lg text-[#24484D] sm:hidden">
               SDG Portal
             </span>
           </Link>
@@ -51,8 +51,8 @@ export default function AppLayout() {
                 <button
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     location.pathname === path
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-[#36656B] text-white"
+                      : "text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2]"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -65,13 +65,13 @@ export default function AppLayout() {
                 <button
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     location.pathname === "/coordinator"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-[#36656B] text-white"
+                      : "text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2]"
                   }`}
                 >
                   <Users className="w-4 h-4" />
                   Coordinator
-                  <span className="text-xs ml-1 px-1 py-0.5 rounded bg-secondary text-secondary-foreground">Admin</span>
+                  <span className="text-xs ml-1 px-1 py-0.5 rounded bg-[#E1ECEC] text-[#2E5A60]">Admin</span>
                 </button>
               </Link>
             )}
@@ -80,20 +80,20 @@ export default function AppLayout() {
           {/* Right side */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-medium text-foreground leading-none">
+              <span className="text-sm font-medium text-[#24484D] leading-none">
                 {user?.full_name || "Student"}
               </span>
-              <span className="text-xs text-muted-foreground capitalize">
+              <span className="text-xs text-[#6F8589] capitalize">
                 {isCoordinator ? "Coordinator" : "Co-op Student"}
               </span>
             </div>
-            <button onClick={handleLogout} className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted">
+            <button onClick={handleLogout} className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2]">
               <LogOut className="w-4 h-4" />
               Logout
             </button>
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2 rounded-lg hover:bg-muted"
+              className="md:hidden p-2 rounded-lg text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2]"
               onClick={() => setMenuOpen(!menuOpen)}
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -103,15 +103,15 @@ export default function AppLayout() {
 
         {/* Mobile Menu Drawer */}
         {menuOpen && (
-          <div className="md:hidden border-t border-border bg-card px-4 py-3 space-y-1">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-border">
+          <div className="md:hidden border-t border-[#D6E3E3] bg-white px-4 py-3 space-y-1">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#D6E3E3]">
               <div>
                 <p className="font-medium text-sm">{user?.full_name || "Student"}</p>
-                <p className="text-xs text-muted-foreground capitalize">
+                <p className="text-xs text-[#6F8589] capitalize">
                   {isCoordinator ? "Coordinator" : "Co-op Student"}
                 </p>
               </div>
-              <button onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10">
+              <button onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-[#9B2C2C] hover:bg-[#FDECEC]">
                 <LogOut className="w-4 h-4" /> Logout
               </button>
             </div>
@@ -120,8 +120,8 @@ export default function AppLayout() {
                 <button
                   className={`w-full justify-start gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
                     location.pathname === path
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-[#36656B] text-white"
+                      : "text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2]"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -132,10 +132,10 @@ export default function AppLayout() {
             ))}
             {isCoordinator && (
               <Link to="/coordinator" onClick={() => setMenuOpen(false)}>
-                <button className="w-full justify-start gap-2 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted flex items-center">
+                <button className="w-full justify-start gap-2 px-4 py-3 rounded-lg text-sm font-medium text-[#4F666A] hover:text-[#24484D] hover:bg-[#EAF2F2] flex items-center">
                   <Users className="w-4 h-4" />
                   Coordinator View
-                  <span className="ml-auto text-xs px-1 py-0.5 rounded bg-secondary text-secondary-foreground">Admin</span>
+                  <span className="ml-auto text-xs px-1 py-0.5 rounded bg-[#E1ECEC] text-[#2E5A60]">Admin</span>
                 </button>
               </Link>
             )}
@@ -149,7 +149,7 @@ export default function AppLayout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card py-4 text-center text-xs text-muted-foreground">
+      <footer className="border-t border-[#D6E3E3] bg-white py-4 text-center text-xs text-[#6F8589]">
         SDG Co-op Learning Portal · COIS 4000Y Capstone Project · Trent University
       </footer>
     </div>

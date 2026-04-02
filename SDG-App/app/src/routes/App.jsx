@@ -13,17 +13,19 @@ import ProtectedRoute from "../components/ProtectedRoute";
 
 // Lazily loaded — deferred until first navigation, keeps initial bundle small
 const Home = lazy(() => import("../screens/Home"));
+const CardSort = lazy(() => import("../screens/CardSort"));
 const Activities = lazy(() => import("../screens/Activities"));
 const ActivityLevels = lazy(() => import("../screens/ActivityLevels").then(m => ({ default: m.ActivityLevels })));
 const LearningScreen = lazy(() => import("../screens/LearningScreen"));
 const ActivityContainer = lazy(() => import("../screens/ActivityContainer"));
 const Profile = lazy(() => import("../screens/Profile"));
 const UserSettings = lazy(() => import("../screens/UserSettings"));
-const ProgressScreen = lazy(() => import("../screens/ProgressScreen"));
+const RealProgress = lazy(() => import("../screens/RealProgress"));
+const ReflectionLog = lazy(() => import("../screens/ReflectionLog"));
 const Resources = lazy(() => import("../screens/Resources"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
 const SDGCards = lazy(() => import("../screens/SDGCards"));
-// Shown while a lazy chunk is loading
+const TestAPI = lazy(() => import("../screens/TestAPI"));
 const PageLoader = () => (
   <div className="flex items-center justify-center w-full h-full">
     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#36656B]" />
@@ -46,10 +48,13 @@ export default function AppNavigator() {
           <Route path="activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
           <Route path="activities/:sdgId" element={<ProtectedRoute><ActivityLevels /></ProtectedRoute>} />
           <Route path="activities/:sdgId/:activityId" element={<ProtectedRoute><ActivityContainer /></ProtectedRoute>} />
-          <Route path="progress" element={<ProtectedRoute><ProgressScreen /></ProtectedRoute>} />
+          <Route path="progress" element={<ProtectedRoute><RealProgress /></ProtectedRoute>} />
+          <Route path="reflection-log" element={<ProtectedRoute><ReflectionLog /></ProtectedRoute>} />
           <Route path="resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
           <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="sdg-cards" element={<ProtectedRoute><SDGCards /></ProtectedRoute>} />
+          <Route path="card-sort" element={<ProtectedRoute><CardSort /></ProtectedRoute>} />
+          <Route path="testapi" element={<ProtectedRoute><TestAPI /></ProtectedRoute>} />
         </Route>
         <Route path="/register" element={<Register />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

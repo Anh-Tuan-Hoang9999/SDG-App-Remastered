@@ -1,14 +1,60 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens — shared across all layouts
+   ============================================================ */
+@theme {
+  /* Brand */
+  --color-trent-green:   #36656B;   /* primary teal-green */
+  --color-trent-dark:    #1A3B2E;   /* deep dark green */
+  --color-trent-gold:    #C8A951;   /* gold accent */
+
+  /* Surfaces */
+  --color-surface:       #F4F7F5;   /* page background */
+  --color-surface-card:  #FFFFFF;   /* card background */
+  --color-surface-muted: #EEF2EE;   /* subtle dividers */
+
+  /* Text */
+  --color-text-primary:  #1A2E1A;
+  --color-text-muted:    #637063;
+  --color-text-faint:    #9BAA9B;
+
+  /* Semantic aliases matching shadcn/ui convention
+     so bg-background, text-foreground, bg-card, etc. resolve */
+  --color-background:          #F4F7F5;
+  --color-foreground:          #1A2E1A;
+  --color-card:                #FFFFFF;
+  --color-card-foreground:     #1A2E1A;
+  --color-primary:             #36656B;
+  --color-primary-foreground:  #FFFFFF;
+  --color-secondary:           #EEF2EE;
+  --color-secondary-foreground:#1A2E1A;
+  --color-muted:               #EEF2EE;
+  --color-muted-foreground:    #637063;
+  --color-accent:              #C8A951;
+  --color-accent-foreground:   #1A2E1A;
+  --color-border:              #DDE6DD;
+  --color-destructive:         #DC2626;
+  --color-destructive-foreground: #FFFFFF;
+
+  /* Chart / SDG spot colors (used by Dashboard) */
+  --color-chart-2:  #05AFD9;
+  --color-chart-3:  #527C4B;
+  --color-chart-4:  #C8A951;
+  --color-chart-5:  #F06C26;
+
+  /* Typography */
+  --font-family-sans:    system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-display: system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* ============================================================
+   Base reset
+   ============================================================ */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family-sans);
   line-height: 1.5;
   font-weight: 400;
-
-  /* Uncomment when light & dark mode is being developed */
-  /* color-scheme: light dark; */
-  /* color: rgba(255, 255, 255, 0.87); */
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,29 +62,95 @@
   height: 100%;
 }
 
-#app {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
-}
-
-body {
-  background: #f2f2f2;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  color: #000;
-  margin: 0;
   padding: 0;
 }
 
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-family-sans);
+  font-size: 16px;
+}
+
+/* Prevent iOS zoom on inputs */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   Swiper dimensions (LearningScreen)
+   ============================================================ */
 .swiper {
   width: 240px;
   height: 320px;
+}
+
+/* ============================================================
+   Auth layout utilities
+   ============================================================ */
+
+/* SDG colour strip — 17 blocks in a row */
+.sdg-strip {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+.sdg-strip > span {
+  flex: 1;
+}
+
+/* Input focus ring using primary color */
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  font-size: 16px;
+  color: var(--color-foreground);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-input:focus {
+  border-color: var(--color-trent-green);
+  box-shadow: 0 0 0 3px rgba(54, 101, 107, 0.12);
+}
+.auth-input::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* Primary button */
+.btn-primary {
+  width: 100%;
+  padding: 13px 20px;
+  background: var(--color-trent-green);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #2a4f53;
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

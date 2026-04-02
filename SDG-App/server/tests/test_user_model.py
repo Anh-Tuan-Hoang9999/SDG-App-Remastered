@@ -1,76 +1,74 @@
+"""Direct model-layer tests for the User model."""
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-from models.user import User, UserRole
 
-# use an in-memory sqlite db so we don't touch the real database
+from db.database import Base
+from models.user import User
+
 engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Session = sessionmaker(bind=engine)
 
-# create the users table before each test and drop it after
-def setup_function(function):
-    User.__table__.create(bind=engine, checkfirst=True)
 
-def teardown_function(function):
-    User.__table__.drop(bind=engine, checkfirst=True)
+def setup_function():
+    Base.metadata.create_all(bind=engine)
 
-# default user for testing, email and username can be overridden
-def make_user(email="student@trentu.ca", username="student1"):
-    return User(
-        email=email,
-        username=username,
-        hashed_password="hashed_pw",
-        course_code="COIS-4000Y",
-    )
 
-# checks that a new user gets the right defaults applied automatically
+def teardown_function():
+    Base.metadata.drop_all(bind=engine)
+
+
+def make_user(name="Alice", email="alice@trentu.ca"):
+    return User(name=name, email=email, password_hash="hashed_pw", role="student")
+
+
 def test_user_defaults_are_applied():
-    db = SessionLocal()
+    db = Session()
     user = make_user()
     db.add(user)
     db.commit()
     db.refresh(user)
-    assert user.user_type == UserRole.STUDENT
-    assert user.is_active is True
+    assert user.role == "student"
+    assert user.id is not None
     db.close()
 
-# two users with the same email should not be allowed
+
 def test_duplicate_email_raises_integrity_error():
-    db = SessionLocal()
-    db.add(make_user(email="same@trentu.ca", username="u1"))
+    db = Session()
+    db.add(make_user(name="Alice", email="same@trentu.ca"))
     db.commit()
-    db.add(make_user(email="same@trentu.ca", username="u2"))
+    db.add(make_user(name="Bob", email="same@trentu.ca"))
     try:
         db.commit()
-        assert False, "Expected IntegrityError for duplicate email"
+        assert False, "Expected IntegrityError"
     except IntegrityError:
         db.rollback()
     finally:
         db.close()
 
-# two users with the same username should not be allowed
-def test_duplicate_username_raises_integrity_error():
-    db = SessionLocal()
-    db.add(make_user(email="a@trentu.ca", username="sameuser"))
-    db.commit()
-    db.add(make_user(email="b@trentu.ca", username="sameuser"))
-    try:
-        db.commit()
-        assert False, "Expected IntegrityError for duplicate username"
-    except IntegrityError:
-        db.rollback()
-    finally:
-        db.close()
 
-# email is required, saving a user without one should fail
-def test_missing_required_email_raises_integrity_error():
-    db = SessionLocal()
+def test_missing_email_raises_integrity_error():
+    db = Session()
     user = make_user()
     user.email = None
     db.add(user)
     try:
         db.commit()
-        assert False, "Expected IntegrityError for null email"
+        assert False, "Expected IntegrityError"
+    except IntegrityError:
+        db.rollback()
+    finally:
+        db.close()
+
+
+def test_missing_name_raises_integrity_error():
+    db = Session()
+    user = make_user()
+    user.name = None
+    db.add(user)
+    try:
+        db.commit()
+        assert False, "Expected IntegrityError"
     except IntegrityError:
         db.rollback()
     finally:

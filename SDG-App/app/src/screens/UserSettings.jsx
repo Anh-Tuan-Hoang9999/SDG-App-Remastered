@@ -7,24 +7,18 @@ const UserSettings = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const [username, setUsername] = React.useState(user?.username || "");
-  const [description, setDescription] = React.useState(user?.description || "");
+  const [name, setName] = React.useState(user?.name || "");
 
   React.useEffect(() => {
-    setUsername(user?.username || "");
-    setDescription(user?.description || "");
+    setName(user?.name || "");
   }, [user]);
 
-  // Placeholder for future form logic
   const handleBack = () => navigate('/profile');
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const res = await client.patch("/users/update", { username, description });
-      const updatedUser = res.data;
-      setUsername(updatedUser.username);
-      setDescription(updatedUser.description);
-      updateUser(updatedUser); // Immediately update user context
+      const res = await client.patch("/api/auth/me", { name });
+      updateUser(res.data);
       alert("Profile updated successfully!");
       navigate("/profile");
     } catch (err) {
@@ -55,21 +49,12 @@ const UserSettings = () => {
             <input type="file" className="block w-full" disabled />
           </div>
           <div className="mb-4">
-            <label className="block font-semibold mb-1">Username</label>
+            <label className="block font-semibold mb-1">Name</label>
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block font-semibold mb-1">Description</label>
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded min-h-[48px]"
-              value={description}
-              placeholder="Add a short description about yourself..."
-              onChange={(e) => setDescription(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <button type="submit" className="mt-4 p-2 w-full bg-[#6e805c] text-white rounded-lg hover:bg-green-700">

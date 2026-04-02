@@ -4,15 +4,15 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 
-class DiscussionPost(Base):
-    __tablename__ = "discussion_posts"
+class DiscussionComment(Base):
+    __tablename__ = "discussion_comments"
 
     id          = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    post_id     = Column(Integer, ForeignKey("discussion_posts.id"), nullable=False)
     user_id     = Column(Integer, ForeignKey("users.id"), nullable=False)
     author_name = Column(String(100), nullable=False)
-    title       = Column(String(255), nullable=False)
     body        = Column(Text, nullable=False)
     created_at  = Column(DateTime, server_default=func.current_timestamp())
 
-    user     = relationship("User", back_populates="discussion_posts")
-    comments = relationship("DiscussionComment", back_populates="post", cascade="all, delete-orphan")
+    post = relationship("DiscussionPost", back_populates="comments")
+    user = relationship("User", back_populates="discussion_comments")

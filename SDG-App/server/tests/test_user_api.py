@@ -1,76 +1,115 @@
+"""API-level tests for /api/auth/* endpoints."""
 from uuid import uuid4
-from fastapi.testclient import TestClient
-from main import app
 
-client = TestClient(app)
 
-PASSWORD = "MyPassword@123"
-
-# need unique emails each run so we don't get duplicate errors
-def fresh_user():
+def fresh_user(role="student"):
     uid = uuid4().hex[:8]
-    return {
-        "email": f"student_{uid}@trentu.ca",
-        "username": f"student_{uid}",
-        "password": PASSWORD,
-        "course_code": "COIS-4000Y",
-    }
-
-def register(payload=None):
-    if payload is None:
-        payload = fresh_user()
-    r = client.post("/users/register", json=payload)
-    return payload, r
-
-def login(email, password=PASSWORD):
-    return client.post("/users/login", data={"username": email, "password": password})
+    return {"name": f"User {uid}", "email": f"user_{uid}@trentu.ca", "password": "Pass@1234", "role": role}
 
 
-def test_register_user_success():
-    user, r = register()
+def register(client, user=None):
+    if user is None:
+        user = fresh_user()
+    return user, client.post("/api/auth/register", json=user)
+
+
+def login(client, email, password="Pass@1234"):
+    return client.post("/api/auth/login", json={"email": email, "password": password})
+
+
+def auth_headers(token):
+    return {"Authorization": f"Bearer {token}"}
+
+
+# --- Register ---
+
+def test_register_success(client):
+    user, r = register(client)
     assert r.status_code == 201
-    assert r.json()["email"] == user["email"]
-    assert r.json()["username"] == user["username"]
-    assert "id" in r.json()
+    data = r.json()
+    assert data["email"] == user["email"]
+    assert data["name"]  == user["name"]
+    assert data["role"]  == "student"
+    assert "id" in data
+    assert "password_hash" not in data
 
-# registering the same email twice should fail
-def test_register_duplicate_email_returns_400():
+
+def test_register_duplicate_email_returns_400(client):
     user = fresh_user()
-    _, first = register(user)
-    second = client.post("/users/register", json=user)
-    assert first.status_code == 201
+    _, first  = register(client, user)
+    _, second = register(client, user)
+    assert first.status_code  == 201
     assert second.status_code == 400
     assert second.json()["detail"] == "Email already registered"
 
-def test_login_success_returns_bearer_token():
-    user, r = register()
-    token_r = login(user["email"])
+
+def test_register_invalid_role_returns_400(client):
+    user = fresh_user()
+    user["role"] = "admin"
+    _, r = register(client, user)
+    assert r.status_code == 400
+
+
+def test_register_coordinator_role(client):
+    user = fresh_user(role="coordinator")
+    _, r = register(client, user)
     assert r.status_code == 201
-    assert token_r.status_code == 200
-    assert "access_token" in token_r.json()
-    assert token_r.json()["token_type"] == "bearer"
+    assert r.json()["role"] == "coordinator"
 
-def test_login_wrong_password_returns_401():
-    user, r = register()
-    bad_login = login(user["email"], "WrongPass123!")
-    assert r.status_code == 201
-    assert bad_login.status_code == 401
-    assert bad_login.json()["detail"] == "Incorrect username or password"
 
-def test_me_with_valid_token_returns_current_user():
-    user, r = register()
-    token_r = login(user["email"])
-    token = token_r.json()["access_token"]
+# --- Login ---
 
-    me = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
+def test_login_success_returns_bearer_token(client):
+    user, _ = register(client)
+    r = login(client, user["email"])
+    assert r.status_code == 200
+    assert "access_token" in r.json()
+    assert r.json()["token_type"] == "bearer"
 
-    assert r.status_code == 201
-    assert token_r.status_code == 200
-    assert me.status_code == 200
-    assert me.json()["email"] == user["email"]
-    assert me.json()["username"] == user["username"]
 
-# no token at all should just get rejected
-def test_me_without_token_returns_401():
-    r = client.get("/users/me")
+def test_login_wrong_password_returns_401(client):
+    user, _ = register(client)
+    r = login(client, user["email"], "WrongPass!")
+    assert r.status_code == 401
+
+
+def test_login_unknown_email_returns_401(client):
+    r = login(client, "nobody@trentu.ca")
+    assert r.status_code == 401
+
+
+# --- Logout ---
+
+def test_logout_returns_200(client):
+    r = client.post("/api/auth/logout")
+    assert r.status_code == 200
+
+
+# --- GET /me ---
+
+def test_me_returns_current_user(client):
+    user, _ = register(client)
+    token = login(client, user["email"]).json()["access_token"]
+    r = client.get("/api/auth/me", headers=auth_headers(token))
+    assert r.status_code == 200
+    assert r.json()["email"] == user["email"]
+
+
+def test_me_without_token_returns_401(client):
+    r = client.get("/api/auth/me")
+    assert r.status_code == 401
+
+
+# --- PATCH /me ---
+
+def test_patch_me_updates_name(client):
+    user, _ = register(client)
+    token = login(client, user["email"]).json()["access_token"]
+    r = client.patch("/api/auth/me", json={"name": "New Name"}, headers=auth_headers(token))
+    assert r.status_code == 200
+    assert r.json()["name"] == "New Name"
+
+
+def test_patch_me_without_token_returns_401(client):
+    r = client.patch("/api/auth/me", json={"name": "X"})
     assert r.status_code == 401

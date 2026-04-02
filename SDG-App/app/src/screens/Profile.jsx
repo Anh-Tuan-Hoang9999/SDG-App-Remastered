@@ -24,12 +24,12 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
   <div className="max-w-2xl mx-auto w-full px-4 py-8">
     {/* Header card */}
     <div
-      className="rounded-3xl overflow-hidden mb-5"
+      className="rounded-3xl mb-5"
       style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 0 0 1px #DDE6DD', background: '#fff' }}
     >
       {/* Gradient banner */}
       <div
-        className="h-24 relative"
+        className="h-28 relative overflow-hidden rounded-t-3xl z-0"
         style={{ background: 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)' }}
       >
         {/* SDG mini-strip */}
@@ -42,11 +42,15 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
 
       {/* Avatar row */}
       <div className="px-6 pb-6">
-        <div className="flex items-end justify-between -mt-10 mb-5">
-          <div className="ring-4 ring-white rounded-full">
-            <ProfilePicture />
+        <div className="relative z-10 flex items-start justify-between -mt-6 mb-5">
+          <div className="relative z-20 ring-4 ring-white rounded-2xl">
+            <ProfilePicture
+              src={user.avatar_url}
+              name={user.name || user.username || 'User'}
+              alt={`${user.name || user.username || 'User'} profile`}
+            />
           </div>
-          <div className="flex gap-2 mb-1">
+          <div className="flex gap-2 mt-3">
             <button
               onClick={() => navigate('/settings')}
               className="px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95"
@@ -59,7 +63,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
 
         <div className="mb-5">
           <h2 className="text-xl font-bold" style={{ color: '#1A2E1A' }}>
-            {user.username || user.full_name}
+            {user.name || user.username || user.full_name}
           </h2>
           <p className="text-sm mt-0.5" style={{ color: '#637063' }}>
             {roleLabel} · {user.email}
@@ -67,7 +71,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
         </div>
 
         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-          <InfoRow label="User Type" value={user.user_type} />
+          <InfoRow label="User Type" value={roleLabel} />
           <InfoRow label="Course Code" value={user.course_code} />
           <InfoRow label="Email" value={user.email} />
         </div>
@@ -98,7 +102,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
 );
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   if (!user) {
@@ -109,7 +113,7 @@ const Profile = () => {
     );
   }
 
-  const userType = (user.user_type || '').toLowerCase();
+  const userType = (user.role || user.user_type || '').toLowerCase();
 
   const progressSection = (
     <>

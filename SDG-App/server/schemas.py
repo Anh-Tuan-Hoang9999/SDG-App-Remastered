@@ -21,6 +21,9 @@ class LoginIn(BaseModel):
 
 class UserUpdateIn(BaseModel):
     name: Optional[str] = None
+    description: Optional[str] = None
+    course_code: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 
 class Token(BaseModel):
@@ -33,6 +36,9 @@ class UserOut(BaseModel):
     name: str
     email: str
     role: str
+    description: Optional[str] = None
+    course_code: Optional[str] = None
+    avatar_url: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:

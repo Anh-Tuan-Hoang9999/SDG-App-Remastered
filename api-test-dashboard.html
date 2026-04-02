@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDG API Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .json-box { font-family: 'Courier New', monospace; font-size: 11px; white-space: pre-wrap; word-break: break-all; }
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .card { @apply bg-white rounded-xl shadow p-4 mb-4; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+    #side-panel { transition: transform 0.3s ease; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Layout wrapper -->
+<div class="flex">
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="flex-1 p-4 pr-[340px] min-h-screen overflow-y-auto">
+
+    <!-- Header -->
+    <div class="mb-4 text-center">
+      <h1 class="text-2xl font-bold text-gray-800">🌍 SDG API Dashboard</h1>
+      <p class="text-gray-400 text-xs">Comprehensive endpoint tester</p>
+    </div>
+
+    <!-- Alert -->
+    <div id="alert-banner" class="hidden rounded-lg p-3 text-sm font-medium mb-3 fade-in"></div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 1: Config                              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">⚙️ Row 1 — Auth Config</h2>
+      <div class="flex flex-wrap gap-3 items-end">
+        <div class="flex-1 min-w-[180px]">
+          <label class="field-label">Base URL</label>
+          <input id="base-url" type="text" value="http://localhost:8000"
+            class="field-input" />
+        </div>
+        <div class="flex-[2] min-w-[260px]">
+          <label class="field-label">Access Token</label>
+          <input id="access-token" type="text" placeholder="Auto-filled after login..."
+            class="field-input font-mono bg-gray-50" />
+        </div>
+        <div class="w-28">
+          <label class="field-label">User ID</label>
+          <input id="global-user-id" type="text" placeholder="auto"
+            class="field-input font-mono bg-gray-50" />
+        </div>
+        <button onclick="clearAuth()" class="btn-gray">Clear</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 2: Auth                                -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">🔐 Row 2 — Auth</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <!-- Register -->
+        <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+          <p class="section-label text-green-700">Register</p>
+          <input id="r-name" type="text" placeholder="Name" class="field-input mb-1" />
+          <input id="r-email" type="email" placeholder="Email" class="field-input mb-1" />
+          <input id="r-password" type="password" placeholder="Password" class="field-input mb-1" />
+          <select id="r-role" class="field-input mb-2">
+            <option value="student">student</option>
+            <option value="coordinator">coordinator</option>
+          </select>
+          <button onclick="doRegister()" class="btn-green w-full">Register</button>
+        </div>
+
+        <!-- Login -->
+        <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+          <p class="section-label text-blue-700">Login</p>
+          <input id="l-email" type="email" placeholder="Email" class="field-input mb-1" />
+          <input id="l-password" type="password" placeholder="Password" class="field-input mb-2" />
+          <button onclick="doLogin()" class="btn-blue w-full">Login</button>
+          <button onclick="doLogout()" class="btn-gray w-full mt-1">Logout</button>
+        </div>
+
+        <!-- GET /me -->
+        <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+          <p class="section-label text-yellow-700">Profile GET /me</p>
+          <button onclick="getMe()" class="btn-yellow w-full mb-1">GET /me</button>
+        </div>
+
+        <!-- PATCH /me -->
+        <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+          <p class="section-label text-orange-700">Update PATCH /me</p>
+          <input id="me-name" type="text" placeholder="New name" class="field-input mb-2" />
+          <button onclick="patchMe()" class="btn-orange w-full">PATCH /me</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 3: Core Features                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">🧩 Row 3 — Core Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+        <!-- SDGs -->
+        <div class="bg-teal-50 rounded-lg p-3 border border-teal-200">
+          <p class="section-label text-teal-700">SDGs</p>
+          <button onclick="getSdgs()" class="btn-teal w-full">GET /api/sdgs</button>
+        </div>
+
+        <!-- Quiz -->
+        <div class="bg-indigo-50 rounded-lg p-3 border border-indigo-200 space-y-1">
+          <p class="section-label text-indigo-700">Quiz</p>
+          <button onclick="getQuizQuestions()" class="btn-indigo w-full">GET Questions</button>
+          <div class="border-t border-indigo-200 pt-1">
+            <p class="text-xs text-indigo-500 mb-1">Submit (user_id, score, total)</p>
+            <input id="q-user-id" type="number" placeholder="user_id" class="field-input mb-1" />
+            <input id="q-score" type="number" placeholder="score" class="field-input mb-1" />
+            <input id="q-total" type="number" placeholder="total" class="field-input mb-1" />
+            <button onclick="submitQuiz()" class="btn-indigo w-full">POST Submit</button>
+          </div>
+          <div class="border-t border-indigo-200 pt-1">
+            <input id="q-result-uid" type="number" placeholder="user_id for result" class="field-input mb-1" />
+            <button onclick="getQuizResult()" class="btn-indigo w-full">GET Result</button>
+          </div>
+        </div>
+
+        <!-- Card Sort -->
+        <div class="bg-pink-50 rounded-lg p-3 border border-pink-200 space-y-1">
+          <p class="section-label text-pink-700">Card Sort</p>
+          <input id="cs-user-id" type="number" placeholder="user_id" class="field-input mb-1" />
+          <button onclick="getCardSort()" class="btn-pink w-full">GET Result</button>
+          <div class="border-t border-pink-200 pt-1 mt-1">
+            <p class="text-xs text-pink-500 mb-1">POST (comma-separated SDG ids)</p>
+            <input id="cs-most" type="text" placeholder="most_relevant: 1,2,3" class="field-input mb-1" />
+            <input id="cs-some" type="text" placeholder="somewhat_relevant: 4,5" class="field-input mb-1" />
+            <input id="cs-least" type="text" placeholder="least_relevant: 6,7" class="field-input mb-1" />
+            <button onclick="postCardSort()" class="btn-pink w-full">POST Card Sort</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 4: Reflections                         -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">📝 Row 4 — Reflections</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Left: Form -->
+        <div class="space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="field-label">User ID</label>
+              <input id="ref-uid" type="number" placeholder="auto from login" class="field-input" />
+            </div>
+            <div>
+              <label class="field-label">SDG Numbers (1,4,13)</label>
+              <input id="ref-sdgs" type="text" placeholder="e.g. 1,4" class="field-input" />
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Title</label>
+            <input id="ref-title" type="text" placeholder="Reflection title" class="field-input" />
+          </div>
+          <div>
+            <label class="field-label">Type (optional)</label>
+            <input id="ref-type" type="text" placeholder="e.g. personal" class="field-input" />
+          </div>
+          <div>
+            <label class="field-label">Reflection Text <span class="text-red-400">*</span></label>
+            <textarea id="ref-text" rows="3" placeholder="Your reflection..."
+              class="field-input resize-none"></textarea>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="ref-employer" type="checkbox" class="w-4 h-4" />
+            <label class="text-xs text-gray-600">Employer Discussion</label>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="postReflection()" class="btn-purple flex-1">POST Reflection</button>
+            <button onclick="getReflections()" class="btn-gray flex-1">GET List</button>
+          </div>
+        </div>
+
+        <!-- Right: Response -->
+        <div>
+          <label class="field-label">JSON Response</label>
+          <div id="ref-response" class="bg-gray-900 text-green-400 rounded-lg p-3 json-box h-[220px] overflow-auto">
+// Reflection responses appear here...
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Reflection List -->
+      <div class="mt-4">
+        <div class="flex justify-between items-center mb-2">
+          <p class="text-sm font-semibold text-gray-600">Live Reflection List</p>
+          <button onclick="getReflections()" class="text-xs text-gray-400 hover:text-gray-600">🔄 Refresh</button>
+        </div>
+        <div id="reflection-list" class="space-y-2 max-h-60 overflow-y-auto">
+          <p class="text-gray-400 text-xs text-center py-4">Login and click "GET List" to load.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 5: Discussion                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">💬 Row 5 — Discussion</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Posts -->
+        <div>
+          <p class="section-label text-gray-600 mb-2">Posts</p>
+          <div class="space-y-1">
+            <input id="dp-uid" type="number" placeholder="user_id (auto)" class="field-input" />
+            <input id="dp-author" type="text" placeholder="Author name" class="field-input" />
+            <input id="dp-title" type="text" placeholder="Post title" class="field-input" />
+            <textarea id="dp-body" rows="2" placeholder="Post body..." class="field-input resize-none"></textarea>
+            <div class="flex gap-2">
+              <button onclick="createPost()" class="btn-blue flex-1">POST Create</button>
+              <button onclick="getPosts()" class="btn-gray flex-1">GET All Posts</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div>
+          <p class="section-label text-gray-600 mb-2">Comments</p>
+          <div class="space-y-1">
+            <input id="dc-post-id" type="number" placeholder="post_id" class="field-input" />
+            <input id="dc-uid" type="number" placeholder="user_id (auto)" class="field-input" />
+            <input id="dc-author" type="text" placeholder="Author name" class="field-input" />
+            <textarea id="dc-body" rows="2" placeholder="Comment body..." class="field-input resize-none"></textarea>
+            <div class="flex gap-2">
+              <button onclick="createComment()" class="btn-blue flex-1">POST Comment</button>
+              <button onclick="getComments()" class="btn-gray flex-1">GET Comments</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discussion Post List -->
+      <div class="mt-4">
+        <div class="flex justify-between items-center mb-2">
+          <p class="text-sm font-semibold text-gray-600">Live Post List</p>
+          <button onclick="getPosts()" class="text-xs text-gray-400 hover:text-gray-600">🔄 Refresh</button>
+        </div>
+        <div id="discussion-list" class="space-y-2 max-h-60 overflow-y-auto">
+          <p class="text-gray-400 text-xs text-center py-4">Click "GET All Posts" to load.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ROW 6: Progress & Coordinator              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="card">
+      <h2 class="row-title">📊 Row 6 — Progress &amp; Coordinator</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Progress -->
+        <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-200">
+          <p class="section-label text-emerald-700 mb-2">Progress</p>
+          <input id="prog-uid" type="number" placeholder="user_id" class="field-input mb-1" />
+          <button onclick="getProgress()" class="btn-emerald w-full mb-2">GET Progress</button>
+          <div class="border-t border-emerald-200 pt-2 space-y-1">
+            <p class="text-xs text-emerald-600 font-semibold">PATCH Progress</p>
+            <input id="prog-sdg-cards" type="text" placeholder="viewed_sdg_cards: 1,2,3" class="field-input" />
+            <div class="flex gap-2">
+              <label class="flex items-center gap-1 text-xs text-gray-600">
+                <input id="prog-card-sort" type="checkbox" /> card_sort done
+              </label>
+              <label class="flex items-center gap-1 text-xs text-gray-600">
+                <input id="prog-quiz" type="checkbox" /> quiz done
+              </label>
+            </div>
+            <input id="prog-ref-count" type="number" placeholder="reflection_count" class="field-input" />
+            <button onclick="patchProgress()" class="btn-emerald w-full">PATCH Progress</button>
+          </div>
+        </div>
+
+        <!-- Coordinator -->
+        <div class="bg-rose-50 rounded-lg p-3 border border-rose-200">
+          <p class="section-label text-rose-700 mb-2">Coordinator (requires coordinator role)</p>
+          <button onclick="getStudents()" class="btn-rose w-full mb-1">GET All Students</button>
+          <button onclick="getAllReflections()" class="btn-rose w-full">GET All Reflections</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end main -->
+
+  <!-- ── SIDE PANEL ── -->
+  <div id="side-panel"
+    class="fixed right-0 top-0 h-full w-[320px] bg-gray-900 shadow-2xl flex flex-col z-50">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+      <span class="text-white font-semibold text-sm">📡 API Response</span>
+      <button onclick="clearResponse()" class="text-gray-400 hover:text-white text-xs">Clear</button>
+    </div>
+    <div class="px-3 py-2 border-b border-gray-700">
+      <span id="response-label" class="text-xs text-gray-400"></span>
+    </div>
+    <div class="flex-1 overflow-auto p-3">
+      <pre id="response-box" class="json-box text-green-400 text-xs">
+// Responses will appear here...
+      </pre>
+    </div>
+  </div>
+
+</div><!-- end layout -->
+
+<!-- ── Tailwind utility classes via inline style (since we're using CDN) ── -->
+<style>
+  .row-title  { @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3; }
+  .section-label { @apply text-xs font-bold uppercase tracking-wide mb-1; }
+  .field-label { @apply block text-xs text-gray-500 mb-1; }
+  .field-input { @apply w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300; }
+
+  .btn-green  { @apply bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-blue   { @apply bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-gray   { @apply bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1.5 px-3 rounded-lg transition; }
+  .btn-yellow { @apply bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-orange { @apply bg-orange-400 hover:bg-orange-500 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-teal   { @apply bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-indigo { @apply bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-pink   { @apply bg-pink-500 hover:bg-pink-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-purple { @apply bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-emerald{ @apply bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-rose   { @apply bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold py-1.5 rounded-lg transition; }
+  .btn-red    { @apply bg-red-100 hover:bg-red-200 text-red-600 text-xs font-semibold py-1 px-2 rounded-lg transition; }
+</style>
+
+<script>
+// ══════════════════════════════════════════════
+//  Global State
+// ══════════════════════════════════════════════
+let currentUserId = '';
+
+// ══════════════════════════════════════════════
+//  Core Helpers
+// ══════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const getBase  = () => $('base-url').value.replace(/\/$/, '');
+const getToken = () => $('access-token').value.trim();
+const getUserId = () => $('global-user-id').value.trim() || currentUserId;
+
+function apiFetch(path, options = {}) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return fetch(getBase() + path, { ...options, headers });
+}
+
+function showResponse(label, data, status) {
+  $('response-label').textContent = `${status} — ${label}`;
+  $('response-label').className = `text-xs font-mono ${status < 300 ? 'text-green-400' : 'text-red-400'}`;
+  $('response-box').textContent = JSON.stringify(data, null, 2);
+}
+
+function clearResponse() {
+  $('response-box').textContent = '// Cleared.';
+  $('response-label').textContent = '';
+}
+
+function showAlert(msg, type = 'success') {
+  const el = $('alert-banner');
+  el.textContent = msg;
+  el.className = `rounded-lg p-3 text-sm font-medium mb-3 fade-in ${
+    type === 'success' ? 'bg-green-100 text-green-800 border border-green-300'
+                       : 'bg-red-100 text-red-800 border border-red-300'}`;
+  el.classList.remove('hidden');
+  clearTimeout(window._at);
+  window._at = setTimeout(() => el.classList.add('hidden'), 4000);
+}
+
+function parseCsv(str) {
+  return str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+}
+
+function esc(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 1
+// ══════════════════════════════════════════════
+function clearAuth() {
+  $('access-token').value = '';
+  $('global-user-id').value = '';
+  currentUserId = '';
+  showAlert('Auth cleared.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 2 — Auth
+// ══════════════════════════════════════════════
+async function doRegister() {
+  const body = { name: $('r-name').value, email: $('r-email').value,
+                 password: $('r-password').value, role: $('r-role').value };
+  const res = await apiFetch('/api/auth/register', { method:'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse('POST /api/auth/register', data, res.status);
+  res.ok ? showAlert(`✅ Registered! ID: ${data.id}`) : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function doLogin() {
+  const body = { email: $('l-email').value, password: $('l-password').value };
+  const res = await fetch(getBase() + '/api/auth/login', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  showResponse('POST /api/auth/login', data, res.status);
+  if (res.ok && data.access_token) {
+    $('access-token').value = data.access_token;
+    // Fetch /me to get user id
+    const meRes = await fetch(getBase() + '/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${data.access_token}` }
+    });
+    if (meRes.ok) {
+      const me = await meRes.json();
+      currentUserId = String(me.id);
+      $('global-user-id').value = currentUserId;
+      // Auto-fill user id fields
+      ['ref-uid','dp-uid','dc-uid','cs-user-id','prog-uid','q-user-id','q-result-uid'].forEach(id => {
+        if ($(id)) $(id).value = currentUserId;
+      });
+      showAlert(`✅ Logged in as ${me.name} (ID: ${me.id})`);
+    } else {
+      showAlert('✅ Login OK — could not fetch /me');
+    }
+  } else {
+    showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+  }
+}
+
+async function doLogout() {
+  const res = await apiFetch('/api/auth/logout', { method: 'POST' });
+  const data = await res.json().catch(() => ({}));
+  showResponse('POST /api/auth/logout', data, res.status);
+  clearAuth();
+  showAlert('✅ Logged out');
+}
+
+async function getMe() {
+  const res = await apiFetch('/api/auth/me');
+  const data = await res.json();
+  showResponse('GET /api/auth/me', data, res.status);
+  if (!res.ok) showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function patchMe() {
+  const body = { name: $('me-name').value };
+  const res = await apiFetch('/api/auth/me', { method: 'PATCH', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse('PATCH /api/auth/me', data, res.status);
+  res.ok ? showAlert(`✅ Profile updated`) : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 3 — Core Features
+// ══════════════════════════════════════════════
+async function getSdgs() {
+  const res = await apiFetch('/api/sdgs');
+  const data = await res.json();
+  showResponse('GET /api/sdgs', data, res.status);
+}
+
+async function getQuizQuestions() {
+  const res = await apiFetch('/api/quiz/questions');
+  const data = await res.json();
+  showResponse('GET /api/quiz/questions', data, res.status);
+}
+
+async function submitQuiz() {
+  const body = {
+    user_id: parseInt($('q-user-id').value),
+    score: parseInt($('q-score').value),
+    total: parseInt($('q-total').value)
+  };
+  const res = await apiFetch('/api/quiz/submit', { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse('POST /api/quiz/submit', data, res.status);
+  res.ok ? showAlert('✅ Quiz submitted') : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function getQuizResult() {
+  const uid = $('q-result-uid').value || getUserId();
+  const res = await apiFetch(`/api/quiz/result/${uid}`);
+  const data = await res.json();
+  showResponse(`GET /api/quiz/result/${uid}`, data, res.status);
+}
+
+async function getCardSort() {
+  const uid = $('cs-user-id').value || getUserId();
+  const res = await apiFetch(`/api/card-sort/${uid}`);
+  const data = await res.json();
+  showResponse(`GET /api/card-sort/${uid}`, data, res.status);
+}
+
+async function postCardSort() {
+  const uid = parseInt($('cs-user-id').value || getUserId());
+  const body = {
+    user_id: uid,
+    most_relevant:     parseCsv($('cs-most').value),
+    somewhat_relevant: parseCsv($('cs-some').value),
+    least_relevant:    parseCsv($('cs-least').value),
+  };
+  const res = await apiFetch('/api/card-sort', { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse('POST /api/card-sort', data, res.status);
+  res.ok ? showAlert('✅ Card sort saved') : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 4 — Reflections
+// ══════════════════════════════════════════════
+async function postReflection() {
+  const uid = parseInt($('ref-uid').value || getUserId());
+  const sdgRaw = $('ref-sdgs').value.trim();
+  const body = {
+    user_id: uid,
+    title: $('ref-title').value,
+    reflection_text: $('ref-text').value,
+    employer_discussion: $('ref-employer').checked,
+    ...(sdgRaw ? { sdg_numbers: parseCsv(sdgRaw) } : {}),
+    ...($('ref-type').value ? { type: $('ref-type').value } : {}),
+  };
+  const res = await apiFetch('/api/reflections', { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  $('ref-response').textContent = JSON.stringify(data, null, 2);
+  showResponse('POST /api/reflections', data, res.status);
+  if (res.ok) {
+    showAlert('✅ Reflection posted');
+    $('ref-text').value = '';
+    $('ref-title').value = '';
+    await getReflections();
+  } else {
+    showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+  }
+}
+
+async function getReflections() {
+  const uid = $('ref-uid').value || getUserId();
+  if (!uid) { showAlert('⚠️ Need user_id', 'error'); return; }
+  const res = await apiFetch(`/api/reflections/${uid}`);
+  const data = await res.json();
+  $('ref-response').textContent = JSON.stringify(data, null, 2);
+  showResponse(`GET /api/reflections/${uid}`, data, res.status);
+  if (res.ok) renderReflections(data);
+  else showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function deleteReflection(id) {
+  if (!confirm(`Delete reflection #${id}?`)) return;
+  const res = await apiFetch(`/api/reflections/${id}`, { method: 'DELETE' });
+  showResponse(`DELETE /api/reflections/${id}`, { deleted: id }, res.status);
+  if (res.ok || res.status === 204) {
+    showAlert(`✅ Deleted reflection #${id}`);
+    await getReflections();
+  } else {
+    showAlert(`❌ Delete failed`, 'error');
+  }
+}
+
+function renderReflections(list) {
+  const el = $('reflection-list');
+  if (!Array.isArray(list) || !list.length) {
+    el.innerHTML = '<p class="text-gray-400 text-xs text-center py-3">No reflections.</p>';
+    return;
+  }
+  el.innerHTML = list.map(r => `
+    <div class="flex items-start justify-between gap-2 bg-purple-50 border border-purple-200 rounded-lg p-2 fade-in">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1 mb-0.5 flex-wrap">
+          <span class="text-xs font-bold text-purple-600">#${r.id}</span>
+          <span class="text-xs font-semibold text-gray-700">${esc(r.title)}</span>
+          ${r.sdg_numbers?.length ? `<span class="text-xs text-blue-600 bg-blue-100 px-1.5 rounded-full">SDG ${r.sdg_numbers.join(',')}</span>` : ''}
+          <span class="text-xs text-gray-400">${r.created_at ? new Date(r.created_at).toLocaleDateString() : ''}</span>
+        </div>
+        <p class="text-xs text-gray-600 truncate">${esc(r.reflection_text)}</p>
+      </div>
+      <button onclick="deleteReflection(${r.id})" class="btn-red flex-shrink-0">Delete</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 5 — Discussion
+// ══════════════════════════════════════════════
+async function createPost() {
+  const uid = parseInt($('dp-uid').value || getUserId());
+  const body = {
+    user_id: uid,
+    author_name: $('dp-author').value,
+    title: $('dp-title').value,
+    body: $('dp-body').value,
+  };
+  const res = await apiFetch('/api/discussion/posts', { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse('POST /api/discussion/posts', data, res.status);
+  if (res.ok) {
+    showAlert('✅ Post created');
+    $('dp-title').value = ''; $('dp-body').value = '';
+    await getPosts();
+  } else {
+    showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+  }
+}
+
+async function getPosts() {
+  const res = await apiFetch('/api/discussion/posts');
+  const data = await res.json();
+  showResponse('GET /api/discussion/posts', data, res.status);
+  if (res.ok) renderPosts(data);
+}
+
+async function deletePost(id) {
+  if (!confirm(`Delete post #${id}?`)) return;
+  const res = await apiFetch(`/api/discussion/posts/${id}`, { method: 'DELETE' });
+  showResponse(`DELETE /api/discussion/posts/${id}`, { deleted: id }, res.status);
+  if (res.ok || res.status === 204) {
+    showAlert(`✅ Deleted post #${id}`);
+    await getPosts();
+  } else {
+    showAlert(`❌ Delete failed`, 'error');
+  }
+}
+
+async function createComment() {
+  const postId = $('dc-post-id').value;
+  if (!postId) { showAlert('⚠️ Need post_id', 'error'); return; }
+  const body = {
+    user_id: parseInt($('dc-uid').value || getUserId()),
+    author_name: $('dc-author').value,
+    body: $('dc-body').value,
+  };
+  const res = await apiFetch(`/api/discussion/posts/${postId}/comments`, { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse(`POST /api/discussion/posts/${postId}/comments`, data, res.status);
+  res.ok ? showAlert('✅ Comment added') : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function getComments() {
+  const postId = $('dc-post-id').value;
+  if (!postId) { showAlert('⚠️ Need post_id', 'error'); return; }
+  const res = await apiFetch(`/api/discussion/posts/${postId}/comments`);
+  const data = await res.json();
+  showResponse(`GET /api/discussion/posts/${postId}/comments`, data, res.status);
+}
+
+function renderPosts(list) {
+  const el = $('discussion-list');
+  if (!Array.isArray(list) || !list.length) {
+    el.innerHTML = '<p class="text-gray-400 text-xs text-center py-3">No posts.</p>';
+    return;
+  }
+  el.innerHTML = list.map(p => `
+    <div class="flex items-start justify-between gap-2 bg-blue-50 border border-blue-200 rounded-lg p-2 fade-in">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1 mb-0.5">
+          <span class="text-xs font-bold text-blue-600">#${p.id}</span>
+          <span class="text-xs font-semibold text-gray-700">${esc(p.title)}</span>
+          <span class="text-xs text-gray-400">by ${esc(p.author_name)}</span>
+        </div>
+        <p class="text-xs text-gray-600 truncate">${esc(p.body)}</p>
+      </div>
+      <button onclick="deletePost(${p.id})" class="btn-red flex-shrink-0">Delete</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  ROW 6 — Progress & Coordinator
+// ══════════════════════════════════════════════
+async function getProgress() {
+  const uid = $('prog-uid').value || getUserId();
+  const res = await apiFetch(`/api/progress/${uid}`);
+  const data = await res.json();
+  showResponse(`GET /api/progress/${uid}`, data, res.status);
+}
+
+async function patchProgress() {
+  const uid = $('prog-uid').value || getUserId();
+  const sdgRaw = $('prog-sdg-cards').value.trim();
+  const refCnt = $('prog-ref-count').value;
+  const body = {
+    completed_card_sort: $('prog-card-sort').checked,
+    completed_quiz: $('prog-quiz').checked,
+    ...(sdgRaw ? { viewed_sdg_cards: parseCsv(sdgRaw) } : {}),
+    ...(refCnt ? { reflection_count: parseInt(refCnt) } : {}),
+  };
+  const res = await apiFetch(`/api/progress/${uid}`, { method: 'PATCH', body: JSON.stringify(body) });
+  const data = await res.json();
+  showResponse(`PATCH /api/progress/${uid}`, data, res.status);
+  res.ok ? showAlert('✅ Progress updated') : showAlert(`❌ ${JSON.stringify(data.detail)}`, 'error');
+}
+
+async function getStudents() {
+  const res = await apiFetch('/api/coordinator/students');
+  const data = await res.json();
+  showResponse('GET /api/coordinator/students', data, res.status);
+}
+
+async function getAllReflections() {
+  const res = await apiFetch('/api/coordinator/reflections');
+  const data = await res.json();
+  showResponse('GET /api/coordinator/reflections', data, res.status);
+}
+
+// ══════════════════════════════════════════════
+//  Enter key shortcuts
+// ══════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (e.target.id === 'l-password') doLogin();
+    if (e.target.id === 'r-password') doRegister();
+  }
+});
+</script>
+</body>
+</html>

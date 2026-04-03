@@ -90,19 +90,7 @@ export default function Register() {
             your work makes in the world.
           </p>
 
-          {/* SDG dot grid */}
-          <div className="flex flex-wrap gap-2 mt-8">
-            {SDG_COLOURS.map((color, i) => (
-              <div
-                key={i}
-                title={`SDG ${i + 1}`}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold"
-                style={{ background: color, fontSize: "9px", opacity: 0.9 }}
-              >
-                {i + 1}
-              </div>
-            ))}
-          </div>
+
         </div>
 
         {/* Bottom tagline */}
@@ -130,12 +118,6 @@ export default function Register() {
               </svg>
             </div>
             <span className="font-bold text-base" style={{ color: "#1A2E1A" }}>SDG Co-op Portal</span>
-          </div>
-          {/* SDG colour strip */}
-          <div className="flex h-[3px] w-full max-w-xs mx-auto rounded-full overflow-hidden">
-            {SDG_COLOURS.map((c, i) => (
-              <div key={i} className="flex-1 h-full" style={{ background: c }} />
-            ))}
           </div>
         </div>
 
@@ -240,12 +222,7 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Desktop SDG strip below card */}
-        <div className="hidden lg:flex h-[3px] w-full max-w-md mt-5 rounded-full overflow-hidden">
-          {SDG_COLOURS.map((c, i) => (
-            <div key={i} className="flex-1 h-full" style={{ background: c }} />
-          ))}
-        </div>
+
       </main>
     </div>
   );

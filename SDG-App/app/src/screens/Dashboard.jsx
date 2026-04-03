@@ -40,12 +40,7 @@ export default function Dashboard() {
           boxShadow: '0 4px 24px rgba(54,101,107,0.25)',
         }}
       >
-        {/* SDG colour strip */}
-        <div className="absolute bottom-0 left-0 right-0 flex h-1">
-          {SDG_COLOURS.map((c, i) => (
-            <div key={i} className="flex-1" style={{ background: c }} />
-          ))}
-        </div>
+
 
         <div className="relative px-7 py-8 md:py-10">
           <div className="flex items-center gap-2.5 mb-4">

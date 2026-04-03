@@ -32,12 +32,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
         className="h-28 relative overflow-hidden rounded-t-3xl z-0"
         style={{ background: 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)' }}
       >
-        {/* SDG mini-strip */}
-        <div className="absolute bottom-0 left-0 right-0 flex h-1">
-          {SDG_COLOURS.map((c, i) => (
-            <div key={i} className="flex-1" style={{ background: c }} />
-          ))}
-        </div>
+
       </div>
 
       {/* Avatar row */}

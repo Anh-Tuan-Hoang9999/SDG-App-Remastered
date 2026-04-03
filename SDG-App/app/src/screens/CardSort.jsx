@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DndContext, DragOverlay, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -6,6 +6,8 @@ import { SDG_DATA } from "@/lib/sdgData";
 import { Badge } from "@/components/ui/badge";
 import SDGFlipCard from "@/components/sdg/SDGFlipCard";
 import { RotateCcw, Save, Shuffle } from "lucide-react";
+import client from "../api/client";
+import { useAuth } from "../authContext";
 import E_PRINT_01 from "../assets/GoalSDG/E_PRINT_01.jpg";
 import E_PRINT_02 from "../assets/GoalSDG/E_PRINT_02.jpg";
 import E_PRINT_03 from "../assets/GoalSDG/E_PRINT_03.jpg";
@@ -121,6 +123,7 @@ function MockButton({
 }
 
 export default function CardSort() {
+  const { user } = useAuth();
   const initial = useMemo(() => SDG_DATA.map((s) => s.number), []);
   const [columns, setColumns] = useState({
     unsorted: initial,
@@ -129,9 +132,53 @@ export default function CardSort() {
     least_relevant: [],
   });
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [loadingSavedSort, setLoadingSavedSort] = useState(true);
+  const [statusMsg, setStatusMsg] = useState("");
   const [activeId, setActiveId] = useState(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  useEffect(() => {
+    if (!user?.id) {
+      setLoadingSavedSort(false);
+      return;
+    }
+
+    setLoadingSavedSort(true);
+    client
+      .get(`/api/card-sort/${user.id}`)
+      .then((res) => {
+        const data = res.data || {};
+
+        const valid = (arr) =>
+          Array.isArray(arr)
+            ? arr.filter((n) => Number.isInteger(n) && n >= 1 && n <= 17)
+            : [];
+
+        const most = valid(data.most_relevant);
+        const somewhat = valid(data.somewhat_relevant);
+        const least = valid(data.least_relevant);
+        const seen = new Set([...most, ...somewhat, ...least]);
+        const unsorted = initial.filter((n) => !seen.has(n));
+
+        setColumns({
+          unsorted,
+          most_relevant: most,
+          somewhat_relevant: somewhat,
+          least_relevant: least,
+        });
+        setSaved(seen.size === 17);
+        setStatusMsg(seen.size > 0 ? "Loaded your saved card sort from database." : "");
+      })
+      .catch((e) => {
+        // 404 means no existing save yet; leave default unsorted state.
+        if (e?.response?.status !== 404) {
+          setStatusMsg("Could not load previous card sort from database.");
+        }
+      })
+      .finally(() => setLoadingSavedSort(false));
+  }, [user?.id, initial]);
 
   const getSdg = (num) => {
     const sdg = SDG_DATA.find((s) => s.number === num);
@@ -154,6 +201,7 @@ export default function CardSort() {
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
     setSaved(false);
+    setStatusMsg("");
   };
 
   const handleDragEnd = (event) => {
@@ -207,10 +255,41 @@ export default function CardSort() {
   const handleReset = () => {
     setColumns({ unsorted: initial, most_relevant: [], somewhat_relevant: [], least_relevant: [] });
     setSaved(false);
+    setStatusMsg("");
   };
 
-  const handleMockSave = () => {
-    setSaved(true);
+  const handleSave = async () => {
+    if (!user?.id) {
+      setStatusMsg("Please log in to save progress.");
+      return;
+    }
+
+    if (columns.unsorted.length > 0) {
+      setStatusMsg("Sort all cards before saving.");
+      return;
+    }
+
+    setSaving(true);
+    setStatusMsg("");
+    try {
+      await client.post("/api/card-sort", {
+        user_id: user.id,
+        most_relevant: columns.most_relevant,
+        somewhat_relevant: columns.somewhat_relevant,
+        least_relevant: columns.least_relevant,
+      });
+
+      await client.patch(`/api/progress/${user.id}`, {
+        completed_card_sort: true,
+      });
+
+      setSaved(true);
+      setStatusMsg("Card sort saved to database.");
+    } catch {
+      setStatusMsg("Unable to save card sort to database.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const totalSorted = columns.most_relevant.length + columns.somewhat_relevant.length + columns.least_relevant.length;
@@ -222,10 +301,10 @@ export default function CardSort() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Shuffle className="w-5 h-5 text-primary" />
-            <h1 className="text-2xl font-bold">SDG Card Sort (Mock)</h1>
+            <h1 className="text-2xl font-bold">SDG Card Sort</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Frontend-only mock activity. No backend or base44 calls are used here.
+            Sort all 17 cards and save your progress to the database.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -233,15 +312,27 @@ export default function CardSort() {
           <MockButton variant="outline" onClick={handleReset} className="gap-1.5">
             <RotateCcw className="w-3.5 h-3.5" /> Reset
           </MockButton>
-          <MockButton onClick={handleMockSave} disabled={columns.unsorted.length > 0} className="gap-1.5">
-            <Save className="w-3.5 h-3.5" /> {saved ? "Saved" : "Save (Mock)"}
+          <MockButton onClick={handleSave} disabled={columns.unsorted.length > 0 || saving} className="gap-1.5">
+            <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : saved ? "Saved" : "Save"}
           </MockButton>
         </div>
       </div>
 
+      {loadingSavedSort && (
+        <div className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-lg px-3 py-2 mb-4">
+          Loading your saved card sort...
+        </div>
+      )}
+
       {columns.unsorted.length > 0 && (
         <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
-          Sort all remaining cards before mock save.
+          Sort all remaining cards before saving.
+        </div>
+      )}
+
+      {statusMsg && (
+        <div className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 mb-4">
+          {statusMsg}
         </div>
       )}
 

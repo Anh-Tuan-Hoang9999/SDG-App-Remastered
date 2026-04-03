@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { SDG_DATA } from "@/lib/sdgData";
-import { FileText, Save } from "lucide-react";
+import { FileText, Save, BookOpen } from "lucide-react";
 import CardData from "../data/CardData";
 import MultiChoiceQuiz from "../components/activities/MultiChoiceQuiz";
 import { getActivityByPosition } from "../api/userActivity";
@@ -61,6 +61,7 @@ export default function ReflectionLog() {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
   const [showPractice, setShowPractice] = useState(false);
+  const [showReading, setShowReading] = useState(false);
   const [selectedQuizPosition, setSelectedQuizPosition] = useState(null);
   const [quizData, setQuizData] = useState(null);
   const [resolvedActivityId, setResolvedActivityId] = useState(null);
@@ -106,6 +107,16 @@ export default function ReflectionLog() {
 
     return quizItems.length > 0 ? quizItems : [{ position: 1, title: "Intro Quiz" }];
   }, [selectedCard]);
+  const selectedSdgReadings = useMemo(() => {
+    if (!selectedCard) return [];
+
+    const path = selectedCard.learningPath ?? [{ id: 2, type: "learning", title: "Read: SDG Overview" }];
+    const readingItems = path
+      .filter((item) => item.type === "learning")
+      .map((item) => ({ id: item.id, title: item.title || `Reading ${item.id}` }));
+
+    return readingItems.length > 0 ? readingItems : [{ id: 2, title: `Read: ${selectedCard.title} Facts` }];
+  }, [selectedCard]);
 
   const loadQuizByPosition = async (position) => {
     if (!selectedSdg) return;
@@ -144,6 +155,7 @@ export default function ReflectionLog() {
   const handlePracticeClick = () => {
     const next = !showPractice;
     setShowPractice(next);
+    setShowReading(false);
 
     if (!next || selectedSdgQuizzes.length === 0) return;
 
@@ -154,8 +166,15 @@ export default function ReflectionLog() {
     }
   };
 
+  const handleReadingClick = () => {
+    const next = !showReading;
+    setShowReading(next);
+    setShowPractice(false);
+  };
+
   useEffect(() => {
     setShowPractice(false);
+    setShowReading(false);
     setSelectedQuizPosition(null);
     setQuizData(null);
     setResolvedActivityId(null);
@@ -257,7 +276,7 @@ export default function ReflectionLog() {
           </div>
 
           <div className="px-4 sm:px-5 py-4">
-            {!showPractice && (
+            {!showPractice && !showReading && (
               <>
                 <label className="text-xs font-semibold uppercase tracking-wide mb-2 block" style={{ color: "#637063" }}>
                   Reflection for {selectedSdg.title}
@@ -275,16 +294,73 @@ export default function ReflectionLog() {
                     {selectedText.trim().length} characters
                   </p>
 
-                  <button
-                    type="button"
-                    onClick={handlePracticeClick}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95"
-                    style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
-                  >
-                    Practice
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleReadingClick}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95"
+                      style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                    >
+                      Reading
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handlePracticeClick}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95"
+                      style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                    >
+                      Practice
+                    </button>
+                  </div>
                 </div>
               </>
+            )}
+
+            {showReading && (
+              <div
+                className="p-4 rounded-xl"
+                style={{ background: "#F8FAF8", border: "1px solid #DDE6DD" }}
+              >
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                    Reading
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleReadingClick}
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
+                    style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                  >
+                    Back to Reflection
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {selectedSdgReadings.map((reading) => (
+                    <a
+                      key={reading.id}
+                      href="https://www.youtube.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-3xl px-5 py-4 transition-all active:scale-[0.99]"
+                      style={{ background: "#ECECEC", border: "1px solid #E2E2E2" }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <BookOpen className="w-9 h-9 shrink-0" style={{ color: "#E73E45" }} />
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm uppercase tracking-wide font-semibold" style={{ color: "#E73E45" }}>
+                            {reading.id} · Reading
+                          </p>
+                          <p className="text-xl font-bold truncate" style={{ color: "#10233E" }}>
+                            {reading.title}
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
             )}
 
             {showPractice && (

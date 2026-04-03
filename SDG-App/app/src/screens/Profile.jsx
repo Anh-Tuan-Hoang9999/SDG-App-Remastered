@@ -110,20 +110,6 @@ const Profile = () => {
 
   const userType = (user.role || user.user_type || '').toLowerCase();
 
-  const progressSection = (
-    <>
-      <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: '#637063' }}>
-        Activity Progress
-      </h3>
-      <div
-        className="rounded-xl flex items-center justify-center py-8 text-sm"
-        style={{ background: '#F4F7F5', color: '#9BAA9B', border: '1px dashed #DDE6DD' }}
-      >
-        Progress tracking coming soon
-      </div>
-    </>
-  );
-
   const studentsSection = (
     <>
       <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: '#637063' }}>
@@ -159,11 +145,11 @@ const Profile = () => {
   };
   const roleLabel = roleMap[userType] ?? 'Co-op Student';
   const sectionMap = {
-    student: progressSection,
+    student: null,
     coordinator: studentsSection,
     developer: devSection,
   };
-  const extraSection = sectionMap[userType] ?? progressSection;
+  const extraSection = sectionMap[userType] ?? null;
 
   return (
     <div style={{ background: '#F4F7F5', minHeight: '100%' }}>

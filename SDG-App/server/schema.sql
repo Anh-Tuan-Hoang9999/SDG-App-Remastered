@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS users (
     email         VARCHAR(255)  NOT NULL UNIQUE,
     password_hash VARCHAR(255)  NOT NULL,
     role          VARCHAR(20)   NOT NULL DEFAULT 'student', -- 'student' | 'coordinator'
+    description   TEXT,
+    course_code   VARCHAR(50),
+    avatar_url    TEXT,
     created_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

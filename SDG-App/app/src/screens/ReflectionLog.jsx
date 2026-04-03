@@ -4,8 +4,8 @@ import { FileText, Save, BookOpen } from "lucide-react";
 import CardData from "../data/CardData";
 import MultiChoiceQuiz from "../components/activities/MultiChoiceQuiz";
 import { getActivityByPosition } from "../api/userActivity";
-
-const STORAGE_KEY = "sdg_reflection_by_topic_v1";
+import client from "../api/client";
+import { useAuth } from "../authContext";
 
 const SDG1_MOCK_QUIZ = {
   title: "SDG 1 Mock Quiz: No Poverty Basics",
@@ -54,12 +54,16 @@ const SectionCard = ({ children, className = "", ...props }) => (
 );
 
 export default function ReflectionLog() {
+  const { user } = useAuth();
   const sortedSdgData = useMemo(() => [...SDG_DATA].sort((a, b) => a.number - b.number), []);
 
   const [reflectionsBySdg, setReflectionsBySdg] = useState({});
+  const [reflectionRecordBySdg, setReflectionRecordBySdg] = useState({});
   const [selectedSdgNumber, setSelectedSdgNumber] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loadingReflections, setLoadingReflections] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
+  const [saveMessage, setSaveMessage] = useState("");
   const [showPractice, setShowPractice] = useState(false);
   const [showReading, setShowReading] = useState(false);
   const [selectedQuizPosition, setSelectedQuizPosition] = useState(null);
@@ -68,27 +72,99 @@ export default function ReflectionLog() {
   const [quizLoading, setQuizLoading] = useState(false);
   const [quizError, setQuizError] = useState("");
 
-  useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
+  const loadReflectionsFromDb = async () => {
+    if (!user?.id) return;
+
+    setLoadingReflections(true);
+    setSaveMessage("");
     const initialReflections = {};
+    const latestBySdg = {};
 
     sortedSdgData.forEach((sdg) => {
-      initialReflections[sdg.number] = typeof parsed[sdg.number] === "string" ? parsed[sdg.number] : "";
+      initialReflections[sdg.number] = "";
+      latestBySdg[sdg.number] = null;
     });
 
-    setReflectionsBySdg(initialReflections);
-  }, [sortedSdgData]);
+    try {
+      const res = await client.get(`/api/reflections/${user.id}`);
+      const rows = Array.isArray(res.data) ? res.data : [];
+
+      // API returns newest first, so first match per SDG is the latest entry.
+      rows.forEach((row) => {
+        const numbers = Array.isArray(row.sdg_numbers) ? row.sdg_numbers : [];
+        numbers.forEach((n) => {
+          if (!(n in initialReflections)) return;
+          if (latestBySdg[n]) return;
+          latestBySdg[n] = row;
+          initialReflections[n] = row.reflection_text || "";
+        });
+      });
+
+      setReflectionRecordBySdg(latestBySdg);
+      setReflectionsBySdg(initialReflections);
+    } catch {
+      setSaveMessage("Unable to load reflections from database.");
+      setReflectionsBySdg(initialReflections);
+      setReflectionRecordBySdg(latestBySdg);
+    } finally {
+      setLoadingReflections(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadReflectionsFromDb();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, sortedSdgData]);
 
   const handleChangeReflection = (sdgNumber, value) => {
     setReflectionsBySdg((prev) => ({ ...prev, [sdgNumber]: value }));
+    setSaveMessage("");
   };
 
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
+    if (!user?.id) {
+      setSaveMessage("Please log in to save reflections.");
+      return;
+    }
+
     setSaving(true);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reflectionsBySdg));
-    setSavedAt(new Date());
-    setTimeout(() => setSaving(false), 150);
+    setSaveMessage("");
+
+    try {
+      let createdCount = 0;
+
+      for (const sdg of sortedSdgData) {
+        const text = (reflectionsBySdg[sdg.number] || "").trim();
+        if (!text) continue;
+
+        const existingText = (reflectionRecordBySdg[sdg.number]?.reflection_text || "").trim();
+        if (text === existingText) continue;
+
+        await client.post("/api/reflections", {
+          user_id: user.id,
+          title: `SDG ${sdg.number}: ${sdg.title}`,
+          type: "general",
+          sdg_numbers: [sdg.number],
+          reflection_text: text,
+          employer_discussion: false,
+        });
+        createdCount += 1;
+      }
+
+      // Keep user_progress reflection_count in sync for coordinator/progress views.
+      const allReflectionsRes = await client.get(`/api/reflections/${user.id}`);
+      const totalReflections = Array.isArray(allReflectionsRes.data) ? allReflectionsRes.data.length : 0;
+      await client.patch(`/api/progress/${user.id}`, { reflection_count: totalReflections });
+
+      await loadReflectionsFromDb();
+      setSavedAt(new Date());
+      setSaveMessage(createdCount > 0 ? "Saved reflections to database." : "No changes to save.");
+    } catch {
+      setSaveMessage("Unable to save reflections to database.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const selectedSdg = sortedSdgData.find((sdg) => sdg.number === selectedSdgNumber) ?? null;
@@ -226,6 +302,18 @@ export default function ReflectionLog() {
         <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
           Saved at {savedAt.toLocaleTimeString()}
         </p>
+      )}
+
+      {loadingReflections && (
+        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}>
+          Loading reflections from database...
+        </div>
+      )}
+
+      {saveMessage && (
+        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "#F7FAF7", color: "#2F5A3F", border: "1px solid #DDE6DD" }}>
+          {saveMessage}
+        </div>
       )}
 
       <SectionCard className="p-4 mb-6">

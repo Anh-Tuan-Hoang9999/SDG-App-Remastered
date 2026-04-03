@@ -25,6 +25,7 @@ const ReflectionLog = lazy(() => import("../screens/ReflectionLog"));
 const Resources = lazy(() => import("../screens/Resources"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
 const SDGCards = lazy(() => import("../screens/SDGCards"));
+const Coordinator = lazy(() => import("../screens/Coordinator"));
 const TestAPI = lazy(() => import("../screens/TestAPI"));
 const PageLoader = () => (
   <div className="flex items-center justify-center w-full h-full">
@@ -50,6 +51,7 @@ export default function AppNavigator() {
           <Route path="resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
           <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="sdg-cards" element={<ProtectedRoute><SDGCards /></ProtectedRoute>} />
+          <Route path="coordinator" element={<ProtectedRoute><Coordinator /></ProtectedRoute>} />
           <Route path="card-sort" element={<ProtectedRoute><CardSort /></ProtectedRoute>} />
           <Route path="testapi" element={<ProtectedRoute><TestAPI /></ProtectedRoute>} />
         </Route>

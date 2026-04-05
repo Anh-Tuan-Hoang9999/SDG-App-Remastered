@@ -1,7 +1,10 @@
 {
   "buildCommand": "cd SDG-App/app && npm run build",
   "outputDirectory": "SDG-App/app/dist",
-  "env": {
-    "VITE_API_URL": "@vite_api_url"
-  }
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

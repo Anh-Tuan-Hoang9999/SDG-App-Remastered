@@ -2,66 +2,232 @@ import React from "react";
 import { useAuth } from "../authContext";
 import { useNavigate } from "react-router";
 import client from "../api/client";
+import ProfilePicture from "../components/ProfilePicture";
+
+const readFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read image file."));
+    reader.readAsDataURL(file);
+  });
 
 const UserSettings = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = React.useState(user?.name || "");
+  const [name, setName] = React.useState(user?.name || user?.username || "");
+  const [description, setDescription] = React.useState(user?.description || "");
+  const [courseCode, setCourseCode] = React.useState(user?.course_code || "");
+  const [avatarUrl, setAvatarUrl] = React.useState(user?.avatar_url || "");
+  const [selectedImageFile, setSelectedImageFile] = React.useState(null);
+  const [successMessage, setSuccessMessage] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [saving, setSaving] = React.useState(false);
 
   React.useEffect(() => {
-    setName(user?.name || "");
+    setName(user?.name || user?.username || "");
+    setDescription(user?.description || "");
+    setCourseCode(user?.course_code || "");
+    setAvatarUrl(user?.avatar_url || "");
+    setSelectedImageFile(null);
   }, [user]);
 
-  const handleBack = () => navigate('/profile');
+  const handleBack = () => navigate("/profile");
+
+  const handleImageFileChange = (file) => {
+    setSelectedImageFile(file);
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
+
+  const handleResetAvatar = () => {
+    setAvatarUrl("");
+    setSelectedImageFile(null);
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setSuccessMessage("");
+    setErrorMessage("");
+
     try {
-      const res = await client.patch("/api/auth/me", { name });
+      let nextAvatarUrl = avatarUrl;
+
+      if (selectedImageFile) {
+        nextAvatarUrl = await readFileAsDataUrl(selectedImageFile);
+      }
+
+      const res = await client.patch("/api/auth/me", {
+        name,
+        description,
+        course_code: courseCode || null,
+        avatar_url: nextAvatarUrl || null,
+      });
+
       updateUser(res.data);
-      alert("Profile updated successfully!");
-      navigate("/profile");
+      setAvatarUrl(res.data.avatar_url || "");
+      setSelectedImageFile(null);
+      setSuccessMessage("Profile updated successfully.");
     } catch (err) {
-      const message = err.response?.data?.detail ?? "An error occurred. Please try again.";
-      alert(message);
+      setErrorMessage(
+        err.response?.data?.detail ?? "An error occurred. Please try again."
+      );
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-[#a2bf87]">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-[400px] flex flex-col">
-        <div className="flex flex-row justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">User Settings</h2>
-          <button
-            onClick={handleBack}
-            className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded hover:bg-gray-300 shadow ml-4"
+    <div className="max-w-lg mx-auto px-4 py-10 w-full">
+      <div className="flex items-center gap-3 mb-8">
+        <button
+          onClick={handleBack}
+          className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+          style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            &larr; Back
-          </button>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <div>
+          <h1 className="text-xl font-bold" style={{ color: "#1A2E1A" }}>
+            Edit Profile
+          </h1>
+          <p className="text-xs" style={{ color: "#637063" }}>
+            Update your account information
+          </p>
         </div>
-        <form onSubmit={handleSave} className="flex flex-col flex-1">
-          <div className="mb-4">
-            <label className="block font-semibold mb-1">Profile Picture</label>
-            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-              {/* Placeholder for profile image preview */}
-              <span className="text-gray-400">Image</span>
-            </div>
-            <input type="file" className="block w-full" disabled />
+      </div>
+
+      <form onSubmit={handleSave}>
+        <div
+          className="rounded-2xl p-6 mb-5 flex flex-col items-center gap-3"
+          style={{ background: "#fff", boxShadow: "0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD" }}
+        >
+          <ProfilePicture
+            src={avatarUrl}
+            name={name || user?.email || "User"}
+            alt={`${name || "User"} profile`}
+            editable
+            onFileChange={handleImageFileChange}
+          />
+          <div className="text-center">
+            <p className="text-sm font-semibold" style={{ color: "#1A2E1A" }}>
+              {name || "Student"}
+            </p>
+            <p className="text-xs" style={{ color: "#637063" }}>{user?.email}</p>
           </div>
-          <div className="mb-4">
-            <label className="block font-semibold mb-1">Name</label>
+          <p className="text-xs text-center" style={{ color: "#9BAA9B" }}>
+            Choose a new image here. It will be saved when you click Save Changes.
+          </p>
+          <button
+            type="button"
+            onClick={handleResetAvatar}
+            className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all active:scale-95"
+            style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+          >
+            Reset to Default Photo
+          </button>
+          {selectedImageFile && (
+            <p className="text-xs font-medium" style={{ color: "#36656B" }}>
+              Selected: {selectedImageFile.name}
+            </p>
+          )}
+        </div>
+
+        <div
+          className="rounded-2xl p-6 flex flex-col gap-5"
+          style={{ background: "#fff", boxShadow: "0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD" }}
+        >
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+              Display Name
+            </label>
             <input
+              className="auth-input"
               type="text"
-              className="w-full p-2 border border-gray-300 rounded"
+              placeholder="Your display name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
             />
           </div>
-          <button type="submit" className="mt-4 p-2 w-full bg-[#6e805c] text-white rounded-lg hover:bg-green-700">
-            Save Changes
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+              Course Code
+            </label>
+            <input
+              className="auth-input"
+              type="text"
+              placeholder="e.g. COIS 4000Y"
+              value={courseCode}
+              onChange={(e) => setCourseCode(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+              Description
+            </label>
+            <textarea
+              className="auth-input min-h-28 resize-y"
+              placeholder="Add a short description about yourself..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+              Email Address
+            </label>
+            <input
+              className="auth-input"
+              type="email"
+              value={user?.email || ""}
+              disabled
+              style={{ opacity: 0.6, cursor: "not-allowed" }}
+            />
+            <p className="text-xs" style={{ color: "#9BAA9B" }}>Email cannot be changed</p>
+          </div>
+
+          {successMessage && (
+            <div
+              className="rounded-xl px-4 py-3 text-sm"
+              style={{ background: "#EEF8F1", color: "#256C3A", border: "1px solid #B7E0C1" }}
+            >
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div
+              className="rounded-xl px-4 py-3 text-sm"
+              style={{ background: "#FEF2F2", color: "#DC2626", border: "1px solid #FECACA" }}
+            >
+              {errorMessage}
+            </div>
+          )}
+
+          <button type="submit" className="btn-primary mt-2" disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };

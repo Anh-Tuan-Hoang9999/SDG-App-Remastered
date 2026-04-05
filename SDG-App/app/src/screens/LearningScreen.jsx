@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import CardData from "../data/CardData";
-
-// Style module for cards
-import styles from "./LearningScreen.module.css"
-
-// Import Swiper styles
+import styles from "./LearningScreen.module.css";
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 import { EffectCards } from 'swiper/modules';
 
-
-// TODO: Should have a button in the card itself overlayed above the back-image or a button below to open content in a modal (for usability, content can be queried from db as html or rich text)
 const Card = ({ frontImg, backImg }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -30,19 +24,29 @@ const Card = ({ frontImg, backImg }) => {
   );
 };
 
-// Only render cards within this many positions of the active index.
-// Cards outside the window are empty placeholders — no images to decode.
-// 3 is enough for the stacked cards effect to look correct.
 const RENDER_WINDOW = 3;
 
 const LearningScreen = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const currentCard = CardData[activeIndex];
 
   return (
-    <>
-      <section className="flex items-center justify-center w-full h-full">
+    <div className="flex flex-col items-center justify-center w-full h-full gap-3">
+
+      {/* ── Header ── */}
+      <div className="text-center px-6 pt-2">
+        <h2 className="text-base font-bold leading-tight" style={{ color: '#1A2E1A' }}>
+          {currentCard?.title ?? 'SDG Cards'}
+        </h2>
+        <p className="text-xs mt-1" style={{ color: '#9BAA9B' }}>
+          Tap to flip · Swipe to browse
+        </p>
+      </div>
+
+      {/* ── Swiper ── */}
+      <section className="flex items-center justify-center flex-1 w-full min-h-0">
         <Swiper
-          effect={'cards'}
+          effect="cards"
           grabCursor={true}
           modules={[EffectCards]}
           className={`mySwiper ${styles.cardsStyle}`}
@@ -64,7 +68,19 @@ const LearningScreen = () => {
           ))}
         </Swiper>
       </section>
-    </>
+
+      {/* ── Counter ── */}
+      <div className="flex items-center gap-2 pb-3">
+        <span className="text-xs font-semibold" style={{ color: '#36656B' }}>
+          {activeIndex + 1}
+        </span>
+        <span className="text-xs" style={{ color: '#DDE6DD' }}>/</span>
+        <span className="text-xs" style={{ color: '#9BAA9B' }}>
+          {CardData.length}
+        </span>
+      </div>
+
+    </div>
   );
 };
 

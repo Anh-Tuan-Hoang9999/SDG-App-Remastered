@@ -1,29 +1,38 @@
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import DefaultFooter from "../components/DefaultFooter";
+import { useNavigate, Link } from "react-router";
 import client from "../api/client";
 
-const Register = () => {
+const SDG_COLOURS = [
+  "#E5243B","#DDA63A","#4C9F38","#C5192D","#FF3A21","#26BDE2",
+  "#FCC30B","#A21942","#FD6925","#DD1367","#FD9D24","#BF8B2E",
+  "#3F7E44","#0A97D9","#56C02B","#00689D","#19486A",
+];
+
+export default function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    coordinatorVerifyCode: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
+      return;
+    }
+    const verifyCode = form.coordinatorVerifyCode.trim();
+    const isCoordinator = verifyCode === "2101";
+    if (verifyCode && !isCoordinator) {
+      setError("Invalid coordinator verification code.");
       return;
     }
     setLoading(true);
@@ -32,92 +41,218 @@ const Register = () => {
         name: form.name,
         email: form.email,
         password: form.password,
+        role: isCoordinator ? "coordinator" : "student",
       });
       navigate("/login");
     } catch (err) {
-      const message = err.response?.data?.detail ?? "Network error";
-      setError(message);
+      setError(
+        err.response?.data?.detail ??
+        "Unable to connect. Please check your connection and try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="w-full bg-[#334d34] h-1/3 flex items-center justify-center relative overflow-hidden mt-[-90px]">
-        <h1 className="text-3xl font-bold bg-[#334d34] text-white p-4 rounded-t-lg mt-[-50px]">
-          Register
-        </h1>
-        <svg
-          className="absolute bottom-[0px] w-full"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 30 1240 190"
-        >
-          <path
-            fill="#a2bf87"
-            d="M0,128C120,160,240,192,360,186.7C480,181,600,139,720,122.7C840,107,960,117,1080,144C1200,171,1320,213,1380,234.7L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
-          ></path>
-        </svg>
-      </div>
-      <div className="w-full bg-[#a2bf87] flex-1 flex items-center justify-center mt-[-150px]">
-        <form className="flex flex-col gap-3 w-72" onSubmit={handleSubmit}>
-          <label className="text-black font-bold">Name</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your full name"
-            value={form.name}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
-          <label className="text-black font-bold">Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="example@trent.ca"
-            value={form.email}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
-          <label className="text-black font-bold">Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
-          <label className="text-black font-bold">Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Re-enter Password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
-          {error && <div className="text-red-600 text-sm text-center">{error}</div>}
-          <button
-            type="submit"
-            className="p-3 bg-[#6e805c] text-white rounded-lg hover:bg-green-700"
-            disabled={loading}
+    <div className="min-h-screen flex">
+
+      {/* ── Left branding panel (desktop only) ─────────────────── */}
+      <aside
+        className="hidden lg:flex lg:w-[44%] flex-col justify-between px-12 py-10"
+        style={{ background: "linear-gradient(160deg, #1A3B2E 0%, #2a5458 100%)" }}
+      >
+        {/* Logo + name */}
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: "rgba(255,255,255,0.12)" }}
           >
-            {loading ? "Registering..." : "Create Account"}
-          </button>
-          <p className="mt-4 text-sm text-center">
-            <a href="/login" className="text-black hover:underline">
-              Or Login Here
-            </a>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p className="text-white text-sm font-bold leading-none">SDG Co-op Portal</p>
+            <p className="text-sm leading-none mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Trent University</p>
+          </div>
+        </div>
+
+        {/* Main copy */}
+        <div>
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6"
+            style={{ background: "rgba(200,169,81,0.2)", color: "#C8A951" }}
+          >
+            Co-op Learning Platform
+          </div>
+          <h1 className="text-4xl font-bold text-white leading-snug mb-4">
+            Start making an impact<br />
+            <span style={{ color: "#C8A951" }}>from day one.</span>
+          </h1>
+          <p className="text-base leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+            Join Trent University's co-op community. Explore the UN Sustainable
+            Development Goals, document your learning, and track the difference
+            your work makes in the world.
           </p>
-        </form>
-      </div>
+
+
+        </div>
+
+        {/* Bottom tagline */}
+        <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
+          Career Space · Trent University
+        </p>
+      </aside>
+
+      {/* ── Right form panel ───────────────────────────────────── */}
+      <main
+        className="flex-1 flex flex-col items-center justify-center px-6 py-12"
+        style={{ background: "#F4F7F5" }}
+      >
+        {/* Mobile-only header */}
+        <div className="lg:hidden mb-8 text-center">
+          <div className="inline-flex items-center gap-2 mb-3">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: "#36656B" }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <span className="font-bold text-base" style={{ color: "#1A2E1A" }}>SDG Co-op Portal</span>
+          </div>
+        </div>
+
+        {/* Card */}
+        <div
+          className="w-full max-w-md bg-white rounded-2xl p-8"
+          style={{ boxShadow: "0 2px 24px rgba(0,0,0,0.07), 0 0 0 1px #DDE6DD" }}
+        >
+          <h2 className="text-2xl font-bold mb-1" style={{ color: "#1A2E1A" }}>Create your account</h2>
+          <p className="text-sm mb-8" style={{ color: "#637063" }}>
+            Join the SDG co-op learning platform at Trent University.
+          </p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                Full name
+              </label>
+              <input
+                className="auth-input"
+                type="text"
+                name="name"
+                placeholder="Your full name"
+                value={form.name}
+                onChange={handleChange}
+                autoComplete="name"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                Email address
+              </label>
+              <input
+                className="auth-input"
+                type="email"
+                name="email"
+                placeholder="yourname@trentu.ca"
+                value={form.email}
+                onChange={handleChange}
+                autoComplete="email"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                Password
+              </label>
+              <input
+                className="auth-input"
+                type="password"
+                name="password"
+                placeholder="Create a password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                Confirm password
+              </label>
+              <input
+                className="auth-input"
+                type="password"
+                name="confirmPassword"
+                placeholder="Re-enter your password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+            </div>
+
+            <div
+              className="flex flex-col gap-2 rounded-xl p-4"
+              style={{ background: "#F8FBF9", border: "1px solid #DDE6DD" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#36656B" }}>
+                Coordinator Verify (Optional)
+              </p>
+              <p className="text-xs" style={{ color: "#637063" }}>
+                Enter code 2101 to register as a coordinator.
+              </p>
+              <input
+                className="auth-input"
+                type="text"
+                name="coordinatorVerifyCode"
+                placeholder="2101"
+                value={form.coordinatorVerifyCode}
+                onChange={handleChange}
+                autoComplete="off"
+              />
+            </div>
+
+            {error && (
+              <div
+                className="px-4 py-3 rounded-xl text-sm"
+                style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {error}
+              </div>
+            )}
+
+            <button className="btn-primary mt-1" type="submit" disabled={loading}>
+              {loading ? "Creating account…" : "Create Account"}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm" style={{ color: "#637063" }}>
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-semibold transition-colors hover:underline"
+              style={{ color: "#36656B" }}
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
+
+
+      </main>
     </div>
   );
-};
-
-export default Register;
+}

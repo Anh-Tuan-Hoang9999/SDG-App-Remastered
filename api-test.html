@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDG API Tester</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .json-box { font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+  <div class="max-w-6xl mx-auto space-y-4">
+
+    <!-- Header -->
+    <div class="text-center py-4">
+      <h1 class="text-3xl font-bold text-gray-800">🌍 SDG API Tester</h1>
+      <p class="text-gray-500 text-sm mt-1">Test all backend endpoints in one place</p>
+    </div>
+
+    <!-- Alert Banner -->
+    <div id="alert-banner" class="hidden rounded-lg p-3 text-sm font-medium fade-in"></div>
+
+    <!-- ─── ROW 1: Auth Config ─── -->
+    <div class="bg-white rounded-xl shadow p-4">
+      <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Row 1 — Auth Config</h2>
+      <div class="flex flex-wrap gap-3 items-end">
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-xs text-gray-500 mb-1">Base URL</label>
+          <input id="base-url" type="text" value="http://localhost:8000"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        </div>
+        <div class="flex-[2] min-w-[300px]">
+          <label class="block text-xs text-gray-500 mb-1">Access Token (auto-filled after login)</label>
+          <input id="access-token" type="text" placeholder="Bearer token will appear here..."
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        </div>
+        <div class="min-w-[120px]">
+          <label class="block text-xs text-gray-500 mb-1">User ID (auto-filled)</label>
+          <input id="display-user-id" type="text" placeholder="auto"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        </div>
+        <button onclick="clearAuth()"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition">
+          Clear Auth
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── ROW 2 & 3: Register + Login side by side ─── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- ROW 2: Register -->
+      <div class="bg-white rounded-xl shadow p-4">
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Row 2 — Register</h2>
+        <div class="space-y-2">
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Name</label>
+            <input id="reg-name" type="text" placeholder="Full name"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Email</label>
+            <input id="reg-email" type="email" placeholder="user@example.com"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Password</label>
+            <input id="reg-password" type="password" placeholder="Password"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Role</label>
+            <select id="reg-role"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              <option value="student">student</option>
+              <option value="coordinator">coordinator</option>
+            </select>
+          </div>
+          <button onclick="register()"
+            class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg text-sm transition mt-1">
+            Register
+          </button>
+        </div>
+        <div id="reg-response" class="mt-3 bg-gray-50 rounded-lg p-3 json-box text-gray-600 text-xs hidden"></div>
+      </div>
+
+      <!-- ROW 3: Login -->
+      <div class="bg-white rounded-xl shadow p-4">
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Row 3 — Login</h2>
+        <div class="space-y-2">
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Email</label>
+            <input id="login-email" type="email" placeholder="user@example.com"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Password</label>
+            <input id="login-password" type="password" placeholder="Password"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <button onclick="login()"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg text-sm transition mt-1">
+            Login
+          </button>
+        </div>
+        <div id="login-response" class="mt-3 bg-gray-50 rounded-lg p-3 json-box text-gray-600 text-xs hidden"></div>
+      </div>
+    </div>
+
+    <!-- ─── ROW 4: Reflection Management ─── -->
+    <div class="bg-white rounded-xl shadow p-4">
+      <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Row 4 — Reflection Management</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Left: Post Reflection -->
+        <div class="space-y-2">
+          <h3 class="text-sm font-semibold text-gray-600">Post Reflection</h3>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">User ID (auto from login, or enter manually)</label>
+            <input id="ref-user-id" type="text" placeholder="e.g. 1"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">SDG Number (1–17)</label>
+            <input id="ref-sdg" type="number" min="1" max="17" placeholder="e.g. 1"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Content</label>
+            <textarea id="ref-content" rows="4" placeholder="Write your reflection..."
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"></textarea>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="postReflection()"
+              class="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded-lg text-sm transition">
+              POST Reflection
+            </button>
+            <button onclick="fetchReflections()"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg text-sm transition">
+              GET Reflections
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: JSON Response -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-600 mb-2">JSON Response</h3>
+          <div id="reflection-response"
+            class="bg-gray-900 text-green-400 rounded-lg p-3 json-box text-xs h-[220px] overflow-auto">
+            // Response will appear here...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ROW 5: Live Reflection List ─── -->
+    <div class="bg-white rounded-xl shadow p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Row 5 — Live Reflection List</h2>
+        <button onclick="fetchReflections()"
+          class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-lg transition">
+          🔄 Refresh
+        </button>
+      </div>
+      <div id="reflection-list" class="space-y-2">
+        <p class="text-gray-400 text-sm text-center py-8">Login and click "GET Reflections" to load data.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ─── Global State ───
+    let currentUserId = '';
+
+    // ─── Helpers ───
+    function getBaseUrl()  { return document.getElementById('base-url').value.trimEnd('/'); }
+    function getToken()    { return document.getElementById('access-token').value.trim(); }
+
+    function authHeaders() {
+      const token = getToken();
+      return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+    }
+
+    function showAlert(message, type = 'success') {
+      const el = document.getElementById('alert-banner');
+      el.textContent = message;
+      el.className = `rounded-lg p-3 text-sm font-medium fade-in ${
+        type === 'success'
+          ? 'bg-green-100 text-green-800 border border-green-300'
+          : 'bg-red-100 text-red-800 border border-red-300'
+      }`;
+      el.classList.remove('hidden');
+      clearTimeout(window._alertTimer);
+      window._alertTimer = setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
+    function showJson(elementId, data) {
+      const el = document.getElementById(elementId);
+      el.textContent = JSON.stringify(data, null, 2);
+      el.classList.remove('hidden');
+    }
+
+    // ─── Row 1 ───
+    function clearAuth() {
+      document.getElementById('access-token').value = '';
+      document.getElementById('display-user-id').value = '';
+      currentUserId = '';
+      showAlert('Auth cleared.', 'error');
+    }
+
+    // ─── Row 2: Register ───
+    async function register() {
+      const body = {
+        name: document.getElementById('reg-name').value,
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-password').value,
+        role: document.getElementById('reg-role').value,
+      };
+      try {
+        const res = await fetch(`${getBaseUrl()}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        showJson('reg-response', data);
+        if (res.ok) {
+          showAlert(`✅ Registered successfully! ID: ${data.id}`, 'success');
+        } else {
+          showAlert(`❌ Register failed: ${JSON.stringify(data.detail)}`, 'error');
+        }
+      } catch (e) {
+        showJson('reg-response', { error: e.message });
+        showAlert(`❌ Network error: ${e.message}`, 'error');
+      }
+    }
+
+    // ─── Row 3: Login ───
+    async function login() {
+      const body = {
+        email: document.getElementById('login-email').value,
+        password: document.getElementById('login-password').value,
+      };
+      try {
+        const res = await fetch(`${getBaseUrl()}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        showJson('login-response', data);
+        if (res.ok && data.access_token) {
+          document.getElementById('access-token').value = data.access_token;
+
+          // Fetch /me to get user_id
+          const meRes = await fetch(`${getBaseUrl()}/api/auth/me`, {
+            headers: { 'Authorization': `Bearer ${data.access_token}` }
+          });
+          if (meRes.ok) {
+            const me = await meRes.json();
+            currentUserId = String(me.id);
+            document.getElementById('display-user-id').value = currentUserId;
+            document.getElementById('ref-user-id').value = currentUserId;
+            showAlert(`✅ Logged in as ${me.name} (ID: ${me.id})`, 'success');
+            await fetchReflections();
+          } else {
+            showAlert('✅ Login OK — could not fetch /me for user_id', 'success');
+          }
+        } else {
+          showAlert(`❌ Login failed: ${JSON.stringify(data.detail)}`, 'error');
+        }
+      } catch (e) {
+        showJson('login-response', { error: e.message });
+        showAlert(`❌ Network error: ${e.message}`, 'error');
+      }
+    }
+
+    // ─── Row 4 & 5: Reflections ───
+    async function fetchReflections() {
+      const userId = document.getElementById('ref-user-id').value.trim() || currentUserId;
+      if (!userId) {
+        showAlert('⚠️ Please enter a User ID or login first.', 'error');
+        return;
+      }
+      try {
+        const res = await fetch(`${getBaseUrl()}/api/reflections/${userId}`, {
+          headers: authHeaders()
+        });
+        const data = await res.json();
+        showJson('reflection-response', data);
+        if (res.ok) {
+          renderReflectionList(data);
+        } else {
+          showAlert(`❌ GET failed: ${JSON.stringify(data.detail)}`, 'error');
+        }
+      } catch (e) {
+        showJson('reflection-response', { error: e.message });
+        showAlert(`❌ Network error: ${e.message}`, 'error');
+      }
+    }
+
+    async function postReflection() {
+      const userId = document.getElementById('ref-user-id').value.trim() || currentUserId;
+      const content = document.getElementById('ref-content').value.trim();
+      const sdgNumber = document.getElementById('ref-sdg').value.trim();
+
+      if (!userId || !content) {
+        showAlert('⚠️ User ID and content are required.', 'error');
+        return;
+      }
+      const body = {
+        user_id: parseInt(userId),
+        content: content,
+        ...(sdgNumber ? { sdg_number: parseInt(sdgNumber) } : {})
+      };
+      try {
+        const res = await fetch(`${getBaseUrl()}/api/reflections`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        showJson('reflection-response', data);
+        if (res.ok) {
+          showAlert('✅ Reflection posted!', 'success');
+          document.getElementById('ref-content').value = '';
+          await fetchReflections();
+        } else {
+          showAlert(`❌ POST failed: ${JSON.stringify(data.detail)}`, 'error');
+        }
+      } catch (e) {
+        showJson('reflection-response', { error: e.message });
+        showAlert(`❌ Network error: ${e.message}`, 'error');
+      }
+    }
+
+    async function deleteReflection(reflectionId) {
+      if (!confirm(`Delete reflection #${reflectionId}?`)) return;
+      try {
+        const res = await fetch(`${getBaseUrl()}/api/reflections/${reflectionId}`, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (res.ok || res.status === 204) {
+          showAlert(`✅ Deleted reflection #${reflectionId}`, 'success');
+          showJson('reflection-response', { deleted: true, id: reflectionId });
+          await fetchReflections();
+        } else {
+          const data = await res.json().catch(() => ({}));
+          showAlert(`❌ DELETE failed: ${JSON.stringify(data.detail)}`, 'error');
+        }
+      } catch (e) {
+        showAlert(`❌ Network error: ${e.message}`, 'error');
+      }
+    }
+
+    // ─── Render Reflection List (Row 5) ───
+    function renderReflectionList(reflections) {
+      const container = document.getElementById('reflection-list');
+      if (!Array.isArray(reflections) || reflections.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm text-center py-8">No reflections found.</p>';
+        return;
+      }
+      container.innerHTML = reflections.map(r => `
+        <div class="flex items-start justify-between gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3 fade-in">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">#${r.id}</span>
+              ${r.sdg_number ? `<span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">SDG ${r.sdg_number}</span>` : ''}
+              <span class="text-xs text-gray-400">${r.created_at ? new Date(r.created_at).toLocaleString() : ''}</span>
+            </div>
+            <p class="text-sm text-gray-700 break-words">${escapeHtml(r.content)}</p>
+          </div>
+          <button onclick="deleteReflection(${r.id})"
+            class="flex-shrink-0 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            Delete
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ─── Enter key shortcuts ───
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.id === 'login-password') login();
+      if (e.key === 'Enter' && e.target.id === 'reg-password') register();
+    });
+  </script>
+</body>
+</html>

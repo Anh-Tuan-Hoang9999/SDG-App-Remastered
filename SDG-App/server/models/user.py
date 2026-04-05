@@ -1,5 +1,5 @@
 from db.database import Base
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -12,6 +12,9 @@ class User(Base):
     email         = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     role          = Column(String(20), nullable=False, default="student")  # student | coordinator
+    description   = Column(Text, nullable=True)
+    course_code   = Column(String(50), nullable=True)
+    avatar_url    = Column(Text, nullable=True)
     created_at    = Column(DateTime, server_default=func.current_timestamp())
 
     quiz_results       = relationship("QuizResult",       back_populates="user")

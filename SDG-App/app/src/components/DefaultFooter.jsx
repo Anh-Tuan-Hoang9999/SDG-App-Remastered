@@ -45,16 +45,16 @@ const DefaultFooter = () => {
                       <motion.div
                         layoutId="active-indicator"
                         className="absolute inset-0 rounded-xl"
-                        style={{ backgroundColor: '#E8F5E9' }}
+                        style={{ backgroundColor: 'rgba(54,101,107,0.10)' }}
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
                     <Icon
-                      className={`relative z-10 text-2xl mb-1 transition-colors ${isActive ? 'text-[#2E7D32]' : 'text-gray-500'
+                      className={`relative z-10 text-2xl mb-1 transition-colors ${isActive ? 'text-[#36656B]' : 'text-gray-400'
                         }`}
                     />
                     <span
-                      className={`relative z-10 text-xs font-semibold transition-colors ${isActive ? 'text-[#2E7D32]' : 'text-gray-500'
+                      className={`relative z-10 text-xs font-semibold transition-colors ${isActive ? 'text-[#36656B]' : 'text-gray-400'
                         }`}
                     >
                       {link.label}

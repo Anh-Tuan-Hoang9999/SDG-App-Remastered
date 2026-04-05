@@ -64,8 +64,16 @@ def me(current_user: CurrentUser):
 
 @router.patch("/me", response_model=schemas.UserOut)
 def update_me(body: schemas.UserUpdateIn, current_user: CurrentUser, db: DbDep):
-    if body.name is not None:
+    provided_fields = body.model_fields_set
+
+    if "name" in provided_fields:
         current_user.name = body.name
+    if "description" in provided_fields:
+        current_user.description = body.description
+    if "course_code" in provided_fields:
+        current_user.course_code = body.course_code
+    if "avatar_url" in provided_fields:
+        current_user.avatar_url = body.avatar_url
     db.commit()
     db.refresh(current_user)
     return current_user

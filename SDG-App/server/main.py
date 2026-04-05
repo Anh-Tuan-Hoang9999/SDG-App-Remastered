@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -9,8 +10,26 @@ from api import auth, sdgs, quiz, card_sort, reflections, progress, discussion, 
 from db.database import engine, Base
 import models  # noqa: F401 — registers all models on Base.metadata
 
+
+def _ensure_sqlite_user_profile_columns() -> None:
+    if engine.url.get_backend_name() != "sqlite":
+        return
+
+    with engine.begin() as conn:
+        existing_cols = {
+            row[1] for row in conn.execute(text("PRAGMA table_info(users)")).fetchall()
+        }
+        if "description" not in existing_cols:
+            conn.execute(text("ALTER TABLE users ADD COLUMN description TEXT"))
+        if "course_code" not in existing_cols:
+            conn.execute(text("ALTER TABLE users ADD COLUMN course_code VARCHAR(50)"))
+        if "avatar_url" not in existing_cols:
+            conn.execute(text("ALTER TABLE users ADD COLUMN avatar_url TEXT"))
+
+
 # Auto-create all tables on startup
 Base.metadata.create_all(bind=engine)
+_ensure_sqlite_user_profile_columns()
 
 app = FastAPI(title="SDG App API", version="2.0.0")
 
@@ -23,6 +42,10 @@ allowed_origins = [
     "http://127.0.0.1:5174",
     "http://localhost:5175",
     "http://127.0.0.1:5175",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
 ] + _extra_origins
 
 app.add_middleware(

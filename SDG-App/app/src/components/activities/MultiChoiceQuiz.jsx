@@ -5,6 +5,15 @@ import {
     completeActivity,
 } from '../../api/userActivity'
 
+const THEME = {
+    brand: '#36656B',
+    brandDark: '#2D5358',
+    pageBg: '#F4F7F5',
+    cardBorder: '#DDE6DD',
+    textMain: '#1A2E1A',
+    textMuted: '#637063',
+};
+
 // Shuffles indices of the original array rather than the objects themselves
 function shuffleIndices(length) {
     const indices = Array.from({ length }, (_, i) => i);
@@ -140,65 +149,75 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
         const allCorrect = finalScore === shuffledOrder.length;
 
         return (
-            <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto p-5 text-center">
-                <div className="text-6xl mb-4">{allCorrect ? '' : ''}</div>
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">{title}</h1>
-                <h2 className="text-xl font-semibold text-gray-600 mb-6">Quiz Complete!</h2>
-
-                <div className="w-40 h-40 rounded-full border-8 border-blue-600 flex items-center justify-center mb-6">
-                    <span className="text-3xl font-bold text-blue-600">{percentage.toFixed(0)}%</span>
-                </div>
-
-                <p className="text-lg text-gray-700 mb-2">
-                    You scored <span className="font-bold text-blue-600">{finalScore}</span> out of <span className="font-bold">{shuffledOrder.length}</span>
-                </p>
-
-                {!allCorrect && (
-                    <p className="text-sm text-gray-500 mb-8">
-                        {percentage >= 80
-                            ? "Great job! Review the ones you missed to master this topic."
-                            : percentage >= 50
-                                ? "Good effort! Consider revisiting the material to improve your score."
-                                : "Keep learning! Try reviewing the content and retake the quiz."}
-                    </p>
-                )}
-
-                {allCorrect && (
-                    <p className="text-sm text-green-600 font-medium mb-8">
-                        Perfect score! You've mastered this topic. 🎉
-                    </p>
-                )}
-
-                <button
-                    onClick={handleRetake}
-                    className="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 active:scale-95 transition-all"
+            <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto p-4 sm:p-5 text-center">
+                <div
+                    className="w-full rounded-2xl p-5 sm:p-7"
+                    style={{ background: '#fff', border: `1px solid ${THEME.cardBorder}`, boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
                 >
-                    Retake Quiz
-                </button>
-                {onBack && (
-                    <button
-                        onClick={onBack}
-                        className="w-full py-4 rounded-xl font-bold text-lg border-2 border-gray-200 text-gray-600 hover:border-gray-300 active:scale-95 transition-all"
+                    <h1 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: THEME.textMain }}>{title}</h1>
+                    <h2 className="text-base sm:text-lg font-semibold mb-6" style={{ color: THEME.textMuted }}>Quiz Complete!</h2>
+
+                    <div
+                        className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-8 flex items-center justify-center mb-6 mx-auto"
+                        style={{ borderColor: THEME.brand }}
                     >
-                        Back to Activities
+                        <span className="text-2xl sm:text-3xl font-bold" style={{ color: THEME.brand }}>{percentage.toFixed(0)}%</span>
+                    </div>
+
+                    <p className="text-base sm:text-lg mb-2" style={{ color: THEME.textMain }}>
+                        You scored <span className="font-bold" style={{ color: THEME.brand }}>{finalScore}</span> out of <span className="font-bold">{shuffledOrder.length}</span>
+                    </p>
+
+                    {!allCorrect && (
+                        <p className="text-sm mb-8" style={{ color: THEME.textMuted }}>
+                            {percentage >= 80
+                                ? "Great job! Review the ones you missed to master this topic."
+                                : percentage >= 50
+                                    ? "Good effort! Consider revisiting the material to improve your score."
+                                    : "Keep learning! Try reviewing the content and retake the quiz."}
+                        </p>
+                    )}
+
+                    {allCorrect && (
+                        <p className="text-sm font-medium mb-8" style={{ color: '#2F7D50' }}>
+                            Perfect score! You've mastered this topic. 🎉
+                        </p>
+                    )}
+
+                    <button
+                        onClick={handleRetake}
+                        className="w-full py-3.5 rounded-xl font-bold text-base text-white shadow-md active:scale-95 transition-all"
+                        style={{ background: THEME.brand }}
+                    >
+                        Retake Quiz
                     </button>
-                )}
+
+                    {onBack && (
+                        <button
+                            onClick={onBack}
+                            className="w-full mt-3 py-3.5 rounded-xl font-bold text-base active:scale-95 transition-all"
+                            style={{ background: '#EEF2EE', color: THEME.brand, border: `1px solid ${THEME.cardBorder}` }}
+                        >
+                            Back
+                        </button>
+                    )}
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col h-full max-w-2xl mx-auto p-5">
+        <div className="flex flex-col h-full max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl" style={{ background: THEME.pageBg }}>
             {/* Header with Progress */}
-            <div className="mb-8">
-                <h1 className="text-xl font-bold text-gray-800 mb-2">{title}</h1>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="mb-7">
+                <h1 className="text-lg sm:text-xl font-bold mb-2" style={{ color: THEME.textMain }}>{title}</h1>
+                <div className="w-full rounded-full h-2.5" style={{ background: '#DDE6DD' }}>
                     <div
-                        className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-                        style={{ width: `${((currentIndex + 1) / shuffledOrder.length) * 100}%` }}
+                        className="h-2.5 rounded-full transition-all duration-300"
+                        style={{ background: THEME.brand, width: `${((currentIndex + 1) / shuffledOrder.length) * 100}%` }}
                     ></div>
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-right">
+                <p className="text-xs mt-2 text-right" style={{ color: THEME.textMuted }}>
                     Question {currentIndex + 1} of {shuffledOrder.length}
                 </p>
             </div>
@@ -207,7 +226,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
             <div className="flex-1">
                 {/* key on currentIndex triggers re-render/animation on question change */}
                 <div key={currentIndex} className="animation-fade-in block">
-                    <h3 className="text-2xl font-semibold mb-6 text-gray-800 leading-tight">
+                    <h3 className="text-xl sm:text-2xl font-semibold mb-5 leading-tight" style={{ color: THEME.textMain }}>
                         {currentQuestion.questionText}
                     </h3>
                     <div className="space-y-3">
@@ -215,12 +234,16 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
                             <button
                                 key={optionIndex}
                                 onClick={() => handleOptionSelect(optionIndex)}
-                                className={`w-full p-4 text-left rounded-xl border-2 transition-all font-medium text-lg
+                                className={`w-full p-4 text-left rounded-xl border-2 transition-all font-medium text-base sm:text-lg
                                     ${selectedOptionIndex === optionIndex
-                                        ? 'border-[#36656B] bg-white text-[#36656B]'
-                                        : 'border-gray-100 hover:border-blue-200 text-gray-600'
+                                        ? 'bg-white'
+                                        : 'bg-white hover:bg-[#FAFCFA]'
                                     }
                                 `}
+                                style={selectedOptionIndex === optionIndex
+                                    ? { borderColor: THEME.brand, color: THEME.brand, boxShadow: '0 0 0 2px rgba(54,101,107,0.08)' }
+                                    : { borderColor: '#E7ECE7', color: THEME.textMuted }
+                                }
                             >
                                 {option}
                             </button>
@@ -230,16 +253,20 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="mt-8 pt-4 border-t border-gray-100">
+            <div className="mt-8 pt-4" style={{ borderTop: '1px solid #E7ECE7' }}>
                 <button
                     onClick={handleNext}
                     disabled={selectedOptionIndex === null}
-                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all
+                    className={`w-full py-4 rounded-xl font-bold text-base sm:text-lg transition-all
                         ${selectedOptionIndex !== null
-                            ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700 active:scale-95'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'text-white shadow-lg active:scale-95'
+                            : 'cursor-not-allowed'
                         }
                     `}
+                    style={selectedOptionIndex !== null
+                        ? { background: THEME.brand }
+                        : { background: '#DDE6DD', color: '#94A394' }
+                    }
                 >
                     {isLastQuestion ? "Finish Quiz" : "Next Question"}
                 </button>

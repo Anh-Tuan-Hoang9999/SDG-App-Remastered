@@ -1,46 +1,84 @@
-import React, { useId, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 
-// Placeholder profile image
-const DEFAULT_PROFILE_IMG =
-  "https://ui-avatars.com/api/?name=User&background=6e805c&color=fff&size=128";
+const DEFAULT_BACKGROUND = "#36656B";
 
-export default function ProfilePicture({ src, alt, onChange }) {
-  const [preview, setPreview] = useState(src || DEFAULT_PROFILE_IMG);
+export default function ProfilePicture({
+  src,
+  alt,
+  name = "User",
+  size = 80,
+  editable = false,
+  onFileChange,
+}) {
   const inputId = useId();
+  const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=36656B&color=fff&size=128`;
+  const [preview, setPreview] = useState(src || fallback);
+
+  useEffect(() => {
+    setPreview(src || fallback);
+  }, [src, fallback]);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      // Optional: send file to parent (for API upload later)
-      // We need to save the file to backend later
-      if (onChange) {
-        onChange(file);
-      }
-    }
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+    onFileChange?.(file);
   };
 
+  const image = (
+    <img
+      src={preview}
+      alt={alt || "Profile"}
+      width={size}
+      height={size}
+      className="block object-cover"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 18,
+        border: "3px solid #36656B",
+        boxShadow: "0 2px 8px rgba(54,101,107,0.2)",
+        background: "#EEF2EE",
+      }}
+    />
+  );
+
+  if (!editable) {
+    return image;
+  }
+
   return (
-    <div className="relative w-24 h-24">
-      {/* Hidden file input */}
+    <div className="relative inline-block">
       <input
+        id={inputId}
         type="file"
         accept="image/*"
         onChange={handleImageChange}
         className="hidden"
-        id={inputId}
       />
-
-      {/* Clickable image */}
-      <label htmlFor={inputId} className="cursor-pointer">
-        <img
-          src={preview}
-          alt={alt || "Profile"}
-          className="w-24 h-24 rounded-full object-cover border-4 border-[#a2bf87] shadow-md hover:opacity-80 transition"
-          style={{ background: "#e0e0e0" }}
-        />
+      <label htmlFor={inputId} className="cursor-pointer block">
+        {image}
+        <div
+          className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full"
+          style={{ background: DEFAULT_BACKGROUND, border: "2px solid #fff" }}
+        >
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
       </label>
     </div>
   );

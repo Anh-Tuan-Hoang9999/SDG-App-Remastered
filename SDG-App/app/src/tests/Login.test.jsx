@@ -105,7 +105,7 @@ describe("Login screen", () => {
     ).toBeInTheDocument();
   });
 
-  test("redirects authenticated user to learning screen", async () => {
+  test("redirects authenticated user to dashboard", async () => {
   authState.user = { username: "student_user" };
 
   render(
@@ -114,7 +114,7 @@ describe("Login screen", () => {
     </MemoryRouter>
   );
 
-  expect(mockNavigate).toHaveBeenCalledWith("/learning");
+  expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
 });
 
 test("shows network error message when login request fails", async () => {

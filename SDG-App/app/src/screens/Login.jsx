@@ -24,7 +24,7 @@ export default function Login() {
   const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { if (user) navigate("/learning"); }, [user, navigate]);
+  useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
   useEffect(() => {
     if (sessionExpired) setError("Your session has expired. Please log in again.");
   }, [sessionExpired]);

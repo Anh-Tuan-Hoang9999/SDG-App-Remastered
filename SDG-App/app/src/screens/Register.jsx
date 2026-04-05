@@ -15,6 +15,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    coordinatorVerifyCode: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,12 +29,19 @@ export default function Register() {
       setError("Passwords do not match.");
       return;
     }
+    const verifyCode = form.coordinatorVerifyCode.trim();
+    const isCoordinator = verifyCode === "2101";
+    if (verifyCode && !isCoordinator) {
+      setError("Invalid coordinator verification code.");
+      return;
+    }
     setLoading(true);
     try {
       await client.post("/api/auth/register", {
         name: form.name,
         email: form.email,
         password: form.password,
+        role: isCoordinator ? "coordinator" : "student",
       });
       navigate("/login");
     } catch (err) {
@@ -193,6 +201,27 @@ export default function Register() {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
+              />
+            </div>
+
+            <div
+              className="flex flex-col gap-2 rounded-xl p-4"
+              style={{ background: "#F8FBF9", border: "1px solid #DDE6DD" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#36656B" }}>
+                Coordinator Verify (Optional)
+              </p>
+              <p className="text-xs" style={{ color: "#637063" }}>
+                Enter code 2101 to register as a coordinator.
+              </p>
+              <input
+                className="auth-input"
+                type="text"
+                name="coordinatorVerifyCode"
+                placeholder="2101"
+                value={form.coordinatorVerifyCode}
+                onChange={handleChange}
+                autoComplete="off"
               />
             </div>
 

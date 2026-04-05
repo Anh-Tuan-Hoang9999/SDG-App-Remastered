@@ -37,8 +37,9 @@ export default function AppLayout() {
   const { user, logout } = useAuth();
   const menuRef = useRef(null);
 
-  const isCoordinator = user?.role === "admin";
-  const displayName   = user?.full_name || user?.username || "Student";
+  const normalizedRole = (user?.role || user?.user_type || "").toLowerCase();
+  const isCoordinator = normalizedRole === "coordinator" || normalizedRole === "admin";
+  const displayName   = user?.name || user?.full_name || user?.username || "Student";
   const initial       = displayName[0].toUpperCase();
   const bgColor       = avatarColor(displayName);
 

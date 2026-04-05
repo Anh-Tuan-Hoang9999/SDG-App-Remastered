@@ -155,6 +155,23 @@ const DefaultTopNav = () => {
               </span>
               Profile
             </button>
+            {user?.role === 'coordinator' && (
+              <button
+                onClick={() => handleNav('/coordinator')}
+                className='menu-item dropdown-item'
+              >
+                <span className='dropdown-item-icon'>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="#36656B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <path d="M20 8v6" />
+                    <path d="M17 11h6" />
+                  </svg>
+                </span>
+                Coordinator
+              </button>
+            )}
             <button
               onClick={() => handleNav('/settings')}
               className='menu-item dropdown-item'

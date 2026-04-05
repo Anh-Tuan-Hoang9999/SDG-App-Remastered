@@ -53,6 +53,15 @@ const SectionCard = ({ children, className = "", ...props }) => (
   </div>
 );
 
+// Helper to get SDG names from numbers
+function getSdgNames(sdgNumbers) {
+  if (!Array.isArray(sdgNumbers) || sdgNumbers.length === 0) return "Reflection";
+  const names = sdgNumbers
+    .map(num => SDG_DATA.find(sdg => sdg.number === num)?.title)
+    .filter(Boolean);
+  return names.length > 0 ? names.join(", ") : "Reflection";
+}
+
 export default function ReflectionLog() {
   const { user } = useAuth();
   const sortedSdgData = useMemo(() => [...SDG_DATA].sort((a, b) => a.number - b.number), []);
@@ -144,7 +153,7 @@ export default function ReflectionLog() {
         await client.post("/api/reflections", {
           user_id: user.id,
           title: `SDG ${sdg.number}: ${sdg.title}`,
-          type: "general",
+          type: sdg.title,
           sdg_numbers: [sdg.number],
           reflection_text: text,
           employer_discussion: false,
@@ -333,7 +342,7 @@ export default function ReflectionLog() {
                   : { background: `${sdg.colour}1A`, color: sdg.colour, border: `1px solid ${sdg.colour}55` }
               }
             >
-              SDG {sdg.number}
+              {sdg.title}
             </button>
           ))}
         </div>

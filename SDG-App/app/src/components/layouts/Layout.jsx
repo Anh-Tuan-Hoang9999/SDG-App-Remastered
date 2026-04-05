@@ -22,6 +22,8 @@ const AVATAR_COLORS = [
   '#E5243B', '#FD6925', '#A21942',
 ];
 
+const NAV_GREEN = '#4A8A70';
+
 function avatarColor(name = '') {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -79,7 +81,7 @@ export default function AppLayout() {
           <Link to="/dashboard" className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: '#36656B' }}
+              style={{ background: NAV_GREEN }}
             >
               <Leaf className="w-4 h-4 text-white" />
             </div>
@@ -98,7 +100,7 @@ export default function AppLayout() {
                   <button
                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                     style={{
-                      background: active ? '#36656B' : 'transparent',
+                      background: active ? NAV_GREEN : 'transparent',
                       color:      active ? '#fff'     : '#4F666A',
                     }}
                     onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#EEF2EE'; }}
@@ -115,7 +117,7 @@ export default function AppLayout() {
                 <button
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium"
                   style={{
-                    background: location.pathname === '/coordinator' ? '#36656B' : 'transparent',
+                    background: location.pathname === '/coordinator' ? NAV_GREEN : 'transparent',
                     color:      location.pathname === '/coordinator' ? '#fff'     : '#4F666A',
                   }}
                 >
@@ -123,7 +125,7 @@ export default function AppLayout() {
                   Coordinator
                   <span
                     className="text-[10px] ml-1 px-1.5 py-0.5 rounded font-bold"
-                    style={{ background: '#EEF2EE', color: '#36656B' }}
+                    style={{ background: '#EEF2EE', color: NAV_GREEN }}
                   >
                     ADMIN
                   </span>
@@ -172,7 +174,7 @@ export default function AppLayout() {
                   {/* ── User info header ── */}
                   <div
                     className="px-4 py-4 flex items-center gap-3"
-                    style={{ background: 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)' }}
+                    style={{ background: `linear-gradient(135deg, #1A3B2E 0%, ${NAV_GREEN} 100%)` }}
                   >
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-base flex-shrink-0 ring-2"
@@ -216,13 +218,13 @@ export default function AppLayout() {
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left"
                             style={{
                               background: active ? 'rgba(54,101,107,0.1)' : 'transparent',
-                              color:      active ? '#36656B' : '#1A2E1A',
+                              color:      active ? NAV_GREEN : '#1A2E1A',
                             }}
                           >
                             <span
                               className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{
-                                background: active ? '#36656B' : '#EEF2EE',
+                                background: active ? NAV_GREEN : '#EEF2EE',
                                 color:      active ? '#fff'     : '#637063',
                               }}
                             >
@@ -232,7 +234,7 @@ export default function AppLayout() {
                             {active && (
                               <span
                                 className="ml-auto w-1.5 h-1.5 rounded-full"
-                                style={{ background: '#36656B' }}
+                                style={{ background: NAV_GREEN }}
                               />
                             )}
                           </button>
@@ -250,7 +252,7 @@ export default function AppLayout() {
                           Coordinator
                           <span
                             className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded"
-                            style={{ background: '#EEF2EE', color: '#36656B' }}
+                            style={{ background: '#EEF2EE', color: NAV_GREEN }}
                           >
                             ADMIN
                           </span>
@@ -275,7 +277,7 @@ export default function AppLayout() {
                       className="dropdown-item w-full rounded-xl"
                     >
                       <span className="dropdown-item-icon">
-                        <User className="w-3.5 h-3.5" style={{ color: '#36656B' }} />
+                        <User className="w-3.5 h-3.5" style={{ color: NAV_GREEN }} />
                       </span>
                       Profile
                     </button>
@@ -284,7 +286,7 @@ export default function AppLayout() {
                       className="dropdown-item w-full rounded-xl"
                     >
                       <span className="dropdown-item-icon">
-                        <Settings className="w-3.5 h-3.5" style={{ color: '#36656B' }} />
+                        <Settings className="w-3.5 h-3.5" style={{ color: NAV_GREEN }} />
                       </span>
                       Settings
                     </button>

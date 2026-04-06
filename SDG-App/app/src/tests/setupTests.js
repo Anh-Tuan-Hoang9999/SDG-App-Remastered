@@ -17,3 +17,14 @@ Object.defineProperty(globalThis, "localStorage", {
   },
   writable: true,
 });
+
+class MockIntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+Object.defineProperty(globalThis, "IntersectionObserver", {
+  value: MockIntersectionObserver,
+  writable: true,
+});

@@ -27,26 +27,26 @@ describe("Register screen", () => {
   });
 
   function fillForm({
-    username = "student1",
+    name = "Student One",
     email = "student@trentu.ca",
     password = "MyPassword@123",
     confirmPassword = "MyPassword@123",
-    courseCode = "COIS-4000Y",
+    coordinatorVerifyCode = "",
   } = {}) {
-    fireEvent.change(screen.getByPlaceholderText("Username"), {
-      target: { value: username },
+    fireEvent.change(screen.getByPlaceholderText("Your full name"), {
+      target: { value: name },
     });
-    fireEvent.change(screen.getByPlaceholderText("example@trent.ca"), {
+    fireEvent.change(screen.getByPlaceholderText("yourname@trentu.ca"), {
       target: { value: email },
     });
-    fireEvent.change(screen.getByPlaceholderText("Password"), {
+    fireEvent.change(screen.getByPlaceholderText("Create a password"), {
       target: { value: password },
     });
-    fireEvent.change(screen.getByPlaceholderText("Re-enter Password"), {
+    fireEvent.change(screen.getByPlaceholderText("Re-enter your password"), {
       target: { value: confirmPassword },
     });
-    fireEvent.change(screen.getByPlaceholderText("Course Code"), {
-      target: { value: courseCode },
+    fireEvent.change(screen.getByPlaceholderText("2101"), {
+      target: { value: coordinatorVerifyCode },
     });
   }
 
@@ -59,7 +59,7 @@ describe("Register screen", () => {
     );
     fillForm({ confirmPassword: "DifferentPass123" });
     fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
-    expect(await screen.findByText("Passwords do not match")).toBeInTheDocument();
+    expect(await screen.findByText("Passwords do not match.")).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
@@ -105,12 +105,14 @@ test("shows network error when register request fails", async () => {
   fillForm();
   fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
-  expect(await screen.findByText("Network error")).toBeInTheDocument();
+  expect(
+    await screen.findByText("Unable to connect. Please check your connection and try again.")
+  ).toBeInTheDocument();
   expect(mockNavigate).not.toHaveBeenCalled();
 });
 
 // if course code is left blank it should not be sent in the request body
-test("does not send course_code when left empty", async () => {
+test("submits student registration when coordinator code is left empty", async () => {
   client.post.mockResolvedValue({ data: {} });
 
   render(
@@ -119,15 +121,15 @@ test("does not send course_code when left empty", async () => {
     </MemoryRouter>,
   );
 
-  fillForm({ courseCode: "" });
+  fillForm({ coordinatorVerifyCode: "" });
   fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
 
   expect(client.post).toHaveBeenCalledTimes(1);
   const [, body] = client.post.mock.calls[0];
 
-  expect(body.username).toBe("student1");
+  expect(body.name).toBe("Student One");
   expect(body.email).toBe("student@trentu.ca");
   expect(body.password).toBe("MyPassword@123");
-  expect(body.course_code).toBeUndefined();
+  expect(body.role).toBe("student");
 });
 });

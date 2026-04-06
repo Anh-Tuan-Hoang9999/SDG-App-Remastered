@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { SDG_DATA } from "@/lib/sdgData";
+import { SDG_DATA } from "@/data/sdgData";
 import { FileText, Save, BookOpen } from "lucide-react";
 import CardData from "../data/CardData";
 import MultiChoiceQuiz from "../components/activities/MultiChoiceQuiz";

@@ -49,21 +49,18 @@ describe("Login screen", () => {
       </MemoryRouter>
     );
 
-    // Fill in the login form with bad credentials
-    fireEvent.change(screen.getByPlaceholderText("example@trent.ca"), {
+    fireEvent.change(screen.getByPlaceholderText("yourname@trentu.ca"), {
       target: { value: "student@trentu.ca" },
     });
-    fireEvent.change(screen.getByPlaceholderText("Password"), {
+    fireEvent.change(screen.getByPlaceholderText("Your password"), {
       target: { value: "wrongpass" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Login" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
-    // The error from the server should appear on screen
     expect(
       await screen.findByText("Incorrect username or password")
     ).toBeInTheDocument();
 
-    // Since login failed, the user should NOT be logged in or redirected
     expect(mockLogin).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
@@ -79,15 +76,15 @@ describe("Login screen", () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText("example@trent.ca"), {
+    fireEvent.change(screen.getByPlaceholderText("yourname@trentu.ca"), {
       target: { value: "student@trentu.ca" },
     });
-    fireEvent.change(screen.getByPlaceholderText("Password"), {
+    fireEvent.change(screen.getByPlaceholderText("Your password"), {
       target: { value: "goodpass" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Login" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
-    expect(await screen.findByRole("button", { name: "Login" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Sign In" })).toBeInTheDocument();
     expect(mockLogin).toHaveBeenCalledWith("fake-token");
   });
 
@@ -126,17 +123,17 @@ test("shows network error message when login request fails", async () => {
     </MemoryRouter>
   );
 
-  fireEvent.change(screen.getByPlaceholderText("example@trent.ca"), {
+  fireEvent.change(screen.getByPlaceholderText("yourname@trentu.ca"), {
     target: { value: "student@trentu.ca" },
   });
-  fireEvent.change(screen.getByPlaceholderText("Password"), {
+  fireEvent.change(screen.getByPlaceholderText("Your password"), {
     target: { value: "somepass" },
   });
-  fireEvent.click(screen.getByRole("button", { name: "Login" }));
+  fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
   expect(
     await screen.findByText(
-      "Unable to connect to the server. Please check your internet connection and try again.",
+      "Unable to connect. Please check your connection and try again.",
     ),
   ).toBeInTheDocument();
 

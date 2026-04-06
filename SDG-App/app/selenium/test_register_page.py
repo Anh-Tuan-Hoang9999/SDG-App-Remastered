@@ -7,12 +7,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from helpers import BASE_URL
+
 
 # checks the register page loads and has all the fields we need
 def test_register_page_loads():
     driver = webdriver.Chrome()
     try:
-        driver.get("http://localhost:5173/register")
+        driver.get(f"{BASE_URL}/register")
         wait = WebDriverWait(driver, 15)
 
         wait.until(EC.presence_of_element_located((By.NAME, "name")))
@@ -20,7 +22,8 @@ def test_register_page_loads():
         wait.until(EC.presence_of_element_located((By.NAME, "password")))
         wait.until(EC.presence_of_element_located((By.NAME, "confirmPassword")))
 
-        assert "Register" in driver.page_source
+        # Remastered register page heading
+        assert "Create your account" in driver.page_source
     finally:
         driver.quit()
 
@@ -29,7 +32,7 @@ def test_register_page_loads():
 def test_register_shows_password_mismatch_error():
     driver = webdriver.Chrome()
     try:
-        driver.get("http://localhost:5173/register")
+        driver.get(f"{BASE_URL}/register")
         wait = WebDriverWait(driver, 15)
 
         wait.until(EC.presence_of_element_located((By.NAME, "name"))).send_keys("Selenium User")
@@ -46,14 +49,16 @@ def test_register_shows_password_mismatch_error():
         driver.quit()
 
 
-# clicking "Or Login Here" should take you back to the login page
+# clicking "Sign in" should take you back to the login page
+# (old link text was "Or Login Here" — remastered copy is simply "Sign in")
 def test_register_link_navigates_to_login():
     driver = webdriver.Chrome()
     try:
-        driver.get("http://localhost:5173/register")
+        driver.get(f"{BASE_URL}/register")
         wait = WebDriverWait(driver, 15)
 
-        login_link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Or Login Here")))
+        # Remastered register page uses "Sign in" as the back-to-login link text
+        login_link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Sign in")))
         login_link.click()
 
         wait.until(EC.url_contains("/login"))
@@ -69,7 +74,7 @@ def test_register_success_redirects_to_login():
 
     driver = webdriver.Chrome()
     try:
-        driver.get("http://localhost:5173/register")
+        driver.get(f"{BASE_URL}/register")
         wait = WebDriverWait(driver, 15)
 
         # use a timestamp to make sure the email is unique each run

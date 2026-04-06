@@ -1,5 +1,5 @@
 import React from "react";
-import { SDG_DATA } from "@/lib/sdgData";
+import { SDG_DATA } from "@/data/sdgData";
 import SDGFlipCard from "@/components/sdg/SDGFlipCard";
 import { motion } from "framer-motion";
 import { CreditCard } from "lucide-react";

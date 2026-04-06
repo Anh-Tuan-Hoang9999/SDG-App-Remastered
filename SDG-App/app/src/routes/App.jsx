@@ -43,6 +43,7 @@ export default function AppNavigator() {
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
           <Route path="learning" element={<ProtectedRoute><LearningScreen /></ProtectedRoute>} />
+          <Route path="learning1" element={<ProtectedRoute><SDGCards /></ProtectedRoute>} />
           <Route path="activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
           <Route path="activities/:sdgId" element={<ProtectedRoute><ActivityLevels /></ProtectedRoute>} />
           <Route path="activities/:sdgId/:activityId" element={<ProtectedRoute><ActivityContainer /></ProtectedRoute>} />

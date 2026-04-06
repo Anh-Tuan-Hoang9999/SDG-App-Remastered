@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { DndContext, DragOverlay, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SDG_DATA } from "@/lib/sdgData";
+import { SDG_DATA } from "@/data/sdgData";
 import { Badge } from "@/components/ui/badge";
 import SDGFlipCard from "@/components/sdg/SDGFlipCard";
 import { RotateCcw, Save, Shuffle } from "lucide-react";

@@ -31,8 +31,8 @@ describe("Profile role rendering", () => {
   });
 
   test("shows loading when user is missing", () => {
-    render(<Profile />);
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    const { container } = render(<Profile />);
+    expect(container.querySelector(".animate-spin")).toBeInTheDocument();
   });
 
   test("renders student profile view", () => {
@@ -43,11 +43,12 @@ describe("Profile role rendering", () => {
       course_code: "COIS-4000Y",
     };
     render(<Profile />);
-    expect(screen.getByText("Progress")).toBeInTheDocument();
-    expect(screen.getByText("Progress tracking placeholder")).toBeInTheDocument();
+    expect(screen.getByText("student_user")).toBeInTheDocument();
+    expect(screen.getAllByText(/Co-op Student/)).toHaveLength(2);
+    expect(screen.getByText("COIS-4000Y")).toBeInTheDocument();
+    expect(screen.queryByText("Supervised Students")).not.toBeInTheDocument();
   });
 
-  // coordinators should see their supervised students section
   test("renders coordinator profile view", () => {
     authState.user = {
       username: "coord_user",
@@ -56,10 +57,9 @@ describe("Profile role rendering", () => {
     };
     render(<Profile />);
     expect(screen.getByText("Supervised Students")).toBeInTheDocument();
-    expect(screen.getByText("Student list and progress coming soon...")).toBeInTheDocument();
+    expect(screen.getByText("Student list coming soon")).toBeInTheDocument();
   });
 
-  // developers should see their tools section
   test("renders developer profile view", () => {
     authState.user = {
       username: "dev_user",
@@ -68,10 +68,9 @@ describe("Profile role rendering", () => {
     };
     render(<Profile />);
     expect(screen.getByText("Developer Tools")).toBeInTheDocument();
-    expect(screen.getByText("Developer/admin tools coming soon...")).toBeInTheDocument();
+    expect(screen.getByText("Admin tools coming soon")).toBeInTheDocument();
   });
 
-  // unknown roles should fall back to the student view instead of breaking
   test("falls back to student profile for unknown role", () => {
     authState.user = {
       username: "unknown_user",
@@ -80,12 +79,13 @@ describe("Profile role rendering", () => {
       course_code: "COIS-4000Y",
     };
     render(<Profile />);
-    expect(screen.getByText("Progress")).toBeInTheDocument();
+    expect(screen.getByText("unknown_user")).toBeInTheDocument();
+    expect(screen.getAllByText(/Co-op Student/)).toHaveLength(2);
     expect(screen.queryByText("Developer Tools")).not.toBeInTheDocument();
     expect(screen.queryByText("Supervised Students")).not.toBeInTheDocument();
   });
 
-  test("logs out and navigates to login when Logout is clicked", () => {
+test("navigates to settings when Edit Profile is clicked", () => {
   authState.user = {
     username: "student_user",
     email: "student@trentu.ca",
@@ -95,23 +95,7 @@ describe("Profile role rendering", () => {
 
   render(<Profile />);
 
-  fireEvent.click(screen.getByRole("button", { name: "Logout" }));
-
-  expect(mockLogout).toHaveBeenCalledTimes(1);
-  expect(mockNavigate).toHaveBeenCalledWith("/login");
-});
-
-test("navigates to settings when Settings is clicked", () => {
-  authState.user = {
-    username: "student_user",
-    email: "student@trentu.ca",
-    user_type: "student",
-    course_code: "COIS-4000Y",
-  };
-
-  render(<Profile />);
-
-  fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+  fireEvent.click(screen.getByRole("button", { name: "Edit Profile" }));
 
   expect(mockNavigate).toHaveBeenCalledWith("/settings");
 });

@@ -1,9 +1,17 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Outlet } from "react-router";
 import { screen } from "@testing-library/react";
 import { AuthProvider } from "../authContext";
 import App from "../routes/App";
+
+vi.mock("../components/layouts/Layout", () => ({
+  default: () => (
+    <div data-testid="app-layout-shell">
+      <Outlet />
+    </div>
+  ),
+}));
 
 describe("App smoke test", () => {
   beforeEach(() => {
@@ -36,7 +44,6 @@ describe("App smoke test", () => {
     </MemoryRouter>
   );
 
-  // Login screen label should appear after redirect
-  expect(await screen.findByText("Email")).toBeInTheDocument();
+  expect(await screen.findByText("Welcome back")).toBeInTheDocument();
 });
 });

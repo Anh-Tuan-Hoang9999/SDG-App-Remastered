@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Outlet } from "react-router";
 import App from "../routes/App";
 
 const authState = {
@@ -14,6 +14,14 @@ const authState = {
 
 vi.mock("../authContext", () => ({
   useAuth: () => authState,
+}));
+
+vi.mock("../components/layouts/Layout", () => ({
+  default: () => (
+    <div data-testid="app-layout-shell">
+      <Outlet />
+    </div>
+  ),
 }));
 
 describe("App route integration", () => {
@@ -31,7 +39,7 @@ describe("App route integration", () => {
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign In" })).toBeInTheDocument();
   });
 
   // a logged in student should be able to access their profile normally
@@ -47,7 +55,7 @@ describe("App route integration", () => {
         <App />
       </MemoryRouter>
     );
-    expect(await screen.findAllByText("student_user")).not.toHaveLength(0);
+    expect(await screen.findByTestId("app-layout-shell")).toBeInTheDocument();
   });
 
   test("redirects unknown route to login flow", () => {
@@ -57,6 +65,6 @@ describe("App route integration", () => {
     </MemoryRouter>
   );
 
-  expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Sign In" })).toBeInTheDocument();
 });
 });

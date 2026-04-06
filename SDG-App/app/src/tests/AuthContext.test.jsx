@@ -68,7 +68,7 @@ test("keeps session active and fetches user when JWT is valid", async () => {
     expect(screen.getByTestId("token").textContent).toBe("present");
   });
 
-  expect(client.get).toHaveBeenCalledWith("/users/me");
+  expect(client.get).toHaveBeenCalledWith("/api/auth/me");
 });
 
 test("marks session expired when JWT decode throws (invalid token)", async () => {
@@ -108,7 +108,7 @@ test("expires session when /users/me returns unauthorized", async () => {
     expect(screen.getByTestId("token").textContent).toBe("empty");
   });
 
-  expect(client.get).toHaveBeenCalledWith("/users/me");
+  expect(client.get).toHaveBeenCalledWith("/api/auth/me");
 });
 
 test("handles /users/me network failure without crashing", async () => {

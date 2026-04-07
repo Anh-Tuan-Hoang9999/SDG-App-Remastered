@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./SDG-App/server
+    ports:
+      - "8000:8000"
+    environment:
+      DB_TYPE: sqlite
+      DB_NAME: sdg-test.db
+      EXTRA_ORIGINS: http://localhost:5173
+    volumes:
+      - backend_data:/app/db
+
+  frontend:
+    build:
+      context: ./SDG-App/app
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./SDG-App/app:/app
+      - /app/node_modules
+
+volumes:
+  backend_data:

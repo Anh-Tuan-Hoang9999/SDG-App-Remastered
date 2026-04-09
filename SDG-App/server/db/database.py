@@ -17,7 +17,8 @@ if DB_TYPE == "sqlite":
     DB_NAME = os.environ.get("DB_NAME", "sdg-test.db")
     DB_PATH = os.path.join(BASE_DIR, DB_NAME)
     SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
-    connect_args = {"check_same_thread": False}
+    # Give SQLite longer to wait on a lock in low-end / single-disk deployments.
+    connect_args = {"check_same_thread": False, "timeout": 30}
 else:
     # --- SQL database variables ---
     DB_HOST = os.environ.get("DB_HOST", "localhost")
@@ -44,7 +45,7 @@ else:
     )
     connect_args = {}
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

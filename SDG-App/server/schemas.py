@@ -14,6 +14,15 @@ class RegisterIn(BaseModel):
     role: str = "student"   # "student" | "coordinator"
 
 
+class SendCodeIn(BaseModel):
+    email: EmailStr
+
+
+class VerifyCodeIn(BaseModel):
+    email: EmailStr
+    code: str
+
+
 class LoginIn(BaseModel):
     email: EmailStr
     password: str

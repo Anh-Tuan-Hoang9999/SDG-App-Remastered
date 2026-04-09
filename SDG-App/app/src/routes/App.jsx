@@ -9,6 +9,7 @@ import AppLayout from "../components/layouts/Layout";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import Introduction from "../screens/Introduction";
+import ForgotPassword from "../screens/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 // Lazily loaded — deferred until first navigation, keeps initial bundle small
@@ -39,6 +40,7 @@ export default function AppNavigator() {
       <Routes>
         <Route index element={<Introduction />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<AppLayout />}>
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
@@ -62,4 +64,3 @@ export default function AppNavigator() {
     </Suspense>
   );
 }
-

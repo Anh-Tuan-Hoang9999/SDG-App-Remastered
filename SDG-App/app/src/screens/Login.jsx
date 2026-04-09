@@ -177,6 +177,16 @@ export default function Login() {
               />
             </div>
 
+            <div className="-mt-2 text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-semibold transition-colors hover:underline"
+                style={{ color: "#36656B" }}
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
             {error && (
               <div
                 className="px-4 py-3 rounded-xl text-sm"

@@ -102,6 +102,16 @@ describe("Login screen", () => {
     ).toBeInTheDocument();
   });
 
+  test("shows forgot password link", () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("link", { name: "Forgot Password?" })).toBeInTheDocument();
+  });
+
   test("redirects authenticated user to dashboard", async () => {
   authState.user = { username: "student_user" };
 

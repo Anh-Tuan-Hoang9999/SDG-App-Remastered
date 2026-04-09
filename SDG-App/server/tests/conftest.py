@@ -1,6 +1,10 @@
 import os
 import sys
 import pytest
+
+# Bypass email-verification check in /api/auth/register so existing tests
+# that call /register directly don't need to seed a verified code record.
+os.environ.setdefault("SKIP_EMAIL_VERIFICATION", "true")
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +14,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from main import app
 from db.database import Base, get_db
+import email_service
+
+email_service.EMAIL_PROVIDER = "none"
 
 # use an in-memory sqlite db so we don't touch the real database
 SQLALCHEMY_TEST_URL = "sqlite://"

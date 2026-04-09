@@ -21,6 +21,30 @@ class RegisterIn(BaseModel):
         return value
 
 
+class SendCodeIn(BaseModel):
+    email: EmailStr
+
+
+class VerifyCodeIn(BaseModel):
+    email: EmailStr
+    code: str
+
+
+class PasswordResetRequestIn(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetVerifyIn(BaseModel):
+    email: EmailStr
+    code: str
+
+
+class PasswordResetConfirmIn(BaseModel):
+    email: EmailStr
+    reset_token: str
+    new_password: str
+
+
 class LoginIn(BaseModel):
     email: EmailStr
     password: str

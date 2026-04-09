@@ -63,6 +63,23 @@ describe("Register screen", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  test("shows frontend error for non-trent email and does not submit", async () => {
+    render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>,
+    );
+
+    fillForm({ email: "student@example.com" });
+    fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
+
+    expect(
+      await screen.findByText("Please use your @trentu.ca email address.")
+    ).toBeInTheDocument();
+    expect(client.post).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   // if the email is already taken the server error should show up on screen
   test("shows backend error when registration fails", async () => {
     client.post.mockRejectedValue({

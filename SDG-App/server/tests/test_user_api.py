@@ -43,6 +43,14 @@ def test_register_duplicate_email_returns_400(client):
     assert second.json()["detail"] == "Email already registered"
 
 
+def test_register_non_trent_email_returns_422(client):
+    user = fresh_user()
+    user["email"] = "user@example.com"
+    _, r = register(client, user)
+    assert r.status_code == 422
+    assert "Registration requires a @trentu.ca email address" in r.text
+
+
 def test_register_invalid_role_returns_400(client):
     user = fresh_user()
     user["role"] = "admin"

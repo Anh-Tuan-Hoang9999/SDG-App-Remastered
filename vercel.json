@@ -1,4 +1,5 @@
 {
+  "installCommand": "cd SDG-App/app && npm install",
   "buildCommand": "cd SDG-App/app && npm run build",
   "outputDirectory": "SDG-App/app/dist",
   "rewrites": [

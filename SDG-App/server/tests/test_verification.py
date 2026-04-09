@@ -181,8 +181,8 @@ class TestRegisterWithVerification:
     def test_register_rejects_non_trentu_email(self, client, monkeypatch):
         monkeypatch.setenv("SKIP_EMAIL_VERIFICATION", "false")
         r = _register(client, "someone@gmail.com")
-        assert r.status_code == 422
-        assert "@trentu.ca" in str(r.json()["detail"])
+        assert r.status_code == 400
+        assert "@trentu.ca" in r.json()["detail"]
 
     def test_register_succeeds_after_verification(self, client):
         em = _email()

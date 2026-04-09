@@ -98,17 +98,17 @@ def send_verification_code(body: schemas.SendCodeIn, db: DbDep):
         expires_at=expires_at,
     )
     db.add(record)
-    db.flush()
+    db.commit()
 
     sent = send_verification_email(email, code)
     if not sent:
-        db.rollback()
+        db.delete(record)
+        db.commit()
         raise HTTPException(
             status_code=503,
             detail="Verification email could not be sent. Email delivery is not configured correctly.",
         )
 
-    db.commit()
     return {"message": "Verification code sent. Check your inbox."}
 
 
@@ -186,17 +186,17 @@ def request_password_reset(body: schemas.PasswordResetRequestIn, db: DbDep):
         expires_at=expires_at,
     )
     db.add(record)
-    db.flush()
+    db.commit()
 
     sent = send_password_reset_email(email, code)
     if not sent:
-        db.rollback()
+        db.delete(record)
+        db.commit()
         raise HTTPException(
             status_code=503,
             detail="Password reset email could not be sent. Email delivery is not configured correctly.",
         )
 
-    db.commit()
     return {
         "message": "If an account exists for that email, a password reset code has been sent."
     }

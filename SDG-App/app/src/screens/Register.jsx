@@ -21,10 +21,15 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const isTrentEmail = (email) => email.trim().toLowerCase().endsWith("@trentu.ca");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!isTrentEmail(form.email)) {
+      setError("Please use your @trentu.ca email address.");
+      return;
+    }
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -136,7 +141,7 @@ export default function Register() {
         >
           <h2 className="text-2xl font-bold mb-1" style={{ color: "#1A2E1A" }}>Create your account</h2>
           <p className="text-sm mb-8" style={{ color: "#637063" }}>
-            Join the SDG co-op learning platform at Trent University.
+            Join the SDG co-op learning platform at Trent University with your @trentu.ca email.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">

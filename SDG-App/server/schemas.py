@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Any, List, Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -12,6 +12,13 @@ class RegisterIn(BaseModel):
     email: EmailStr
     password: str
     role: str = "student"   # "student" | "coordinator"
+
+    @field_validator("email")
+    @classmethod
+    def validate_trent_email(cls, value: EmailStr) -> EmailStr:
+        if value.split("@")[-1].lower() != "trentu.ca":
+            raise ValueError("Registration requires a @trentu.ca email address")
+        return value
 
 
 class LoginIn(BaseModel):

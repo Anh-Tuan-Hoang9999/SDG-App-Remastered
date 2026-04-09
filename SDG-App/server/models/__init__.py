@@ -9,3 +9,4 @@ from .user_progress import UserProgress
 from .discussion_post import DiscussionPost
 from .discussion_comment import DiscussionComment
 from .email_verification import EmailVerification
+from .password_reset_code import PasswordResetCode

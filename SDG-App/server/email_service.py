@@ -25,19 +25,22 @@ EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "none").lower()
 
 def send_verification_email(to_email: str, code: str) -> bool:
     """Send a 6-digit verification code to *to_email*. Returns True on success."""
-    subject = "Your SDG Co-op Portal verification code"
-    body = (
-        f"Your verification code is: {code}\n\n"
-        "This code expires in 10 minutes.\n"
-        "If you did not request this, you can safely ignore this email."
+    return _send_code_email(
+        to_email,
+        code,
+        subject="Your SDG Co-op Portal verification code",
+        intro="Your verification code is",
     )
 
-    if EMAIL_PROVIDER == "resend":
-        return _send_via_resend(to_email, subject, body)
-    if EMAIL_PROVIDER == "smtp":
-        return _send_via_smtp(to_email, subject, body)
-    # Default: console / no-op — log the code so dev/test can proceed
-    return _console_log(to_email, code)
+
+def send_password_reset_email(to_email: str, code: str) -> bool:
+    """Send a 6-digit password-reset code to *to_email*. Returns True on success."""
+    return _send_code_email(
+        to_email,
+        code,
+        subject="Your SDG Co-op Portal password reset code",
+        intro="Your password reset code is",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +51,20 @@ def _console_log(to_email: str, code: str) -> bool:
     print(f"\n[DEV EMAIL] To: {to_email}  |  Verification code: {code}\n", flush=True)
     logger.info("DEV email — To: %s  Code: %s", to_email, code)
     return True
+
+
+def _send_code_email(to_email: str, code: str, *, subject: str, intro: str) -> bool:
+    body = (
+        f"{intro}: {code}\n\n"
+        "This code expires in 10 minutes.\n"
+        "If you did not request this, you can safely ignore this email."
+    )
+
+    if EMAIL_PROVIDER == "resend":
+        return _send_via_resend(to_email, subject, body)
+    if EMAIL_PROVIDER == "smtp":
+        return _send_via_smtp(to_email, subject, body)
+    return _console_log(to_email, code)
 
 
 def _send_via_resend(to_email: str, subject: str, body: str) -> bool:

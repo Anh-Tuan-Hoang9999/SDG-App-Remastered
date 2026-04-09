@@ -14,6 +14,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from main import app
 from db.database import Base, get_db
+import email_service
+
+email_service.EMAIL_PROVIDER = "none"
 
 # use an in-memory sqlite db so we don't touch the real database
 SQLALCHEMY_TEST_URL = "sqlite://"

@@ -1,7 +1,10 @@
+import React, { useEffect } from "react";
 import {
   Library, ExternalLink, Globe, GraduationCap, Phone, Video,
   Mail, MapPin, Info,
 } from "lucide-react";
+import { useAuth } from "../authContext";
+import client from "../api/client";
 
 const RESOURCES = [
   {
@@ -69,6 +72,16 @@ const Tag = ({ children, variant = "default" }) => {
 };
 
 export default function Resources() {
+  const { user } = useAuth();
+
+  // Record that the user has visited the resources page. Fire-and-forget.
+  useEffect(() => {
+    if (!user?.id) return;
+    client
+      .patch(`/api/progress/${user.id}`, { viewed_resources: ["resources"] })
+      .catch(() => {});
+  }, [user?.id]);
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 

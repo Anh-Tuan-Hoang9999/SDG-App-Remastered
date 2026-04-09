@@ -1,5 +1,6 @@
 services:
   backend:
+    image: sdg-app-remastered-backend:latest
     build:
       context: ./SDG-App/server
     ports:
@@ -9,9 +10,12 @@ services:
       DB_NAME: sdg-test.db
       EXTRA_ORIGINS: http://localhost:5173
     volumes:
+      - ./SDG-App/server:/app
       - backend_data:/app/db
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   frontend:
+    image: sdg-app-remastered-frontend:latest
     build:
       context: ./SDG-App/app
     ports:
@@ -23,6 +27,7 @@ services:
     volumes:
       - ./SDG-App/app:/app
       - /app/node_modules
+    command: ["npm", "run", "dev", "--", "--port", "5173", "--host", "0.0.0.0"]
 
 volumes:
   backend_data:

@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SDG_DATA } from "@/data/sdgData";
 import SDGFlipCard from "@/components/sdg/SDGFlipCard";
 import { motion } from "framer-motion";
 import { CreditCard } from "lucide-react";
+import { useAuth } from "../authContext";
+import client from "../api/client";
 
 export default function SDGCards() {
+  const { user } = useAuth();
+
+  // Record that the user has viewed all SDG cards. The page renders all 17 at
+  // once so a single visit counts as having explored the full set.
+  // Fire-and-forget: a failure here is non-critical and should not surface to
+  // the user.
+  useEffect(() => {
+    if (!user?.id) return;
+    const allSdgNumbers = SDG_DATA.map((sdg) => sdg.number);
+    client
+      .patch(`/api/progress/${user.id}`, { viewed_sdg_cards: allSdgNumbers })
+      .catch(() => {});
+  }, [user?.id]);
+
   return (
     <div className="space-y-8">
       <div>

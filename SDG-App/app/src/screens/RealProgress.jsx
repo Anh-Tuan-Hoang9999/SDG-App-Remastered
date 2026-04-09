@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import {
   CheckCircle2, Circle, BookOpen, Shuffle, FileText,
-  Library, TrendingUp, ChevronRight, Info,
+  Library, TrendingUp, ChevronRight, AlertCircle,
 } from "lucide-react";
+import { useAuth } from "../authContext";
+import client from "../api/client";
 
 const ACTIVITIES = [
   {
@@ -50,12 +52,26 @@ const ACTIVITIES = [
   },
 ];
 
-const MOCK_PROGRESS = {
-  viewed_sdg_cards: true,
-  completed_card_sort: false,
-  reflection_count: 2,
-  viewed_resources: true,
-};
+/**
+ * Returns true if the backend progress record counts `activity` as done.
+ *
+ * Rules:
+ *  - reflection_count / reflection_count_3  → compare count to threshold
+ *  - viewed_sdg_cards / viewed_resources    → any non-empty array means visited
+ *  - everything else (booleans)             → truthy check
+ */
+function isComplete(activity, progress) {
+  if (!progress) return false;
+  if (activity.key === "reflection_count")
+    return (progress.reflection_count || 0) >= 1;
+  if (activity.key === "reflection_count_3")
+    return (progress.reflection_count || 0) >= 3;
+  if (activity.key === "viewed_sdg_cards")
+    return Array.isArray(progress.viewed_sdg_cards) && progress.viewed_sdg_cards.length > 0;
+  if (activity.key === "viewed_resources")
+    return Array.isArray(progress.viewed_resources) && progress.viewed_resources.length > 0;
+  return !!progress[activity.key];
+}
 
 function ProgressBar({ value }) {
   const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
@@ -70,33 +86,31 @@ function ProgressBar({ value }) {
 }
 
 export default function RealProgress() {
+  const { user } = useAuth();
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setProgress(MOCK_PROGRESS);
-      setLoading(false);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const isComplete = (activity) => {
-    if (!progress) return false;
-    if (activity.key === "reflection_count") return (progress.reflection_count || 0) >= 1;
-    if (activity.key === "reflection_count_3") return (progress.reflection_count || 0) >= 3;
-    return !!progress[activity.key];
-  };
+    if (!user?.id) return;
+    setLoading(true);
+    setError(null);
+    client
+      .get(`/api/progress/${user.id}`)
+      .then((res) => setProgress(res.data))
+      .catch(() => setError("Could not load your progress. Please try again."))
+      .finally(() => setLoading(false));
+  }, [user?.id]);
 
   const completedActivities = useMemo(
-    () => ACTIVITIES.filter((a) => isComplete(a)),
-    [progress]
+    () => ACTIVITIES.filter((a) => isComplete(a, progress)),
+    [progress],
   );
 
-  const totalPoints = completedActivities.reduce((sum, a) => sum + a.points, 0);
-  const maxPoints = ACTIVITIES.reduce((sum, a) => sum + a.points, 0);
-  const progressPct = Math.round((completedActivities.length / ACTIVITIES.length) * 100);
-  const pointsPct = Math.round((totalPoints / maxPoints) * 100);
+  const totalPoints  = completedActivities.reduce((sum, a) => sum + a.points, 0);
+  const maxPoints    = ACTIVITIES.reduce((sum, a) => sum + a.points, 0);
+  const progressPct  = Math.round((completedActivities.length / ACTIVITIES.length) * 100);
+  const pointsPct    = Math.round((totalPoints / maxPoints) * 100);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
@@ -111,24 +125,33 @@ export default function RealProgress() {
         </div>
         <h1 className="text-2xl font-bold" style={{ color: '#1A2E1A' }}>Progress Tracker</h1>
       </div>
-      <p className="text-sm mb-5" style={{ color: '#637063' }}>
-        Frontend mock progress only — no backend data is used.
+      <p className="text-sm mb-6" style={{ color: '#637063' }}>
+        Your real-time completion status across all core co-op learning activities.
       </p>
 
-      {/* ── Info banner ── */}
-      <div
-        className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-xs mb-6"
-        style={{ background: 'rgba(54,101,107,0.08)', border: '1px solid rgba(54,101,107,0.18)', color: '#36656B' }}
-      >
-        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-        <span>
-          <strong>Mock only:</strong> Progress is simulated from local state and does not persist between sessions.
-        </span>
-      </div>
+      {/* ── Loading spinner ── */}
+      {loading && (
+        <div className="flex items-center justify-center py-16">
+          <div
+            className="animate-spin rounded-full h-8 w-8 border-b-2"
+            style={{ borderColor: '#36656B' }}
+          />
+        </div>
+      )}
 
-      {loading ? (
-        <p className="text-sm" style={{ color: '#637063' }}>Loading mock progress…</p>
-      ) : (
+      {/* ── Error state ── */}
+      {!loading && error && (
+        <div
+          className="flex items-center gap-3 px-4 py-4 rounded-xl text-sm"
+          style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}
+        >
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {error}
+        </div>
+      )}
+
+      {/* ── Main content — only shown after a successful load ── */}
+      {!loading && !error && progress && (
         <>
           {/* ── Stat cards ── */}
           <div className="grid grid-cols-3 gap-3 mb-6">
@@ -183,7 +206,7 @@ export default function RealProgress() {
           </h2>
           <div className="space-y-3">
             {ACTIVITIES.map((activity) => {
-              const done = isComplete(activity);
+              const done = isComplete(activity, progress);
               const Icon = activity.icon;
               return (
                 <div

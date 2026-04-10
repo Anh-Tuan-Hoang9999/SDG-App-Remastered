@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Globe,CreditCard, Shuffle, BookOpen, BarChart3, Library, Users, ArrowRight, Leaf,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../authContext";
+import client from "../api/client";
 
 const SDG_COLOURS = [
   "#E5243B","#DDA63A","#4C9F38","#C5192D","#FF3A21","#26BDE2",
@@ -21,10 +22,45 @@ const sections = [
   { path: "/coordinator",    label: "Coordinator View",     desc: "View student progress summaries",                       icon: Users      },
 ];
 
+const CORE_ACTIVITIES = [
+  { key: "viewed_sdg_cards" },
+  { key: "completed_card_sort" },
+  { key: "reflection_count", threshold: 1 },
+  { key: "reflection_count", threshold: 3 },
+  { key: "viewed_resources" },
+];
+
+function isCoreComplete(activity, progress) {
+  if (!progress) return false;
+  if (activity.key === "reflection_count") {
+    return (progress.reflection_count || 0) >= (activity.threshold || 1);
+  }
+  if (activity.key === "viewed_sdg_cards") {
+    return Array.isArray(progress.viewed_sdg_cards) && progress.viewed_sdg_cards.length > 0;
+  }
+  if (activity.key === "viewed_resources") {
+    return Array.isArray(progress.viewed_resources) && progress.viewed_resources.length > 0;
+  }
+  return !!progress[activity.key];
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const displayName = user?.name || user?.full_name || "Student";
-  const completedCount = 0;
+  const [progress, setProgress] = useState(null);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    client
+      .get(`/api/progress/${user.id}`)
+      .then((res) => setProgress(res.data))
+      .catch(() => setProgress(null));
+  }, [user?.id]);
+
+  const completedCount = useMemo(
+    () => CORE_ACTIVITIES.filter((a) => isCoreComplete(a, progress)).length,
+    [progress]
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
@@ -60,7 +96,7 @@ export default function Dashboard() {
           </h1>
           <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.65)' }}>
             Continue your sustainability learning journey. You've completed{' '}
-            <span className="font-bold text-white">{completedCount} of 4</span> core activities.
+            <span className="font-bold text-white">{completedCount} of {CORE_ACTIVITIES.length}</span> core activities.
           </p>
 
           <div className="flex flex-wrap gap-2">

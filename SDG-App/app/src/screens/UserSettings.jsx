@@ -170,6 +170,10 @@ const UserSettings = () => {
               }
               autoComplete="name"
             />
+            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+              Max {DISPLAY_NAME_MAX_LENGTH} characters ({name.length}/
+              {DISPLAY_NAME_MAX_LENGTH})
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -186,6 +190,10 @@ const UserSettings = () => {
                 setCourseCode(e.target.value.slice(0, COURSE_CODE_MAX_LENGTH))
               }
             />
+            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+              Max {COURSE_CODE_MAX_LENGTH} characters ({courseCode.length}/
+              {COURSE_CODE_MAX_LENGTH})
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -201,6 +209,10 @@ const UserSettings = () => {
                 setDescription(e.target.value.slice(0, DESCRIPTION_MAX_LENGTH))
               }
             />
+            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+              Max {DESCRIPTION_MAX_LENGTH} characters ({description.length}/
+              {DESCRIPTION_MAX_LENGTH})
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">

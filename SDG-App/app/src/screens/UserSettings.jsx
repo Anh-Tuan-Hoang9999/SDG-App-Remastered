@@ -24,6 +24,7 @@ const UserSettings = () => {
   const [successMessage, setSuccessMessage] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
   const [saving, setSaving] = React.useState(false);
+  const COURSE_CODE_MAX_LENGTH = 10;
 
   React.useEffect(() => {
     setName(user?.name || user?.username || "");
@@ -175,7 +176,10 @@ const UserSettings = () => {
               type="text"
               placeholder="e.g. COIS 4000Y"
               value={courseCode}
-              onChange={(e) => setCourseCode(e.target.value)}
+              maxLength={COURSE_CODE_MAX_LENGTH}
+              onChange={(e) =>
+                setCourseCode(e.target.value.slice(0, COURSE_CODE_MAX_LENGTH))
+              }
             />
           </div>
 

@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../authContext";
 import {
   LayoutDashboard, BookOpen, Shuffle, FileText, TrendingUp,
-  Library, Users, Leaf,
+  Library, Users, Leaf,LeafyGreen,Globe,
   User, Settings, LogOut
 } from "lucide-react";
 
@@ -83,7 +83,7 @@ export default function AppLayout() {
               className="w-8 h-8 rounded-xl flex items-center justify-center"
               style={{ background: NAV_GREEN }}
             >
-              <Leaf className="w-4 h-4 text-white" />
+              <Globe className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-base" style={{ color: '#1A2E1A' }}>
               <span className="hidden sm:inline">SDG Co-op Portal</span>

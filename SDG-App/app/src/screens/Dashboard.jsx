@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  CreditCard, Shuffle, BookOpen, BarChart3, Library, Users, ArrowRight, Leaf,
+  Globe,CreditCard, Shuffle, BookOpen, BarChart3, Library, Users, ArrowRight, Leaf,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../authContext";
@@ -48,7 +48,7 @@ export default function Dashboard() {
               className="w-9 h-9 rounded-xl flex items-center justify-center"
               style={{ background: 'rgba(255,255,255,0.15)' }}
             >
-              <Leaf className="w-4 h-4 text-white" />
+              <Globe className="w-4 h-4 text-white" />
             </div>
             <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>
               SDG Co-op Learning Portal

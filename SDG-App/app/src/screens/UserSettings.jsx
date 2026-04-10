@@ -26,6 +26,7 @@ const UserSettings = () => {
   const [saving, setSaving] = React.useState(false);
   const DISPLAY_NAME_MAX_LENGTH = 20;
   const COURSE_CODE_MAX_LENGTH = 10;
+  const DESCRIPTION_MAX_LENGTH = 1500;
 
   React.useEffect(() => {
     setName(user?.name || user?.username || "");
@@ -195,7 +196,10 @@ const UserSettings = () => {
               className="auth-input min-h-28 resize-y"
               placeholder="Add a short description about yourself..."
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              maxLength={DESCRIPTION_MAX_LENGTH}
+              onChange={(e) =>
+                setDescription(e.target.value.slice(0, DESCRIPTION_MAX_LENGTH))
+              }
             />
           </div>
 

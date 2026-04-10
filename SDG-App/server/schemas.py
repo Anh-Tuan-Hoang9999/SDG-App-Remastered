@@ -209,6 +209,7 @@ class ProgressOut(BaseModel):
     completed_quiz: bool
     reflection_count: int
     viewed_resources: Optional[Any] = None
+    last_reset_date: Optional[str] = None
 
     class Config:
         from_attributes = True

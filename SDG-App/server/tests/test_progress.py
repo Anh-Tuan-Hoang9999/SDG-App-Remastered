@@ -1,5 +1,8 @@
 """Tests for /api/progress endpoints."""
+from datetime import date, timedelta
 from uuid import uuid4
+
+from models.user_progress import UserProgress
 
 
 def make_user(client):
@@ -59,3 +62,31 @@ def test_patch_progress_partial_update_preserves_other_fields(client):
     assert r["completed_quiz"]      is True   # preserved
     assert r["reflection_count"]    == 3       # preserved
     assert r["completed_card_sort"] is True   # newly set
+
+
+def test_get_progress_resets_stale_daily_progress(client, db):
+    user_id = make_user(client)
+    client.patch(
+        f"/api/progress/{user_id}",
+        json={
+            "completed_quiz": True,
+            "completed_card_sort": True,
+            "viewed_sdg_cards": [1],
+            "viewed_resources": ["resources"],
+            "reflection_count": 2,
+        },
+    )
+
+    row = db.query(UserProgress).filter(UserProgress.user_id == user_id).first()
+    row.last_reset_date = (date.today() - timedelta(days=1)).isoformat()
+    db.commit()
+
+    r = client.get(f"/api/progress/{user_id}")
+    assert r.status_code == 200
+    data = r.json()
+    assert data["completed_quiz"] is False
+    assert data["completed_card_sort"] is False
+    assert data["viewed_sdg_cards"] is None
+    assert data["viewed_resources"] is None
+    assert data["reflection_count"] == 0
+    assert data["last_reset_date"] == date.today().isoformat()

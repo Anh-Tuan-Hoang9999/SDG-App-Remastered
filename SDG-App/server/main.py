@@ -27,9 +27,22 @@ def _ensure_sqlite_user_profile_columns() -> None:
             conn.execute(text("ALTER TABLE users ADD COLUMN avatar_url TEXT"))
 
 
+def _ensure_sqlite_user_progress_columns() -> None:
+    if engine.url.get_backend_name() != "sqlite":
+        return
+
+    with engine.begin() as conn:
+        existing_cols = {
+            row[1] for row in conn.execute(text("PRAGMA table_info(user_progress)")).fetchall()
+        }
+        if "last_reset_date" not in existing_cols:
+            conn.execute(text("ALTER TABLE user_progress ADD COLUMN last_reset_date VARCHAR(10)"))
+
+
 # Auto-create all tables on startup
 Base.metadata.create_all(bind=engine)
 _ensure_sqlite_user_profile_columns()
+_ensure_sqlite_user_progress_columns()
 
 app = FastAPI(title="SDG App API", version="2.0.0")
 

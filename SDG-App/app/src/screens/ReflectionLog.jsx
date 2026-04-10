@@ -161,10 +161,21 @@ export default function ReflectionLog() {
         createdCount += 1;
       }
 
-      // Keep user_progress reflection_count in sync for coordinator/progress views.
+      // Keep user_progress reflection_count in sync for today's progress.
       const allReflectionsRes = await client.get(`/api/reflections/${user.id}`);
-      const totalReflections = Array.isArray(allReflectionsRes.data) ? allReflectionsRes.data.length : 0;
-      await client.patch(`/api/progress/${user.id}`, { reflection_count: totalReflections });
+      const today = new Date();
+      const isSameDay = (isoLike) => {
+        const d = new Date(isoLike);
+        return (
+          d.getFullYear() === today.getFullYear() &&
+          d.getMonth() === today.getMonth() &&
+          d.getDate() === today.getDate()
+        );
+      };
+      const todayReflections = Array.isArray(allReflectionsRes.data)
+        ? allReflectionsRes.data.filter((r) => r?.created_at && isSameDay(r.created_at)).length
+        : 0;
+      await client.patch(`/api/progress/${user.id}`, { reflection_count: todayReflections });
 
       await loadReflectionsFromDb();
       setSavedAt(new Date());

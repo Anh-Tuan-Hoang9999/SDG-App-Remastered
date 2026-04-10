@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,16 +23,39 @@ def _parse(row: UserProgress) -> dict:
         "completed_quiz":      row.completed_quiz,
         "reflection_count":    row.reflection_count,
         "viewed_resources":    json.loads(row.viewed_resources)  if row.viewed_resources   else None,
+        "last_reset_date":     row.last_reset_date,
     }
+
+
+def _today_key() -> str:
+    return date.today().isoformat()
+
+
+def _reset_daily_fields(row: UserProgress) -> None:
+    row.viewed_sdg_cards = None
+    row.completed_card_sort = False
+    row.completed_quiz = False
+    row.reflection_count = 0
+    row.viewed_resources = None
 
 
 def _get_or_create(user_id: int, db: Session) -> UserProgress:
     row = db.query(UserProgress).filter(UserProgress.user_id == user_id).first()
+    today = _today_key()
+
     if not row:
-        row = UserProgress(user_id=user_id)
+        row = UserProgress(user_id=user_id, last_reset_date=today)
         db.add(row)
         db.commit()
         db.refresh(row)
+        return row
+
+    if row.last_reset_date != today:
+        _reset_daily_fields(row)
+        row.last_reset_date = today
+        db.commit()
+        db.refresh(row)
+
     return row
 
 

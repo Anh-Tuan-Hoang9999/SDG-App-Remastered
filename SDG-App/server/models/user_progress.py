@@ -1,5 +1,5 @@
 from db.database import Base
-from sqlalchemy import Column, Integer, ForeignKey, Boolean, Text
+from sqlalchemy import Column, Integer, ForeignKey, Boolean, Text, String
 from sqlalchemy.orm import relationship
 
 
@@ -13,5 +13,6 @@ class UserProgress(Base):
     completed_quiz      = Column(Boolean, default=False, nullable=False)
     reflection_count    = Column(Integer, default=0, nullable=False)
     viewed_resources    = Column(Text, nullable=True)    # JSON array of resource IDs viewed
+    last_reset_date     = Column(String(10), nullable=True)  # YYYY-MM-DD
 
     user = relationship("User", back_populates="progress")

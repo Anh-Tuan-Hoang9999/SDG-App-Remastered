@@ -53,6 +53,16 @@ const RESOURCES = [
       { title: "SDG Portal Support",           desc: "Technical support for this portal: portal-support@university.ca",             url: "mailto:portal-support@university.ca", tag: "Support",     isContact: true },
     ],
   },
+  {
+    section: "Dev Contact Information",
+    icon: Mail,
+    iconBg: '#EEF2EE',
+    iconColor: '#36656B',
+    items: [
+      { title: "Anh Tuan Hoang", desc: "Developer of this website : anhtuanhoang@trentu.ca", url: "mailto:anhtuanhoang@trentu.ca", tag: "Developer", isContact: true },
+      { title: "Ahmed Rashed",   desc: "Developer of this website : ahmedrashed@trenu.ca",   url: "mailto:ahmedrashed@trenu.ca",   tag: "Developer", isContact: true },
+    ],
+  },
 ];
 
 // Pill for resource tags

@@ -24,6 +24,7 @@ const UserSettings = () => {
   const [successMessage, setSuccessMessage] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
   const [saving, setSaving] = React.useState(false);
+  const DISPLAY_NAME_MAX_LENGTH = 20;
   const COURSE_CODE_MAX_LENGTH = 10;
 
   React.useEffect(() => {
@@ -162,7 +163,10 @@ const UserSettings = () => {
               type="text"
               placeholder="Your display name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              maxLength={DISPLAY_NAME_MAX_LENGTH}
+              onChange={(e) =>
+                setName(e.target.value.slice(0, DISPLAY_NAME_MAX_LENGTH))
+              }
               autoComplete="name"
             />
           </div>

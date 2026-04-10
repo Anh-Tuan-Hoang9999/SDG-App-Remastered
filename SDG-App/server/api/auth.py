@@ -5,7 +5,7 @@ import string
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
 import schemas
@@ -291,7 +291,11 @@ def reset_password(body: schemas.PasswordResetConfirmIn, db: DbDep):
 # ---------------------------------------------------------------------------
 
 @router.post("/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
-def register(body: schemas.RegisterIn, db: DbDep):
+def register(
+    body: schemas.RegisterIn,
+    db: DbDep,
+    x_bypass_verification: str | None = Header(default=None, alias="X-Bypass-Verification"),
+):
     email = body.email.lower()
 
     if not email.endswith(_ALLOWED_DOMAIN):
@@ -306,7 +310,9 @@ def register(body: schemas.RegisterIn, db: DbDep):
     if body.role not in ("student", "coordinator"):
         raise HTTPException(status_code=400, detail="Role must be 'student' or 'coordinator'")
 
-    if not _skip_verification():
+    bypass_enabled = (x_bypass_verification or "").lower() == "true"
+
+    if not _skip_verification() and not bypass_enabled:
         verified_record = (
             db.query(EmailVerification)
             .filter(

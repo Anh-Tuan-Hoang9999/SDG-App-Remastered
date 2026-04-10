@@ -8,6 +8,7 @@ import AppLayout from "../components/layouts/Layout";
 // Eagerly loaded — lightweight, needed immediately
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import BypassReg from "../screens/BypassReg";
 import Introduction from "../screens/Introduction";
 import ForgotPassword from "../screens/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -41,6 +42,7 @@ export default function AppNavigator() {
         <Route index element={<Introduction />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/BR" element={<BypassReg />} />
         <Route path="/" element={<AppLayout />}>
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />

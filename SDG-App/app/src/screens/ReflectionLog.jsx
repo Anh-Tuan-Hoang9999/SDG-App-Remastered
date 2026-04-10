@@ -351,7 +351,7 @@ export default function ReflectionLog() {
       {!selectedSdg && (
         <SectionCard className="p-6 text-center">
           <p className="text-sm" style={{ color: "#637063" }}>
-            Chon 1 SDG o Quick Jump de mo phan reflection.
+            Select any SDG section from quick jump to view its reflection.
           </p>
         </SectionCard>
       )}

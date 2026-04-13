@@ -193,7 +193,7 @@ export default function AppLayout() {
                     className="px-4 py-4 flex items-center gap-3"
                     style={{
                       background: isDark
-                        ? `linear-gradient(135deg, #102519 0%, ${NAV_GREEN} 55%, var(--app-accent-2, #57B4D8) 100%)`
+                        ? `linear-gradient(135deg, #102519 0%, #245239 55%, var(--app-accent-2, #57B4D8) 100%)`
                         : `linear-gradient(135deg, #1A3B2E 0%, ${NAV_GREEN} 100%)`,
                     }}
                   >

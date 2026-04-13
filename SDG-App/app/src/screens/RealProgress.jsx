@@ -240,13 +240,16 @@ export default function RealProgress() {
                   {/* Text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold" style={{ color: '#1A2E1A' }}>
+                      <span className="text-sm font-semibold" style={{ color: 'var(--app-text1)' }}>
                         {activity.title}
                       </span>
                       {/* Points pill */}
                       <span
                         className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: 'var(--app-muted)', color: '#5E9B7B' }}
+                        style={{
+                          background: 'color-mix(in srgb, var(--app-muted) 82%, var(--app-accent, #5EC88A) 18%)',
+                          color: 'color-mix(in srgb, var(--app-text1) 70%, var(--app-accent, #5EC88A) 30%)',
+                        }}
                       >
                         {activity.points} pts
                       </span>
@@ -254,7 +257,10 @@ export default function RealProgress() {
                       {done && (
                         <span
                           className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(74,138,112,0.16)', color: '#6AAF8A' }}
+                          style={{
+                            background: 'color-mix(in srgb, var(--app-muted) 70%, var(--app-accent, #5EC88A) 30%)',
+                            color: 'var(--app-text1)',
+                          }}
                         >
                           Done
                         </span>
@@ -269,7 +275,11 @@ export default function RealProgress() {
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 transition-all active:scale-95"
-                        style={{ background: 'var(--app-muted)', color: '#5E9B7B', border: '1px solid var(--app-border)' }}
+                        style={{
+                          background: 'color-mix(in srgb, var(--app-muted) 76%, var(--app-accent, #5EC88A) 24%)',
+                          color: 'var(--app-text1)',
+                          border: '1px solid color-mix(in srgb, var(--app-border) 72%, var(--app-accent, #5EC88A) 28%)',
+                        }}
                       >
                         Go <ChevronRight className="w-3 h-3" />
                       </button>

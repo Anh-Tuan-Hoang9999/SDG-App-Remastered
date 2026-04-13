@@ -90,7 +90,7 @@ const UserSettings = () => {
         <button
           onClick={handleBack}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
-          style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+          style={{ background: "var(--app-muted)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
         >
           <svg
             width="16"
@@ -106,10 +106,10 @@ const UserSettings = () => {
           </svg>
         </button>
         <div>
-          <h1 className="text-xl font-bold" style={{ color: "#1A2E1A" }}>
+          <h1 className="text-xl font-bold" style={{ color: "var(--app-text1)" }}>
             Edit Profile
           </h1>
-          <p className="text-xs" style={{ color: "#637063" }}>
+          <p className="text-xs" style={{ color: "var(--app-text2)" }}>
             Update your account information
           </p>
         </div>
@@ -118,7 +118,7 @@ const UserSettings = () => {
       <form onSubmit={handleSave}>
         <div
           className="rounded-2xl p-6 mb-5 flex flex-col items-center gap-3"
-          style={{ background: "#fff", boxShadow: "0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD" }}
+          style={{ background: "var(--app-card)", boxShadow: "var(--app-shadow-card)", border: "1px solid var(--app-border)" }}
         >
           <ProfilePicture
             src={avatarUrl}
@@ -128,24 +128,24 @@ const UserSettings = () => {
             onFileChange={handleImageFileChange}
           />
           <div className="text-center">
-            <p className="text-sm font-semibold" style={{ color: "#1A2E1A" }}>
+            <p className="text-sm font-semibold" style={{ color: "var(--app-text1)" }}>
               {name || "Student"}
             </p>
-            <p className="text-xs" style={{ color: "#637063" }}>{user?.email}</p>
+            <p className="text-xs" style={{ color: "var(--app-text2)" }}>{user?.email}</p>
           </div>
-          <p className="text-xs text-center" style={{ color: "#9BAA9B" }}>
+          <p className="text-xs text-center" style={{ color: "var(--app-text3)" }}>
             Choose a new image here. It will be saved when you click Save Changes.
           </p>
           <button
             type="button"
             onClick={handleResetAvatar}
             className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all active:scale-95"
-            style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+            style={{ background: "var(--app-muted)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
           >
             Reset to Default Photo
           </button>
           {selectedImageFile && (
-            <p className="text-xs font-medium" style={{ color: "#36656B" }}>
+            <p className="text-xs font-medium" style={{ color: "#5E9B7B" }}>
               Selected: {selectedImageFile.name}
             </p>
           )}
@@ -153,10 +153,10 @@ const UserSettings = () => {
 
         <div
           className="rounded-2xl p-6 flex flex-col gap-5"
-          style={{ background: "#fff", boxShadow: "0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD" }}
+          style={{ background: "var(--app-card)", boxShadow: "var(--app-shadow-card)", border: "1px solid var(--app-border)" }}
         >
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
               Display Name
             </label>
             <input
@@ -170,14 +170,14 @@ const UserSettings = () => {
               }
               autoComplete="name"
             />
-            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+            <p className="text-xs" style={{ color: "var(--app-text3)" }}>
               Max {DISPLAY_NAME_MAX_LENGTH} characters ({name.length}/
               {DISPLAY_NAME_MAX_LENGTH})
             </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
               Course Code
             </label>
             <input
@@ -190,14 +190,14 @@ const UserSettings = () => {
                 setCourseCode(e.target.value.slice(0, COURSE_CODE_MAX_LENGTH))
               }
             />
-            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+            <p className="text-xs" style={{ color: "var(--app-text3)" }}>
               Max {COURSE_CODE_MAX_LENGTH} characters ({courseCode.length}/
               {COURSE_CODE_MAX_LENGTH})
             </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
               Description
             </label>
             <textarea
@@ -209,14 +209,14 @@ const UserSettings = () => {
                 setDescription(e.target.value.slice(0, DESCRIPTION_MAX_LENGTH))
               }
             />
-            <p className="text-xs" style={{ color: "#9BAA9B" }}>
+            <p className="text-xs" style={{ color: "var(--app-text3)" }}>
               Max {DESCRIPTION_MAX_LENGTH} characters ({description.length}/
               {DESCRIPTION_MAX_LENGTH})
             </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
               Email Address
             </label>
             <input
@@ -226,7 +226,7 @@ const UserSettings = () => {
               disabled
               style={{ opacity: 0.6, cursor: "not-allowed" }}
             />
-            <p className="text-xs" style={{ color: "#9BAA9B" }}>Email cannot be changed</p>
+            <p className="text-xs" style={{ color: "var(--app-text3)" }}>Email cannot be changed</p>
           </div>
 
           {successMessage && (

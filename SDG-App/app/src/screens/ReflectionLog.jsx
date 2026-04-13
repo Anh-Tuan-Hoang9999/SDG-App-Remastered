@@ -47,7 +47,7 @@ const SectionCard = ({ children, className = "", ...props }) => (
   <div
     {...props}
     className={`bg-white rounded-2xl ${className}`}
-    style={{ border: "1px solid #DDE6DD", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}
+    style={{ border: "1px solid var(--app-border)", boxShadow: "var(--app-shadow-card)" }}
   >
     {children}
   </div>
@@ -285,15 +285,15 @@ export default function ReflectionLog() {
           <div className="flex items-center gap-2 mb-1">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: "#EEF2EE" }}
+              style={{ background: "var(--app-muted)" }}
             >
-              <FileText className="w-4 h-4" style={{ color: "#36656B" }} />
+              <FileText className="w-4 h-4" style={{ color: "#4A8A70" }} />
             </div>
-            <h1 className="text-2xl font-bold" style={{ color: "#1A2E1A" }}>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--app-text1)" }}>
               Reflection Log
             </h1>
           </div>
-          <p className="text-sm" style={{ color: "#637063" }}>
+          <p className="text-sm" style={{ color: "var(--app-text2)" }}>
             Pick an SDG from Quick Jump, then write your reflection for that topic below.
           </p>
         </div>
@@ -311,7 +311,7 @@ export default function ReflectionLog() {
 
       <div
         className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-xs mb-4"
-        style={{ background: "rgba(54,101,107,0.08)", border: "1px solid rgba(54,101,107,0.18)", color: "#36656B" }}
+        style={{ background: "rgba(74,138,112,0.10)", border: "1px solid rgba(74,138,112,0.22)", color: "var(--app-text2)" }}
       >
         <span>
           Only one SDG reflection editor is shown at a time to keep this page clean.
@@ -319,25 +319,25 @@ export default function ReflectionLog() {
       </div>
 
       {savedAt && (
-        <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
+        <p className="text-xs mb-4" style={{ color: "var(--app-text3)" }}>
           Saved at {savedAt.toLocaleTimeString()}
         </p>
       )}
 
       {loadingReflections && (
-        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}>
+        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "var(--app-muted)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}>
           Loading reflections from database...
         </div>
       )}
 
       {saveMessage && (
-        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "#F7FAF7", color: "#2F5A3F", border: "1px solid #DDE6DD" }}>
+        <div className="text-xs mb-4 px-3 py-2 rounded-lg" style={{ background: "rgba(74,138,112,0.10)", color: "#6AAF8A", border: "1px solid var(--app-border)" }}>
           {saveMessage}
         </div>
       )}
 
       <SectionCard className="p-4 mb-6">
-        <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#9BAA9B" }}>
+        <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--app-text3)" }}>
           Quick Jump
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -361,7 +361,7 @@ export default function ReflectionLog() {
 
       {!selectedSdg && (
         <SectionCard className="p-6 text-center">
-          <p className="text-sm" style={{ color: "#637063" }}>
+          <p className="text-sm" style={{ color: "var(--app-text2)" }}>
             Select any SDG section from quick jump to view its reflection.
           </p>
         </SectionCard>
@@ -369,15 +369,15 @@ export default function ReflectionLog() {
 
       {selectedSdg && (
         <SectionCard className="overflow-hidden" id={`sdg-reflection-${selectedSdg.number}`}>
-          <div className="px-4 sm:px-5 py-4" style={{ borderBottom: "1px solid #EEF2EE" }}>
+          <div className="px-4 sm:px-5 py-4" style={{ borderBottom: "1px solid var(--app-border)" }}>
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: selectedSdg.colour }}>
                 SDG {selectedSdg.number}
               </p>
-              <h3 className="text-sm sm:text-base font-bold leading-tight" style={{ color: "#1A2E1A" }}>
+              <h3 className="text-sm sm:text-base font-bold leading-tight" style={{ color: "var(--app-text1)" }}>
                 {selectedSdg.title}
               </h3>
-              <p className="text-xs mt-1" style={{ color: "#637063" }}>
+              <p className="text-xs mt-1" style={{ color: "var(--app-text2)" }}>
                 {selectedSdg.desc}
               </p>
             </div>
@@ -386,7 +386,7 @@ export default function ReflectionLog() {
           <div className="px-4 sm:px-5 py-4">
             {!showPractice && !showReading && (
               <>
-                <label className="text-xs font-semibold uppercase tracking-wide mb-2 block" style={{ color: "#637063" }}>
+                <label className="text-xs font-semibold uppercase tracking-wide mb-2 block" style={{ color: "var(--app-text2)" }}>
                   Reflection for {selectedSdg.title}
                 </label>
 
@@ -398,7 +398,7 @@ export default function ReflectionLog() {
                 />
 
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <p className="text-xs" style={{ color: "#9BAA9B" }}>
+                  <p className="text-xs" style={{ color: "var(--app-text3)" }}>
                     {selectedText.trim().length} characters
                   </p>
 
@@ -407,7 +407,7 @@ export default function ReflectionLog() {
                       type="button"
                       onClick={handleReadingClick}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95"
-                      style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                      style={{ background: "var(--app-muted)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
                     >
                       Reading
                     </button>
@@ -416,7 +416,7 @@ export default function ReflectionLog() {
                       type="button"
                       onClick={handlePracticeClick}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95"
-                      style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                      style={{ background: "var(--app-muted)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
                     >
                       Practice
                     </button>
@@ -428,17 +428,17 @@ export default function ReflectionLog() {
             {showReading && (
               <div
                 className="p-4 rounded-xl"
-                style={{ background: "#F8FAF8", border: "1px solid #DDE6DD" }}
+                style={{ background: "var(--app-muted)", border: "1px solid var(--app-border)" }}
               >
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
                     Reading
                   </p>
                   <button
                     type="button"
                     onClick={handleReadingClick}
                     className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
-                    style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                    style={{ background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
                   >
                     Back to Reflection
                   </button>
@@ -452,7 +452,7 @@ export default function ReflectionLog() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block rounded-3xl px-5 py-4 transition-all active:scale-[0.99]"
-                      style={{ background: "#ECECEC", border: "1px solid #E2E2E2" }}
+                      style={{ background: "var(--app-card)", border: "1px solid var(--app-border)", boxShadow: "var(--app-shadow-card)" }}
                     >
                       <div className="flex items-center gap-4">
                         <BookOpen className="w-9 h-9 shrink-0" style={{ color: "#E73E45" }} />
@@ -460,7 +460,7 @@ export default function ReflectionLog() {
                           <p className="text-xs sm:text-sm uppercase tracking-wide font-semibold" style={{ color: "#E73E45" }}>
                             {reading.id} · Reading
                           </p>
-                          <p className="text-xl font-bold truncate" style={{ color: "#10233E" }}>
+                          <p className="text-xl font-bold truncate" style={{ color: "var(--app-text1)" }}>
                             {reading.title}
                           </p>
                         </div>
@@ -474,17 +474,17 @@ export default function ReflectionLog() {
             {showPractice && (
               <div
                 className="p-4 rounded-xl"
-                style={{ background: "#F8FAF8", border: "1px solid #DDE6DD" }}
+                style={{ background: "var(--app-muted)", border: "1px solid var(--app-border)" }}
               >
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#637063" }}>
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
                     Quiz Practice
                   </p>
                   <button
                     type="button"
                     onClick={handlePracticeClick}
                     className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
-                    style={{ background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }}
+                    style={{ background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
                   >
                     Back to Reflection
                   </button>
@@ -503,7 +503,7 @@ export default function ReflectionLog() {
                       style={
                         selectedQuizPosition === quiz.position
                           ? { background: selectedSdg.colour, color: "#fff", border: `1px solid ${selectedSdg.colour}` }
-                          : { background: "#EEF2EE", color: "#36656B", border: "1px solid #DDE6DD" }
+                          : { background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }
                       }
                     >
                       {quiz.title}
@@ -512,7 +512,7 @@ export default function ReflectionLog() {
                 </div>
 
                 {quizLoading && (
-                  <p className="text-sm" style={{ color: "#637063" }}>
+                  <p className="text-sm" style={{ color: "var(--app-text2)" }}>
                     Loading quiz...
                   </p>
                 )}
@@ -527,7 +527,7 @@ export default function ReflectionLog() {
                 )}
 
                 {!quizLoading && !quizError && quizData && (
-                  <div className="rounded-xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E5ECE5" }}>
+                  <div className="rounded-xl overflow-hidden" style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}>
                     <MultiChoiceQuiz
                       data={quizData}
                       activityId={resolvedActivityId ?? undefined}

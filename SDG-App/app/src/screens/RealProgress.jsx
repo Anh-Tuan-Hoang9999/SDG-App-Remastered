@@ -76,7 +76,7 @@ function isComplete(activity, progress) {
 function ProgressBar({ value }) {
   const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
   return (
-    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#EEF2EE' }}>
+    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--app-muted)' }}>
       <div
         className="h-full rounded-full transition-all duration-500"
         style={{ width: `${safeValue}%`, background: '#36656B' }}
@@ -119,13 +119,13 @@ export default function RealProgress() {
       <div className="flex items-center gap-2 mb-1">
         <div
           className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ background: '#EEF2EE' }}
+          style={{ background: 'var(--app-muted)' }}
         >
-          <TrendingUp className="w-4 h-4" style={{ color: '#36656B' }} />
+          <TrendingUp className="w-4 h-4" style={{ color: '#4A8A70' }} />
         </div>
-        <h1 className="text-2xl font-bold" style={{ color: '#1A2E1A' }}>Progress Tracker</h1>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--app-text1)' }}>Progress Tracker</h1>
       </div>
-      <p className="text-sm mb-6" style={{ color: '#637063' }}>
+      <p className="text-sm mb-6" style={{ color: 'var(--app-text2)' }}>
         Your real-time completion status across all core co-op learning activities.
       </p>
 
@@ -163,11 +163,11 @@ export default function RealProgress() {
               <div
                 key={label}
                 className="rounded-2xl p-4 text-center"
-                style={{ background: '#fff', border: '1px solid #DDE6DD', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+                style={{ background: 'var(--app-card)', border: '1px solid var(--app-border)', boxShadow: 'var(--app-shadow-card)' }}
               >
                 <div className="text-2xl font-bold" style={{ color }}>{value}</div>
-                <div className="text-xs mt-0.5" style={{ color: '#9BAA9B' }}>{sub}</div>
-                <div className="text-xs font-medium mt-0.5" style={{ color: '#1A2E1A' }}>{label}</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--app-text3)' }}>{sub}</div>
+                <div className="text-xs font-medium mt-0.5" style={{ color: 'var(--app-text1)' }}>{label}</div>
               </div>
             ))}
           </div>
@@ -175,14 +175,14 @@ export default function RealProgress() {
           {/* ── Overall progress bars ── */}
           <div
             className="rounded-2xl p-5 mb-6"
-            style={{ background: '#fff', border: '1px solid #DDE6DD', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+            style={{ background: 'var(--app-card)', border: '1px solid var(--app-border)', boxShadow: 'var(--app-shadow-card)' }}
           >
-            <h2 className="text-sm font-bold mb-4" style={{ color: '#1A2E1A' }}>Overall Progress</h2>
+            <h2 className="text-sm font-bold mb-4" style={{ color: 'var(--app-text1)' }}>Overall Progress</h2>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
-                  <span style={{ color: '#637063' }}>Activities Completed</span>
-                  <span className="font-semibold" style={{ color: '#1A2E1A' }}>
+                  <span style={{ color: 'var(--app-text2)' }}>Activities Completed</span>
+                  <span className="font-semibold" style={{ color: 'var(--app-text1)' }}>
                     {completedActivities.length}/{ACTIVITIES.length}
                   </span>
                 </div>
@@ -190,8 +190,8 @@ export default function RealProgress() {
               </div>
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
-                  <span style={{ color: '#637063' }}>Points Earned</span>
-                  <span className="font-semibold" style={{ color: '#1A2E1A' }}>
+                  <span style={{ color: 'var(--app-text2)' }}>Points Earned</span>
+                  <span className="font-semibold" style={{ color: 'var(--app-text1)' }}>
                     {totalPoints}/{maxPoints} pts
                   </span>
                 </div>
@@ -201,7 +201,7 @@ export default function RealProgress() {
           </div>
 
           {/* ── Activity checklist ── */}
-          <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#9BAA9B' }}>
+          <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--app-text3)' }}>
             Activity Checklist
           </h2>
           <div className="space-y-3">
@@ -213,25 +213,25 @@ export default function RealProgress() {
                   key={activity.key}
                   className="flex items-center gap-4 p-4 rounded-2xl transition-colors"
                   style={{
-                    background: done ? 'rgba(54,101,107,0.05)' : '#fff',
-                    border: done ? '1px solid rgba(54,101,107,0.25)' : '1px solid #DDE6DD',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    background: done ? 'rgba(74,138,112,0.10)' : 'var(--app-card)',
+                    border: done ? '1px solid rgba(74,138,112,0.28)' : '1px solid var(--app-border)',
+                    boxShadow: 'var(--app-shadow-card)',
                   }}
                 >
                   {/* Check / circle icon */}
                   <div className="flex-shrink-0">
                     {done
                       ? <CheckCircle2 className="w-5 h-5" style={{ color: '#36656B' }} />
-                      : <Circle className="w-5 h-5" style={{ color: '#DDE6DD' }} />
+                      : <Circle className="w-5 h-5" style={{ color: 'var(--app-border)' }} />
                     }
                   </div>
 
                   {/* Activity icon square */}
                   <div
                     className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: done ? 'rgba(54,101,107,0.12)' : '#EEF2EE' }}
+                    style={{ background: done ? 'rgba(74,138,112,0.16)' : 'var(--app-muted)' }}
                   >
-                    <Icon className="w-4 h-4" style={{ color: done ? '#36656B' : '#637063' }} />
+                    <Icon className="w-4 h-4" style={{ color: done ? '#5E9B7B' : 'var(--app-text2)' }} />
                   </div>
 
                   {/* Text */}
@@ -243,7 +243,7 @@ export default function RealProgress() {
                       {/* Points pill */}
                       <span
                         className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: '#EEF2EE', color: '#36656B' }}
+                        style={{ background: 'var(--app-muted)', color: '#5E9B7B' }}
                       >
                         {activity.points} pts
                       </span>
@@ -251,13 +251,13 @@ export default function RealProgress() {
                       {done && (
                         <span
                           className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(54,101,107,0.12)', color: '#36656B' }}
+                          style={{ background: 'rgba(74,138,112,0.16)', color: '#6AAF8A' }}
                         >
                           Done
                         </span>
                       )}
                     </div>
-                    <p className="text-xs mt-0.5" style={{ color: '#637063' }}>{activity.desc}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--app-text2)' }}>{activity.desc}</p>
                   </div>
 
                   {/* Go button */}
@@ -266,7 +266,7 @@ export default function RealProgress() {
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 transition-all active:scale-95"
-                        style={{ background: '#EEF2EE', color: '#36656B', border: '1px solid #DDE6DD' }}
+                        style={{ background: 'var(--app-muted)', color: '#5E9B7B', border: '1px solid var(--app-border)' }}
                       >
                         Go <ChevronRight className="w-3 h-3" />
                       </button>

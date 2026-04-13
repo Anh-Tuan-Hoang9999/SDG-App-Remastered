@@ -11,11 +11,11 @@ const SDG_COLOURS = [
 
 const InfoRow = ({ label, value }) => (
   <div className="flex flex-col gap-0.5">
-    <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#637063' }}>
+    <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--app-text2)' }}>
       {label}
     </span>
-    <span className="text-sm font-medium" style={{ color: '#1A2E1A' }}>
-      {value || <span className="italic" style={{ color: '#9BAA9B' }}>Not set</span>}
+    <span className="text-sm font-medium" style={{ color: 'var(--app-text1)' }}>
+      {value || <span className="italic" style={{ color: 'var(--app-text3)' }}>Not set</span>}
     </span>
   </div>
 );
@@ -25,7 +25,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
     {/* Header card */}
     <div
       className="rounded-3xl mb-5"
-      style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 0 0 1px #DDE6DD', background: '#fff' }}
+      style={{ boxShadow: 'var(--app-shadow-dropdown)', background: 'var(--app-card)' }}
     >
       {/* Gradient banner */}
       <div
@@ -49,7 +49,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
             <button
               onClick={() => navigate('/settings')}
               className="px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95"
-              style={{ background: '#EEF2EE', color: '#36656B', border: '1px solid #DDE6DD' }}
+              style={{ background: 'var(--app-muted)', color: '#5E9B7B', border: '1px solid var(--app-border)' }}
             >
               Edit Profile
             </button>
@@ -57,10 +57,10 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
         </div>
 
         <div className="mb-5">
-          <h2 className="text-xl font-bold" style={{ color: '#1A2E1A' }}>
+          <h2 className="text-xl font-bold" style={{ color: 'var(--app-text1)' }}>
             {user.name || user.username || user.full_name}
           </h2>
-          <p className="text-sm mt-0.5" style={{ color: '#637063' }}>
+          <p className="text-sm mt-0.5" style={{ color: 'var(--app-text2)' }}>
             {roleLabel} · {user.email}
           </p>
         </div>
@@ -76,10 +76,10 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
     {/* Description card */}
     <div
       className="rounded-2xl p-5 mb-5"
-      style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD', background: '#fff' }}
+      style={{ boxShadow: 'var(--app-shadow-card)', border: '1px solid var(--app-border)', background: 'var(--app-card)' }}
     >
-      <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: '#637063' }}>About</h3>
-      <p className="text-sm leading-relaxed" style={{ color: user.description ? '#1A2E1A' : '#9BAA9B' }}>
+      <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: 'var(--app-text2)' }}>About</h3>
+      <p className="text-sm leading-relaxed" style={{ color: user.description ? 'var(--app-text1)' : 'var(--app-text3)' }}>
         {user.description || 'No description added yet. Click "Edit Profile" to add one.'}
       </p>
     </div>
@@ -88,7 +88,7 @@ const ProfileCard = ({ user, navigate, roleLabel, extraSection }) => (
     {extraSection && (
       <div
         className="rounded-2xl p-5"
-        style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px #DDE6DD', background: '#fff' }}
+        style={{ boxShadow: 'var(--app-shadow-card)', border: '1px solid var(--app-border)', background: 'var(--app-card)' }}
       >
         {extraSection}
       </div>
@@ -117,7 +117,7 @@ const Profile = () => {
       </h3>
       <div
         className="rounded-xl flex items-center justify-center py-8 text-sm"
-        style={{ background: '#F4F7F5', color: '#9BAA9B', border: '1px dashed #DDE6DD' }}
+        style={{ background: 'var(--app-muted)', color: 'var(--app-text3)', border: '1px dashed var(--app-border)' }}
       >
         Student list coming soon
       </div>
@@ -126,12 +126,12 @@ const Profile = () => {
 
   const devSection = (
     <>
-      <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: '#637063' }}>
+      <h3 className="text-sm font-bold mb-3 uppercase tracking-wide" style={{ color: 'var(--app-text2)' }}>
         Developer Tools
       </h3>
       <div
         className="rounded-xl flex items-center justify-center py-8 text-sm"
-        style={{ background: '#F4F7F5', color: '#9BAA9B', border: '1px dashed #DDE6DD' }}
+        style={{ background: 'var(--app-muted)', color: 'var(--app-text3)', border: '1px dashed var(--app-border)' }}
       >
         Admin tools coming soon
       </div>
@@ -152,7 +152,7 @@ const Profile = () => {
   const extraSection = sectionMap[userType] ?? null;
 
   return (
-    <div style={{ background: '#F4F7F5', minHeight: '100%' }}>
+    <div style={{ background: 'var(--app-bg)', minHeight: '100%' }}>
       <ProfileCard
         user={user}
         navigate={navigate}

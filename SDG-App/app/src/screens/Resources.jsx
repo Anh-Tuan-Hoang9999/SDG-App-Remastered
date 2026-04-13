@@ -10,8 +10,8 @@ const RESOURCES = [
   {
     section: "SDG Learning Resources",
     icon: Globe,
-    iconBg: '#EEF2EE',
-    iconColor: '#36656B',
+    iconBg: 'var(--app-muted)',
+    iconColor: '#4A8A70',
     items: [
       { title: "UN SDGs Official Site",     desc: "The official United Nations page for the 17 Sustainable Development Goals.", url: "https://sdgs.un.org/goals",                    tag: "External"  },
       { title: "SDG Academy",               desc: "Online courses and learning materials about the global goals.",              url: "https://sdgacademy.org",                      tag: "Courses"   },
@@ -22,8 +22,8 @@ const RESOURCES = [
   {
     section: "Student Co-op Resources",
     icon: GraduationCap,
-    iconBg: '#FFF8EC',
-    iconColor: '#A07C28',
+    iconBg: 'rgba(200,169,81,0.12)',
+    iconColor: '#C8A951',
     items: [
       { title: "Student Experience Portal", desc: "Access your co-op placement details, timesheets, and evaluations.",                        url: "#", tag: "Portal",   mock: true },
       { title: "Co-op Handbook (PDF)",      desc: "Complete guide for co-op students — expectations, policies, and best practices.",          url: "#", tag: "Document", mock: true },
@@ -45,8 +45,8 @@ const RESOURCES = [
   {
     section: "Coordinator Contact Information",
     icon: Phone,
-    iconBg: '#EEF2EE',
-    iconColor: '#36656B',
+    iconBg: 'var(--app-muted)',
+    iconColor: '#4A8A70',
     items: [
       { title: "Dr. Sarah Mitchell",           desc: "Co-op Program Coordinator · sarah.mitchell@university.ca · Ext. 4201",        url: "mailto:sarah.mitchell@university.ca", tag: "Coordinator", isContact: true },
       { title: "Co-op Office — General",       desc: "coop@university.ca · (705) 748-1011 Ext. 7777 · Bata Library Room 104",       url: "mailto:coop@university.ca",           tag: "Office",      isContact: true },
@@ -56,8 +56,8 @@ const RESOURCES = [
   {
     section: "Dev Contact Information",
     icon: Mail,
-    iconBg: '#EEF2EE',
-    iconColor: '#36656B',
+    iconBg: 'var(--app-muted)',
+    iconColor: '#4A8A70',
     items: [
       { title: "Anh Tuan Hoang", desc: "Developer of this website : anhtuanhoang@trentu.ca", url: "mailto:anhtuanhoang@trentu.ca", tag: "Developer", isContact: true },
       { title: "Ahmed Rashed",   desc: "Developer of this website : ahmedrashed@trenu.ca",   url: "mailto:ahmedrashed@trenu.ca",   tag: "Developer", isContact: true },
@@ -68,8 +68,8 @@ const RESOURCES = [
 // Pill for resource tags
 const Tag = ({ children, variant = "default" }) => {
   const styles = {
-    default: { background: '#EEF2EE', color: '#36656B' },
-    mock:    { background: '#FFF8EC', color: '#A07C28' },
+    default: { background: 'var(--app-muted)', color: '#5E9B7B' },
+    mock:    { background: 'rgba(200,169,81,0.14)', color: '#C8A951' },
   };
   return (
     <span
@@ -99,27 +99,31 @@ export default function Resources() {
       <div className="flex items-center gap-2 mb-1">
         <div
           className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ background: '#EEF2EE' }}
+          style={{ background: 'var(--app-muted)' }}
         >
-          <Library className="w-4 h-4" style={{ color: '#36656B' }} />
+          <Library className="w-4 h-4" style={{ color: '#4A8A70' }} />
         </div>
-        <h1 className="text-2xl font-bold" style={{ color: '#1A2E1A' }}>Resources</h1>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--app-text1)' }}>Resources</h1>
       </div>
-      <p className="text-sm mb-5" style={{ color: '#637063' }}>
+      <p className="text-sm mb-5" style={{ color: 'var(--app-text2)' }}>
         Curated links and contacts to support your SDG co-op learning journey.
       </p>
 
       {/* ── Info banner ── */}
       <div
         className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-xs mb-6"
-        style={{ background: 'rgba(54,101,107,0.08)', border: '1px solid rgba(54,101,107,0.18)', color: '#36656B' }}
+        style={{
+          background: 'rgba(74,138,112,0.10)',
+          border: '1px solid rgba(74,138,112,0.22)',
+          color: 'var(--app-text2)',
+        }}
       >
-        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#5E9B7B' }} />
         <span>
-          <strong>Mock only:</strong> Links labelled{' '}
+          <strong style={{ color: 'var(--app-text1)' }}>Mock only:</strong> Links labelled{' '}
           <span
             className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mx-0.5"
-            style={{ background: '#FFF8EC', color: '#A07C28' }}
+            style={{ background: 'rgba(200,169,81,0.14)', color: '#C8A951' }}
           >
             Mock
           </span>{' '}
@@ -138,7 +142,7 @@ export default function Resources() {
               >
                 <SectionIcon className="w-4 h-4" style={{ color: iconColor }} />
               </div>
-              <h2 className="text-base font-bold" style={{ color: '#1A2E1A' }}>{section}</h2>
+              <h2 className="text-base font-bold" style={{ color: 'var(--app-text1)' }}>{section}</h2>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3">
@@ -150,30 +154,30 @@ export default function Resources() {
                   rel="noopener noreferrer"
                   className="block group rounded-2xl p-4 transition-all"
                   style={{
-                    background: '#fff',
-                    border: '1px solid #DDE6DD',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    background: 'var(--app-card)',
+                    border: '1px solid var(--app-border)',
+                    boxShadow: 'var(--app-shadow-card)',
                     cursor: item.url === "#" ? 'default' : 'pointer',
                   }}
                   onClick={item.url === "#" ? (e) => e.preventDefault() : undefined}
-                  onMouseEnter={e => { if (item.url !== "#") e.currentTarget.style.boxShadow = '0 4px 16px rgba(54,101,107,0.12)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; }}
+                  onMouseEnter={e => { if (item.url !== "#") e.currentTarget.style.boxShadow = '0 4px 16px rgba(74,138,112,0.16)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--app-shadow-card)'; }}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                        <span className="text-sm font-semibold" style={{ color: '#1A2E1A' }}>
+                        <span className="text-sm font-semibold" style={{ color: 'var(--app-text1)' }}>
                           {item.title}
                         </span>
                         <Tag>{item.tag}</Tag>
                         {item.mock && <Tag variant="mock">Mock</Tag>}
                       </div>
-                      <p className="text-xs leading-relaxed" style={{ color: '#637063' }}>{item.desc}</p>
+                      <p className="text-xs leading-relaxed" style={{ color: 'var(--app-text2)' }}>{item.desc}</p>
                     </div>
                     <div className="flex-shrink-0 mt-0.5">
                       {item.isContact
-                        ? <Mail className="w-4 h-4" style={{ color: '#9BAA9B' }} />
-                        : <ExternalLink className="w-4 h-4" style={{ color: '#9BAA9B' }} />
+                        ? <Mail className="w-4 h-4" style={{ color: 'var(--app-text3)' }} />
+                        : <ExternalLink className="w-4 h-4" style={{ color: 'var(--app-text3)' }} />
                       }
                     </div>
                   </div>
@@ -187,13 +191,13 @@ export default function Resources() {
       {/* ── Campus info card ── */}
       <div
         className="mt-8 rounded-2xl p-5"
-        style={{ background: '#F4F7F5', border: '1px solid #DDE6DD' }}
+        style={{ background: 'var(--app-muted)', border: '1px solid var(--app-border)' }}
       >
         <div className="flex items-start gap-3">
-          <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#637063' }} />
+          <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--app-text2)' }} />
           <div>
-            <h3 className="text-sm font-bold mb-1" style={{ color: '#1A2E1A' }}>Co-op Office Location</h3>
-            <p className="text-xs leading-relaxed" style={{ color: '#637063' }}>
+            <h3 className="text-sm font-bold mb-1" style={{ color: 'var(--app-text1)' }}>Co-op Office Location</h3>
+            <p className="text-xs leading-relaxed" style={{ color: 'var(--app-text2)' }}>
               Bata Library, Room 104 · Trent University, 1600 West Bank Drive, Peterborough, Ontario K9L 0G2<br />
               Office Hours: Monday–Friday, 9:00 AM – 4:30 PM EST
             </p>

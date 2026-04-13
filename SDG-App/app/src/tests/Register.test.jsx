@@ -137,17 +137,11 @@ describe("Register screen", () => {
   });
 
   test("shows frontend error for non-trent email and does not submit", async () => {
-    render(
-      <MemoryRouter>
-        <Register />
-      </MemoryRouter>,
-    );
-
-    fillForm({ email: "student@example.com" });
-    fireEvent.click(screen.getByRole("button", { name: "Create Account" }));
-
+    renderRegister();
+    fillStep1({ email: "student@example.com" });
+    fireEvent.click(screen.getByRole("button", { name: "Send Verification Code" }));
     expect(
-      await screen.findByText("Please use your @trentu.ca email address.")
+      await screen.findByText(/only @trentu\.ca/i)
     ).toBeInTheDocument();
     expect(client.post).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();

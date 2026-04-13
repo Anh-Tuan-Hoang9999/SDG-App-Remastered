@@ -49,6 +49,68 @@
 }
 
 /* ============================================================
+   Theme tokens — overridden by html.dark for dark mode
+   ============================================================ */
+:root {
+  /* Scaffold surfaces */
+  --app-bg:           #F4F7F5;
+  --app-header:       #ffffff;
+  --app-card:         #ffffff;
+  --app-muted:        #EEF2EE;
+  --app-border:       #DDE6DD;
+  --app-footer:       #ffffff;
+  /* Text */
+  --app-text1:        #1A2E1A;
+  --app-text2:        #637063;
+  --app-text3:        #9BAA9B;
+  /* Nav / interactive */
+  --app-nav-hover:    #EEF2EE;
+  --app-nav-active-bg: rgba(54,101,107,0.10);
+  --app-nav-active-fg: #4A8A70;
+  --app-input-bg:     #ffffff;
+  --app-input-border: #DDE6DD;
+  --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.05);
+  --app-shadow-card:  0 1px 4px rgba(0,0,0,0.04);
+  --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.13), 0 0 0 1px #DDE6DD;
+}
+
+html.dark {
+  /* Intentional dark-green palette — matches the brand's deep forest tones */
+  --app-bg:           #0E1A10;
+  --app-header:       #111D14;
+  --app-card:         #162018;
+  --app-muted:        #1C2E1F;
+  --app-border:       #243527;
+  --app-footer:       #111D14;
+  --app-text1:        #DCE9DC;
+  --app-text2:        #7A9A7A;
+  --app-text3:        #4D6450;
+  --app-nav-hover:    #1A2C1D;
+  --app-nav-active-bg: rgba(74,138,112,0.18);
+  --app-nav-active-fg: #6AAF8A;
+  --app-input-bg:     #1A2B1D;
+  --app-input-border: #2A3D2D;
+  --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.25);
+  --app-shadow-card:  0 1px 4px rgba(0,0,0,0.20);
+  --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px #243527;
+
+  /* Override Tailwind color tokens so bg-background, text-foreground, etc. work */
+  --color-background:       #0E1A10;
+  --color-foreground:       #DCE9DC;
+  --color-card:             #162018;
+  --color-card-foreground:  #DCE9DC;
+  --color-surface:          #0E1A10;
+  --color-surface-card:     #162018;
+  --color-surface-muted:    #1C2E1F;
+  --color-muted:            #1C2E1F;
+  --color-muted-foreground: #7A9A7A;
+  --color-border:           #243527;
+  --color-text-primary:     #DCE9DC;
+  --color-text-muted:       #7A9A7A;
+  --color-text-faint:       #4D6450;
+}
+
+/* ============================================================
    Base reset
    ============================================================ */
 :root {
@@ -115,11 +177,11 @@ textarea {
 .auth-input {
   width: 100%;
   padding: 12px 14px;
-  background: #FFFFFF;
-  border: 1.5px solid var(--color-border);
+  background: var(--app-input-bg);
+  border: 1.5px solid var(--app-input-border);
   border-radius: 12px;
   font-size: 16px;
-  color: var(--color-foreground);
+  color: var(--app-text1);
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -128,7 +190,11 @@ textarea {
   box-shadow: 0 0 0 3px rgba(54, 101, 107, 0.12);
 }
 .auth-input::placeholder {
-  color: var(--color-text-faint);
+  color: var(--app-text3);
+}
+
+html.dark .auth-input:focus {
+  box-shadow: 0 0 0 3px rgba(74, 138, 112, 0.2);
 }
 
 /* ============================================================
@@ -150,7 +216,7 @@ textarea {
   padding: 9px 12px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-foreground);
+  color: var(--app-text1);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -158,7 +224,7 @@ textarea {
   transition: background 0.1s ease;
 }
 .dropdown-item:hover {
-  background: var(--color-surface);
+  background: var(--app-muted);
 }
 .dropdown-item.danger {
   color: var(--color-destructive);
@@ -166,11 +232,14 @@ textarea {
 .dropdown-item.danger:hover {
   background: #FEF2F2;
 }
+html.dark .dropdown-item.danger:hover {
+  background: rgba(220, 38, 38, 0.12);
+}
 .dropdown-item-icon {
   width: 26px;
   height: 26px;
   border-radius: 7px;
-  background: var(--color-muted);
+  background: var(--app-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,6 +247,9 @@ textarea {
 }
 .dropdown-item-icon.danger {
   background: #FEF2F2;
+}
+html.dark .dropdown-item-icon.danger {
+  background: rgba(220, 38, 38, 0.12);
 }
 
 /* Primary button */
@@ -202,4 +274,44 @@ textarea {
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ============================================================
+   Dark mode — broad coverage for screens that still use
+   hardcoded light values. These rules handle the most common
+   patterns without requiring per-screen edits.
+   ============================================================ */
+
+/* Page-level backgrounds */
+html.dark body {
+  background: var(--app-bg);
+  color: var(--app-text1);
+}
+
+/* White card surfaces (bg-white and common inline background patterns) */
+html.dark .bg-white {
+  background-color: var(--app-card) !important;
+}
+
+/* Auth page panels — keep the left gradient panel untouched;
+   make the right form panel dark */
+html.dark main[style*="background: \"#F4F7F5\""],
+html.dark main[style*="background: #F4F7F5"] {
+  background: var(--app-bg) !important;
+}
+
+/* Scrollbars */
+html.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: var(--app-bg);
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--app-border);
+  border-radius: 3px;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--app-text3);
 }

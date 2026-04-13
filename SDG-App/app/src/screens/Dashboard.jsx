@@ -126,7 +126,7 @@ export default function Dashboard() {
 
       {/* ── Section heading ── */}
       <div>
-        <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#9BAA9B' }}>
+        <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--app-text3)' }}>
           Activities
         </h2>
 
@@ -143,25 +143,29 @@ export default function Dashboard() {
               >
                 <Link to={section.path} className="block group">
                   <div
-                    className="h-full bg-white rounded-2xl p-5 transition-all duration-200 group-hover:shadow-md group-hover:-translate-y-0.5"
-                    style={{ border: '1px solid #DDE6DD', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+                    className="h-full rounded-2xl p-5 transition-all duration-200 group-hover:shadow-md group-hover:-translate-y-0.5"
+                    style={{
+                      background: 'var(--app-card)',
+                      border: '1px solid var(--app-border)',
+                      boxShadow: 'var(--app-shadow-card)',
+                    }}
                   >
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                      style={{ background: '#EEF2EE' }}
+                      style={{ background: 'var(--app-muted)' }}
                     >
-                      <Icon className="w-5 h-5" style={{ color: '#36656B' }} />
+                      <Icon className="w-5 h-5" style={{ color: '#4A8A70' }} />
                     </div>
                     <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <h3 className="text-sm font-semibold leading-snug" style={{ color: '#1A2E1A' }}>
+                      <h3 className="text-sm font-semibold leading-snug" style={{ color: 'var(--app-text1)' }}>
                         {section.label}
                       </h3>
                       <ArrowRight
                         className="w-4 h-4 flex-shrink-0 mt-0.5 transition-transform group-hover:translate-x-1"
-                        style={{ color: '#36656B' }}
+                        style={{ color: '#4A8A70' }}
                       />
                     </div>
-                    <p className="text-xs leading-relaxed" style={{ color: '#637063' }}>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--app-text2)' }}>
                       {section.desc}
                     </p>
                   </div>

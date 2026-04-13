@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../authContext";
+import { useTheme } from "../../themeContext";
 import {
   LayoutDashboard, BookOpen, Shuffle, FileText, TrendingUp,
-  Library, Users, Leaf,LeafyGreen,Globe,
-  User, Settings, LogOut
+  Library, Users, Globe,
+  User, Settings, LogOut, Sun, Moon,
 } from "lucide-react";
 
 const navItems = [
@@ -37,6 +38,7 @@ export default function AppLayout() {
   const location = useLocation();
   const navigate  = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const menuRef = useRef(null);
 
   const normalizedRole = (user?.role || user?.user_type || "").toLowerCase();
@@ -44,6 +46,8 @@ export default function AppLayout() {
   const displayName   = user?.name || user?.full_name || user?.username || "Student";
   const initial       = displayName[0].toUpperCase();
   const bgColor       = avatarColor(displayName);
+
+  const isDark = theme === "dark";
 
   // Close on outside click or route change
   useEffect(() => {
@@ -68,12 +72,16 @@ export default function AppLayout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#F4F7F5' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--app-bg)' }}>
 
       {/* ── Sticky header ── */}
       <header
-        className="sticky top-0 z-50 bg-white"
-        style={{ borderBottom: '1px solid #DDE6DD', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+        className="sticky top-0 z-50"
+        style={{
+          background: 'var(--app-header)',
+          borderBottom: '1px solid var(--app-border)',
+          boxShadow: 'var(--app-shadow-sm)',
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
 
@@ -85,7 +93,7 @@ export default function AppLayout() {
             >
               <Globe className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-base" style={{ color: '#1A2E1A' }}>
+            <span className="font-bold text-base" style={{ color: 'var(--app-text1)' }}>
               <span className="hidden sm:inline">SDG Co-op Portal</span>
               <span className="sm:hidden">SDG Portal</span>
             </span>
@@ -101,9 +109,9 @@ export default function AppLayout() {
                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                     style={{
                       background: active ? NAV_GREEN : 'transparent',
-                      color:      active ? '#fff'     : '#4F666A',
+                      color:      active ? '#fff'    : 'var(--app-text2)',
                     }}
-                    onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#EEF2EE'; }}
+                    onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--app-nav-hover)'; }}
                     onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                   >
                     <Icon className="w-4 h-4" />
@@ -118,14 +126,14 @@ export default function AppLayout() {
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium"
                   style={{
                     background: location.pathname === '/coordinator' ? NAV_GREEN : 'transparent',
-                    color:      location.pathname === '/coordinator' ? '#fff'     : '#4F666A',
+                    color:      location.pathname === '/coordinator' ? '#fff'    : 'var(--app-text2)',
                   }}
                 >
                   <Users className="w-4 h-4" />
                   Coordinator
                   <span
                     className="text-[10px] ml-1 px-1.5 py-0.5 rounded font-bold"
-                    style={{ background: '#EEF2EE', color: NAV_GREEN }}
+                    style={{ background: 'var(--app-muted)', color: NAV_GREEN }}
                   >
                     ADMIN
                   </span>
@@ -136,17 +144,17 @@ export default function AppLayout() {
 
           {/* ── Right: user name (desktop) + avatar (all sizes) ── */}
           <div className="flex items-center gap-3">
-            {/* User name — desktop only (nav is visible, so context is clear) */}
+            {/* User name — desktop only */}
             <div className="hidden md:flex flex-col items-end leading-tight">
-              <span className="text-sm font-semibold" style={{ color: '#1A2E1A' }}>
+              <span className="text-sm font-semibold" style={{ color: 'var(--app-text1)' }}>
                 {displayName}
               </span>
-              <span className="text-xs capitalize" style={{ color: '#637063' }}>
+              <span className="text-xs capitalize" style={{ color: 'var(--app-text2)' }}>
                 {isCoordinator ? 'Coordinator' : 'Co-op Student'}
               </span>
             </div>
 
-            {/* ── Avatar button — SINGLE nav trigger on mobile ── */}
+            {/* ── Avatar button ── */}
             <div ref={menuRef} className="relative">
               <button
                 onClick={() => setOpen(v => !v)}
@@ -161,10 +169,11 @@ export default function AppLayout() {
               {/* ── Unified dropdown ── */}
               {open && (
                 <div
-                  className="absolute right-0 mt-2 bg-white rounded-2xl overflow-hidden z-50"
+                  className="absolute right-0 mt-2 rounded-2xl overflow-hidden z-50"
                   style={{
+                    background: 'var(--app-card)',
                     width: 'min(288px, calc(100vw - 24px))',
-                    boxShadow: '0 8px 40px rgba(0,0,0,0.13), 0 0 0 1px #DDE6DD',
+                    boxShadow: 'var(--app-shadow-dropdown)',
                     transformOrigin: 'top right',
                     animation: 'dropdownIn 0.15s ease',
                     maxHeight: 'calc(100vh - 80px)',
@@ -198,12 +207,12 @@ export default function AppLayout() {
                     </div>
                   </div>
 
-                  {/* ── Navigation section (mobile only — hidden on desktop where nav bar exists) ── */}
+                  {/* ── Navigation section (mobile only) ── */}
                   <div className="md:hidden">
                     <div className="px-4 pt-3 pb-1">
                       <p
                         className="text-[10px] font-bold uppercase tracking-widest"
-                        style={{ color: '#9BAA9B' }}
+                        style={{ color: 'var(--app-text3)' }}
                       >
                         Navigate
                       </p>
@@ -217,15 +226,15 @@ export default function AppLayout() {
                             onClick={() => go(path)}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left"
                             style={{
-                              background: active ? 'rgba(54,101,107,0.1)' : 'transparent',
-                              color:      active ? NAV_GREEN : '#1A2E1A',
+                              background: active ? 'var(--app-nav-active-bg)' : 'transparent',
+                              color:      active ? 'var(--app-nav-active-fg)' : 'var(--app-text1)',
                             }}
                           >
                             <span
                               className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{
-                                background: active ? NAV_GREEN : '#EEF2EE',
-                                color:      active ? '#fff'     : '#637063',
+                                background: active ? NAV_GREEN : 'var(--app-muted)',
+                                color:      active ? '#fff'    : 'var(--app-text2)',
                               }}
                             >
                               <Icon className="w-3.5 h-3.5" />
@@ -244,30 +253,30 @@ export default function AppLayout() {
                         <button
                           onClick={() => go('/coordinator')}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left"
-                          style={{ color: '#1A2E1A' }}
+                          style={{ color: 'var(--app-text1)' }}
                         >
-                          <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#EEF2EE', color: '#637063' }}>
+                          <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--app-muted)', color: 'var(--app-text2)' }}>
                             <Users className="w-3.5 h-3.5" />
                           </span>
                           Coordinator
                           <span
                             className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded"
-                            style={{ background: '#EEF2EE', color: NAV_GREEN }}
+                            style={{ background: 'var(--app-muted)', color: NAV_GREEN }}
                           >
                             ADMIN
                           </span>
                         </button>
                       )}
                     </div>
-                    <div style={{ height: '1px', background: '#EEF2EE', margin: '0 16px' }} />
+                    <div style={{ height: '1px', background: 'var(--app-border)', margin: '0 16px' }} />
                   </div>
 
-                  {/* ── Account section (always visible) ── */}
+                  {/* ── Account section ── */}
                   <div className="px-2 py-2">
                     <div className="px-2 pt-1 pb-1">
                       <p
                         className="text-[10px] font-bold uppercase tracking-widest"
-                        style={{ color: '#9BAA9B' }}
+                        style={{ color: 'var(--app-text3)' }}
                       >
                         Account
                       </p>
@@ -290,10 +299,35 @@ export default function AppLayout() {
                       </span>
                       Settings
                     </button>
+
+                    {/* ── Theme toggle ── */}
+                    <button
+                      onClick={toggleTheme}
+                      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                      className="dropdown-item w-full rounded-xl"
+                    >
+                      <span className="dropdown-item-icon">
+                        {isDark
+                          ? <Sun  className="w-3.5 h-3.5" style={{ color: '#C8A951' }} />
+                          : <Moon className="w-3.5 h-3.5" style={{ color: NAV_GREEN }} />
+                        }
+                      </span>
+                      <span className="flex-1 text-left">{isDark ? "Light mode" : "Dark mode"}</span>
+                      {/* Pill indicator */}
+                      <span
+                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                        style={{
+                          background: isDark ? 'rgba(200,169,81,0.15)' : 'var(--app-muted)',
+                          color: isDark ? '#C8A951' : 'var(--app-text2)',
+                        }}
+                      >
+                        {isDark ? "ON" : "OFF"}
+                      </span>
+                    </button>
                   </div>
 
                   {/* ── Logout ── */}
-                  <div className="px-2 pb-2" style={{ borderTop: '1px solid #EEF2EE' }}>
+                  <div className="px-2 pb-2" style={{ borderTop: '1px solid var(--app-border)' }}>
                     <button
                       onClick={handleLogout}
                       className="dropdown-item danger w-full rounded-xl mt-1"
@@ -307,7 +341,6 @@ export default function AppLayout() {
                 </div>
               )}
             </div>
-            {/* ── NO hamburger button — avatar is the only mobile trigger ── */}
           </div>
         </div>
       </header>
@@ -320,7 +353,11 @@ export default function AppLayout() {
       {/* Footer */}
       <footer
         className="border-t py-4 text-center text-xs"
-        style={{ borderColor: '#DDE6DD', background: '#fff', color: '#637063' }}
+        style={{
+          borderColor: 'var(--app-border)',
+          background: 'var(--app-footer)',
+          color: 'var(--app-text2)',
+        }}
       >
         SDG Co-op Learning Portal · COIS 4000Y Capstone · Trent University
       </footer>

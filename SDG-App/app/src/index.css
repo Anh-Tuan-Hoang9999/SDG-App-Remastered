@@ -72,42 +72,104 @@
   --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.05);
   --app-shadow-card:  0 1px 4px rgba(0,0,0,0.04);
   --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.13), 0 0 0 1px #DDE6DD;
+  --app-accent:       #4A8A70;
+  --app-accent-2:     #57B4D8;
+  --app-accent-gold:  #C8A951;
+  --app-glow:         rgba(74,138,112,0.18);
+  --app-bg-gradient:
+    radial-gradient(circle at top right, rgba(87,180,216,0.08), transparent 28%),
+    radial-gradient(circle at top left, rgba(74,138,112,0.08), transparent 24%),
+    linear-gradient(180deg, #F4F7F5 0%, #EEF2EE 100%);
 }
 
 html.dark {
-  /* Intentional dark-green palette — matches the brand's deep forest tones */
-  --app-bg:           #0E1A10;
-  --app-header:       #111D14;
-  --app-card:         #162018;
-  --app-muted:        #1C2E1F;
-  --app-border:       #243527;
-  --app-footer:       #111D14;
-  --app-text1:        #DCE9DC;
-  --app-text2:        #7A9A7A;
-  --app-text3:        #4D6450;
-  --app-nav-hover:    #1A2C1D;
-  --app-nav-active-bg: rgba(74,138,112,0.18);
-  --app-nav-active-fg: #6AAF8A;
-  --app-input-bg:     #1A2B1D;
-  --app-input-border: #2A3D2D;
-  --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.25);
-  --app-shadow-card:  0 1px 4px rgba(0,0,0,0.20);
-  --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px #243527;
+  /* ── Premium dark forest palette ────────────────────────────────────
+     Richer, more vivid than the flat first pass.
+     Three clear elevation levels: bg → card → elevated card.
+     Strong border contrast so layout is always crisp.
+     Saturated text and muted tones for readability and life.
+  ──────────────────────────────────────────────────────────────────── */
+  --app-bg:             #0B1410;   /* deepest level — page canvas */
+  --app-header:         #0E1B13;   /* header / footer — one step up */
+  --app-card:           #152B1D;   /* content cards — clear elevation */
+  --app-card-elevated:  #1E3A29;   /* floating cards / hover state */
+  --app-muted:          #1E3828;   /* icon pads, tags, subtle fills */
+  --app-border:         #2E5039;   /* crisp, branded green border */
+  --app-footer:         #0E1B13;
+  --app-text1:          #E3EEE3;   /* primary — bright, readable */
+  --app-text2:          #8DC08D;   /* muted — vivid, not dead */
+  --app-text3:          #567A5C;   /* faint / placeholder */
+  --app-nav-hover:      #182E1E;   /* nav item hover — perceptible */
+  --app-nav-active-bg:  linear-gradient(135deg, rgba(94,200,138,0.24) 0%, rgba(87,180,216,0.18) 100%);
+  --app-nav-active-fg:  #D7FBE4;
+  --app-input-bg:       #182E1E;   /* form inputs — distinct surface */
+  --app-input-border:   #3A5C44;   /* input border — clearly visible */
+  --app-shadow-sm:      0 1px 10px rgba(0,0,0,0.45);
+  --app-shadow-card:    0 10px 32px rgba(0,0,0,0.28), 0 0 0 1px rgba(78,131,97,0.45);
+  --app-shadow-dropdown:0 20px 60px rgba(0,0,0,0.62), 0 0 0 1px rgba(78,131,97,0.55);
+  /* Accent */
+  --app-accent:         #5EC88A;   /* vivid green CTA accent */
+  --app-accent-2:       #57B4D8;   /* vivid cool accent */
+  --app-accent-gold:    #D4A84B;   /* gold — badges, highlights */
+  --app-glow:           rgba(94,200,138,0.18);
+  --app-bg-gradient:
+    radial-gradient(circle at top right, rgba(87,180,216,0.18), transparent 26%),
+    radial-gradient(circle at top left, rgba(94,200,138,0.14), transparent 24%),
+    linear-gradient(180deg, #0B1410 0%, #0D1913 40%, #0A130F 100%);
 
   /* Override Tailwind color tokens so bg-background, text-foreground, etc. work */
-  --color-background:       #0E1A10;
-  --color-foreground:       #DCE9DC;
-  --color-card:             #162018;
-  --color-card-foreground:  #DCE9DC;
-  --color-surface:          #0E1A10;
-  --color-surface-card:     #162018;
-  --color-surface-muted:    #1C2E1F;
-  --color-muted:            #1C2E1F;
-  --color-muted-foreground: #7A9A7A;
-  --color-border:           #243527;
-  --color-text-primary:     #DCE9DC;
-  --color-text-muted:       #7A9A7A;
-  --color-text-faint:       #4D6450;
+  --color-background:       #0B1410;
+  --color-foreground:       #E3EEE3;
+  --color-card:             #152B1D;
+  --color-card-foreground:  #E3EEE3;
+  --color-surface:          #0B1410;
+  --color-surface-card:     #152B1D;
+  --color-surface-muted:    #1E3828;
+  --color-muted:            #1E3828;
+  --color-muted-foreground: #8DC08D;
+  --color-border:           #2E5039;
+  --color-text-primary:     #E3EEE3;
+  --color-text-muted:       #8DC08D;
+  --color-text-faint:       #567A5C;
+}
+
+/* ============================================================
+   Auth pages — always light, regardless of theme selection.
+   Login, Register, ForgotPassword carry [data-auth-page] and
+   this block resets every --app-* token back to the light values
+   so their inline styles, .auth-input, .bg-white, etc. remain
+   exactly as designed.
+   ============================================================ */
+[data-auth-page] {
+  --app-bg:           #F4F7F5;
+  --app-header:       #ffffff;
+  --app-card:         #ffffff;
+  --app-card-elevated:#ffffff;
+  --app-muted:        #EEF2EE;
+  --app-border:       #DDE6DD;
+  --app-footer:       #ffffff;
+  --app-text1:        #1A2E1A;
+  --app-text2:        #637063;
+  --app-text3:        #9BAA9B;
+  --app-input-bg:     #ffffff;
+  --app-input-border: #DDE6DD;
+  --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.05);
+  --app-shadow-card:  0 1px 4px rgba(0,0,0,0.04);
+  --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.13), 0 0 0 1px #DDE6DD;
+  /* Force-reset the Tailwind tokens too */
+  --color-background:       #F4F7F5;
+  --color-foreground:       #1A2E1A;
+  --color-card:             #ffffff;
+  --color-muted:            #EEF2EE;
+  --color-border:           #DDE6DD;
+  color: #1A2E1A;
+  background: #F4F7F5;
+}
+
+/* Prevent html.dark .bg-white from darkening auth-page cards */
+html.dark [data-auth-page] .bg-white,
+html.dark [data-auth-page] [class*="bg-white"] {
+  background-color: #ffffff !important;
 }
 
 /* ============================================================
@@ -133,10 +195,11 @@ body,
 }
 
 body {
-  background: var(--color-background);
+  background: var(--app-bg-gradient, var(--color-background));
   color: var(--color-foreground);
   font-family: var(--font-family-sans);
   font-size: 16px;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 /* Prevent iOS zoom on inputs */
@@ -221,10 +284,12 @@ html.dark .auth-input:focus {
   border: none;
   cursor: pointer;
   border-radius: 10px;
-  transition: background 0.1s ease;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .dropdown-item:hover {
   background: var(--app-muted);
+  transform: translateX(2px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-border) 70%, transparent 30%);
 }
 .dropdown-item.danger {
   color: var(--color-destructive);
@@ -244,6 +309,7 @@ html.dark .dropdown-item.danger:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-border) 68%, transparent 32%);
 }
 .dropdown-item-icon.danger {
   background: #FEF2F2;
@@ -256,17 +322,22 @@ html.dark .dropdown-item-icon.danger {
 .btn-primary {
   width: 100%;
   padding: 13px 20px;
-  background: var(--color-trent-green);
+  background: linear-gradient(
+    135deg,
+    var(--app-accent) 0%,
+    color-mix(in srgb, var(--app-accent) 68%, var(--app-accent-2) 32%) 100%
+  );
   color: #FFFFFF;
   font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+  box-shadow: 0 12px 24px var(--app-glow);
+  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 .btn-primary:hover:not(:disabled) {
-  background: #2a4f53;
+  box-shadow: 0 16px 28px color-mix(in srgb, var(--app-glow) 86%, transparent 14%);
 }
 .btn-primary:active:not(:disabled) {
   transform: scale(0.98);
@@ -284,7 +355,7 @@ html.dark .dropdown-item-icon.danger {
 
 /* Page-level backgrounds */
 html.dark body {
-  background: var(--app-bg);
+  background: var(--app-bg-gradient);
   color: var(--app-text1);
 }
 
@@ -293,11 +364,11 @@ html.dark .bg-white {
   background-color: var(--app-card) !important;
 }
 
-/* Auth page panels — keep the left gradient panel untouched;
-   make the right form panel dark */
-html.dark main[style*="background: \"#F4F7F5\""],
-html.dark main[style*="background: #F4F7F5"] {
-  background: var(--app-bg) !important;
+html.dark [style*="background: #fff"],
+html.dark [style*="background:#fff"],
+html.dark [style*="background: #ffffff"],
+html.dark [style*="background:#ffffff"] {
+  background: var(--app-card) !important;
 }
 
 /* Scrollbars */

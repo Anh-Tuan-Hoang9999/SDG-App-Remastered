@@ -14,8 +14,8 @@ import {
 
 function ActivityDot({ done }) {
   return done
-    ? <CheckCircle2 className="w-4 h-4" style={{ color: "#2F7D50" }} />
-    : <Circle className="w-4 h-4" style={{ color: "#9BAA9B" }} />;
+    ? <CheckCircle2 className="w-4 h-4" style={{ color: "var(--app-accent, #2F7D50)" }} />
+    : <Circle className="w-4 h-4" style={{ color: "var(--app-text3)" }} />;
 }
 
 function StudentRow({ student, reflections }) {
@@ -32,7 +32,7 @@ function StudentRow({ student, reflections }) {
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ border: "1px solid #DDE6DD", background: "#fff" }}
+      style={{ border: "1px solid var(--app-border)", background: "var(--app-card)" }}
     >
       <button
         type="button"
@@ -41,7 +41,7 @@ function StudentRow({ student, reflections }) {
       >
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white flex-shrink-0"
-          style={{ background: "#36656B" }}
+          style={{ background: "var(--app-muted)" }}
         >
           {student.name
             .split(" ")
@@ -52,8 +52,8 @@ function StudentRow({ student, reflections }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm truncate" style={{ color: "#1A2E1A" }}>{student.name}</p>
-          <p className="text-xs truncate" style={{ color: "#637063" }}>{student.email}</p>
+          <p className="font-semibold text-sm truncate" style={{ color: "var(--app-text1)" }}>{student.name}</p>
+          <p className="text-xs truncate" style={{ color: "var(--app-text2)" }}>{student.email}</p>
         </div>
 
         <div className="hidden sm:flex items-center gap-2">
@@ -63,32 +63,35 @@ function StudentRow({ student, reflections }) {
         </div>
 
         <div className="hidden md:block text-right min-w-[56px]">
-          <p className="text-xs" style={{ color: "#637063" }}>{pct}%</p>
-          <p className="text-[11px]" style={{ color: "#9BAA9B" }}>{done}/3</p>
+          <p className="text-xs" style={{ color: "var(--app-text2)" }}>{pct}%</p>
+          <p className="text-[11px]" style={{ color: "var(--app-text3)" }}>{done}/3</p>
         </div>
 
         {expanded
-          ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "#637063" }} />
-          : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "#637063" }} />}
+          ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "var(--app-text2)" }} />
+          : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "var(--app-text2)" }} />}
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 pt-1" style={{ borderTop: "1px solid #EEF2EE", background: "#FAFCFA" }}>
+        <div
+          className="px-4 pb-4 pt-1"
+          style={{ borderTop: "1px solid var(--app-border)", background: "var(--app-muted)" }}
+        >
           <div className="grid sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#9BAA9B" }}>
+              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--app-text3)" }}>
                 Activity Status
               </p>
               <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-sm" style={{ color: "#1A2E1A" }}>
+                <div className="flex items-center gap-2 text-sm" style={{ color: "var(--app-text1)" }}>
                   <ActivityDot done={!!student.completed_card_sort} />
                   Completed Card Sort
                 </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: "#1A2E1A" }}>
+                <div className="flex items-center gap-2 text-sm" style={{ color: "var(--app-text1)" }}>
                   <ActivityDot done={!!student.completed_quiz} />
                   Completed Quiz
                 </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: "#1A2E1A" }}>
+                <div className="flex items-center gap-2 text-sm" style={{ color: "var(--app-text1)" }}>
                   <ActivityDot done={(student.reflection_count ?? 0) > 0} />
                   Submitted Reflection
                 </div>
@@ -96,21 +99,21 @@ function StudentRow({ student, reflections }) {
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#9BAA9B" }}>
+              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--app-text3)" }}>
                 Reflection Summary
               </p>
-              <p className="text-2xl font-bold" style={{ color: "#36656B" }}>{student.reflection_count ?? 0}</p>
-              <p className="text-xs" style={{ color: "#637063" }}>entries submitted</p>
+              <p className="text-2xl font-bold" style={{ color: "var(--app-accent, #36656B)" }}>{student.reflection_count ?? 0}</p>
+              <p className="text-xs" style={{ color: "var(--app-text2)" }}>entries submitted</p>
             </div>
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#9BAA9B" }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--app-text3)" }}>
               Recent Reflections
             </p>
 
             {reflections.length === 0 && (
-              <p className="text-sm" style={{ color: "#637063" }}>No reflections yet.</p>
+              <p className="text-sm" style={{ color: "var(--app-text2)" }}>No reflections yet.</p>
             )}
 
             <div className="space-y-2">
@@ -118,10 +121,10 @@ function StudentRow({ student, reflections }) {
                 <div
                   key={r.id}
                   className="rounded-lg px-3 py-2"
-                  style={{ border: "1px solid #E8EFE8", background: "#fff" }}
+                  style={{ border: "1px solid var(--app-border)", background: "var(--app-card)" }}
                 >
-                  <p className="text-sm font-semibold" style={{ color: "#1A2E1A" }}>{r.title}</p>
-                  <p className="text-xs" style={{ color: "#637063" }}>
+                  <p className="text-sm font-semibold" style={{ color: "var(--app-text1)" }}>{r.title}</p>
+                  <p className="text-xs" style={{ color: "var(--app-text2)" }}>
                     {r.type ? r.type.replace("_", " ") : "general"}
                     {r.created_at ? ` · ${new Date(r.created_at).toLocaleDateString()}` : ""}
                   </p>
@@ -191,19 +194,23 @@ export default function Coordinator() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">
-          <Users className="w-5 h-5" style={{ color: "#36656B" }} />
-          <h1 className="text-2xl font-bold" style={{ color: "#1A2E1A" }}>Coordinator View</h1>
+          <Users className="w-5 h-5" style={{ color: "var(--app-accent, #36656B)" }} />
+          <h1 className="text-2xl font-bold" style={{ color: "var(--app-text1)" }}>Coordinator View</h1>
         </div>
         <span
           className="text-xs font-semibold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5"
-          style={{ background: "#FFF6DB", color: "#8A6A1B", border: "1px solid #F3E5B8" }}
+          style={{
+            background: "color-mix(in srgb, var(--app-card) 76%, #d4a739 24%)",
+            color: "color-mix(in srgb, var(--app-text1) 70%, #d4a739 30%)",
+            border: "1px solid color-mix(in srgb, var(--app-border) 68%, #d4a739 32%)",
+          }}
         >
           <Shield className="w-3.5 h-3.5" />
           Coordinators Only
         </span>
       </div>
 
-      <p className="text-sm mb-5" style={{ color: "#637063" }}>
+      <p className="text-sm mb-5" style={{ color: "var(--app-text2)" }}>
         Live data from database. Showing all student accounts.
       </p>
 
@@ -214,36 +221,47 @@ export default function Coordinator() {
           { label: "Reflections", value: totalReflections, icon: FileText },
           { label: "Avg / Student", value: avgReflections, icon: BookOpen },
         ].map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-xl p-4" style={{ background: "#fff", border: "1px solid #DDE6DD" }}>
-            <Icon className="w-5 h-5 mb-2" style={{ color: "#36656B" }} />
-            <p className="text-xl font-bold" style={{ color: "#1A2E1A" }}>{value}</p>
-            <p className="text-xs" style={{ color: "#637063" }}>{label}</p>
+          <div
+            key={label}
+            className="rounded-xl p-4"
+            style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}
+          >
+            <Icon className="w-5 h-5 mb-2" style={{ color: "var(--app-accent, #36656B)" }} />
+            <p className="text-xl font-bold" style={{ color: "var(--app-text1)" }}>{value}</p>
+            <p className="text-xs" style={{ color: "var(--app-text2)" }}>{label}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center gap-3 mb-4 text-xs" style={{ color: "#637063" }}>
-        <span className="font-semibold" style={{ color: "#1A2E1A" }}>Legend:</span>
+      <div className="flex items-center gap-3 mb-4 text-xs" style={{ color: "var(--app-text2)" }}>
+        <span className="font-semibold" style={{ color: "var(--app-text1)" }}>Legend:</span>
         <span className="inline-flex items-center gap-1"><Shuffle className="w-3.5 h-3.5" /> Card Sort</span>
         <span className="inline-flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> Quiz</span>
         <span className="inline-flex items-center gap-1"><FileText className="w-3.5 h-3.5" /> Reflection</span>
       </div>
 
       {loading && (
-        <div className="rounded-xl p-5" style={{ background: "#fff", border: "1px solid #DDE6DD" }}>
-          <p className="text-sm" style={{ color: "#637063" }}>Loading coordinator data...</p>
+        <div className="rounded-xl p-5" style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}>
+          <p className="text-sm" style={{ color: "var(--app-text2)" }}>Loading coordinator data...</p>
         </div>
       )}
 
       {!loading && error && (
-        <div className="rounded-xl p-5" style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#B91C1C" }}>
+        <div
+          className="rounded-xl p-5"
+          style={{
+            background: "color-mix(in srgb, var(--app-card) 80%, #b91c1c 20%)",
+            border: "1px solid color-mix(in srgb, var(--app-border) 72%, #b91c1c 28%)",
+            color: "#fecaca",
+          }}
+        >
           {error}
         </div>
       )}
 
       {!loading && !error && students.length === 0 && (
-        <div className="rounded-xl p-5" style={{ background: "#fff", border: "1px solid #DDE6DD" }}>
-          <p className="text-sm" style={{ color: "#637063" }}>No student accounts found.</p>
+        <div className="rounded-xl p-5" style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}>
+          <p className="text-sm" style={{ color: "var(--app-text2)" }}>No student accounts found.</p>
         </div>
       )}
 

@@ -213,7 +213,7 @@ export default function Register() {
   // ── Step 1 — registration form ────────────────────────────────────────────
   if (step === STEP.FORM) {
     return (
-      <div className="min-h-screen flex">
+      <div className="min-h-screen flex" data-auth-page>
         {LeftPanel}
         <main
           className="flex-1 flex flex-col items-center justify-center px-6 py-12"
@@ -364,7 +364,7 @@ export default function Register() {
 
   // ── Step 2 — enter verification code ─────────────────────────────────────
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" data-auth-page>
       {LeftPanel}
       <main
         className="flex-1 flex flex-col items-center justify-center px-6 py-12"

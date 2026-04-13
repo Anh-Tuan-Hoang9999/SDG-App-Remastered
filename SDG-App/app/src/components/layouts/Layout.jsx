@@ -23,7 +23,7 @@ const AVATAR_COLORS = [
   '#E5243B', '#FD6925', '#A21942',
 ];
 
-const NAV_GREEN = '#4A8A70';
+const NAV_GREEN = 'var(--app-accent, #4A8A70)';
 
 function avatarColor(name = '') {
   let hash = 0;
@@ -89,7 +89,10 @@ export default function AppLayout() {
           <Link to="/dashboard" className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: NAV_GREEN }}
+              style={{
+                background: `linear-gradient(135deg, ${NAV_GREEN} 0%, var(--app-accent-2, #57B4D8) 100%)`,
+                boxShadow: '0 10px 18px var(--app-glow, rgba(74,138,112,0.18))',
+              }}
             >
               <Globe className="w-4 h-4 text-white" />
             </div>
@@ -108,8 +111,9 @@ export default function AppLayout() {
                   <button
                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                     style={{
-                      background: active ? NAV_GREEN : 'transparent',
-                      color:      active ? '#fff'    : 'var(--app-text2)',
+                      background: active ? 'var(--app-nav-active-bg)' : 'transparent',
+                      color:      active ? 'var(--app-nav-active-fg)' : 'var(--app-text2)',
+                      boxShadow:  active ? '0 10px 20px var(--app-glow, rgba(74,138,112,0.18))' : 'none',
                     }}
                     onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--app-nav-hover)'; }}
                     onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
@@ -125,15 +129,19 @@ export default function AppLayout() {
                 <button
                   className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium"
                   style={{
-                    background: location.pathname === '/coordinator' ? NAV_GREEN : 'transparent',
-                    color:      location.pathname === '/coordinator' ? '#fff'    : 'var(--app-text2)',
+                    background: location.pathname === '/coordinator' ? 'var(--app-nav-active-bg)' : 'transparent',
+                    color:      location.pathname === '/coordinator' ? 'var(--app-nav-active-fg)' : 'var(--app-text2)',
+                    boxShadow:  location.pathname === '/coordinator' ? '0 10px 20px var(--app-glow, rgba(74,138,112,0.18))' : 'none',
                   }}
                 >
                   <Users className="w-4 h-4" />
                   Coordinator
                   <span
                     className="text-[10px] ml-1 px-1.5 py-0.5 rounded font-bold"
-                    style={{ background: 'var(--app-muted)', color: NAV_GREEN }}
+                    style={{
+                      background: 'color-mix(in srgb, var(--app-muted) 75%, var(--app-accent-gold, #D4A84B) 25%)',
+                      color: 'var(--app-accent-gold, #D4A84B)',
+                    }}
                   >
                     ADMIN
                   </span>
@@ -183,7 +191,11 @@ export default function AppLayout() {
                   {/* ── User info header ── */}
                   <div
                     className="px-4 py-4 flex items-center gap-3"
-                    style={{ background: `linear-gradient(135deg, #1A3B2E 0%, ${NAV_GREEN} 100%)` }}
+                    style={{
+                      background: isDark
+                        ? `linear-gradient(135deg, #102519 0%, ${NAV_GREEN} 55%, var(--app-accent-2, #57B4D8) 100%)`
+                        : `linear-gradient(135deg, #1A3B2E 0%, ${NAV_GREEN} 100%)`,
+                    }}
                   >
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-base flex-shrink-0 ring-2"
@@ -200,7 +212,11 @@ export default function AppLayout() {
                       </p>
                       <span
                         className="inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded mt-1 capitalize"
-                        style={{ background: 'rgba(200,169,81,0.25)', color: '#C8A951' }}
+                        style={{
+                          background: isDark ? 'rgba(212,168,75,0.22)' : 'rgba(200,169,81,0.25)',
+                          color: 'var(--app-accent-gold, #C8A951)',
+                          boxShadow: isDark ? '0 0 0 1px rgba(212,168,75,0.15)' : 'none',
+                        }}
                       >
                         {isCoordinator ? 'Coordinator' : 'Co-op Student'}
                       </span>
@@ -233,8 +249,9 @@ export default function AppLayout() {
                             <span
                               className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{
-                                background: active ? NAV_GREEN : 'var(--app-muted)',
+                                background: active ? `linear-gradient(135deg, ${NAV_GREEN} 0%, var(--app-accent-2, #57B4D8) 100%)` : 'var(--app-muted)',
                                 color:      active ? '#fff'    : 'var(--app-text2)',
+                                boxShadow:  active ? '0 10px 18px var(--app-glow, rgba(74,138,112,0.18))' : 'none',
                               }}
                             >
                               <Icon className="w-3.5 h-3.5" />
@@ -243,7 +260,10 @@ export default function AppLayout() {
                             {active && (
                               <span
                                 className="ml-auto w-1.5 h-1.5 rounded-full"
-                                style={{ background: NAV_GREEN }}
+                                style={{
+                                  background: 'var(--app-accent, #4A8A70)',
+                                  boxShadow: '0 0 10px var(--app-glow, rgba(74,138,112,0.18))',
+                                }}
                               />
                             )}
                           </button>
@@ -261,7 +281,10 @@ export default function AppLayout() {
                           Coordinator
                           <span
                             className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded"
-                            style={{ background: 'var(--app-muted)', color: NAV_GREEN }}
+                            style={{
+                              background: 'color-mix(in srgb, var(--app-muted) 75%, var(--app-accent-gold, #D4A84B) 25%)',
+                              color: 'var(--app-accent-gold, #D4A84B)',
+                            }}
                           >
                             ADMIN
                           </span>
@@ -317,8 +340,11 @@ export default function AppLayout() {
                       <span
                         className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
                         style={{
-                          background: isDark ? 'rgba(200,169,81,0.15)' : 'var(--app-muted)',
-                          color: isDark ? '#C8A951' : 'var(--app-text2)',
+                          background: isDark
+                            ? 'linear-gradient(135deg, rgba(212,168,75,0.2) 0%, rgba(87,180,216,0.12) 100%)'
+                            : 'var(--app-muted)',
+                          color: isDark ? 'var(--app-accent-gold, #C8A951)' : 'var(--app-text2)',
+                          boxShadow: isDark ? '0 0 0 1px rgba(212,168,75,0.14)' : 'none',
                         }}
                       >
                         {isDark ? "ON" : "OFF"}

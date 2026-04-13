@@ -52,7 +52,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" data-auth-page>
 
       {/* ── Left branding panel (desktop only) ─────────────────── */}
       <aside

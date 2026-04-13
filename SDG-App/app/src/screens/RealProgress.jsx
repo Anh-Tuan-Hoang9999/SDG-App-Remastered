@@ -7,6 +7,9 @@ import {
 import { useAuth } from "../authContext";
 import client from "../api/client";
 
+const PROGRESS_BLUE = "#63C7E8";
+const PROGRESS_GOLD = "#F2D36B";
+
 const ACTIVITIES = [
   {
     key: "viewed_sdg_cards",
@@ -79,7 +82,7 @@ function ProgressBar({ value }) {
     <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--app-muted)' }}>
       <div
         className="h-full rounded-full transition-all duration-500"
-        style={{ width: `${safeValue}%`, background: '#36656B' }}
+        style={{ width: `${safeValue}%`, background: PROGRESS_BLUE }}
       />
     </div>
   );
@@ -156,9 +159,9 @@ export default function RealProgress() {
           {/* ── Stat cards ── */}
           <div className="grid grid-cols-3 gap-3 mb-6">
             {[
-              { value: completedActivities.length, sub: `of ${ACTIVITIES.length} Tasks`, label: "Completed", color: '#36656B' },
-              { value: `${progressPct}%`,           sub: "Completion",                   label: "Rate",       color: '#36656B' },
-              { value: totalPoints,                  sub: `of ${maxPoints} pts`,          label: "Earned",     color: '#C8A951' },
+              { value: completedActivities.length, sub: `of ${ACTIVITIES.length} Tasks`, label: "Completed", color: PROGRESS_BLUE },
+              { value: `${progressPct}%`,           sub: "Completion",                   label: "Rate",       color: PROGRESS_BLUE },
+              { value: totalPoints,                 sub: `of ${maxPoints} pts`,          label: "Earned",     color: PROGRESS_GOLD },
             ].map(({ value, sub, label, color }) => (
               <div
                 key={label}

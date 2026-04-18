@@ -424,7 +424,7 @@ export default function ReflectionLog() {
             )}
 
             {showReading && (
-              <Reading selectedSdgReadings={selectedSdgReadings} onBack={handleReadingClick} />
+              <Reading selectedSdgReadings={selectedSdgReadings} onBack={handleReadingClick} color={selectedSdg?.colour} />
             )}
 
             {showPractice && (

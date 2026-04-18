@@ -2,15 +2,15 @@ import { BookOpen } from "lucide-react";
 
 export const readingItemsBySdg = {
   1: [
-    { id: 2, title: "Read: Poverty Facts", href: "https://example.com/sdg1-poverty" },
-    { id: 5, title: "Case Study", href: "https://example.com/sdg1-case-study" },
+    { id: 1, title: "Poverty in Canada", href: "https://cwp-csp.ca/poverty/just-the-facts/" },
+    { id: 2, title: "Global Poverty Facts", href: "https://www.worldvision.org/sponsorship-news-stories/global-poverty-facts" },
   ],
   2: [
-    { id: 2, title: "Read: Hunger Facts", href: "https://example.com/sdg2-hunger" },
+    { id: 1, title: "Hunger in Canada", href: "https://foodbankscanada.ca/hunger-in-canada/" },
   ],
 };
 
-export default function Reading({ selectedSdgReadings, onBack }) {
+export default function Reading({ selectedSdgReadings, onBack, color = "#E73E45" }) {
   return (
     <div
       className="p-4 rounded-xl"
@@ -41,9 +41,9 @@ export default function Reading({ selectedSdgReadings, onBack }) {
             style={{ background: "var(--app-card)", border: "1px solid var(--app-border)", boxShadow: "var(--app-shadow-card)" }}
           >
             <div className="flex items-center gap-4">
-              <BookOpen className="w-9 h-9 shrink-0" style={{ color: "#E73E45" }} />
+              <BookOpen className="w-9 h-9 shrink-0" style={{ color }} />
               <div className="min-w-0">
-                <p className="text-xs sm:text-sm uppercase tracking-wide font-semibold" style={{ color: "#E73E45" }}>
+                <p className="text-xs sm:text-sm uppercase tracking-wide font-semibold" style={{ color }}>
                   {reading.id} · Reading
                 </p>
                 <p className="text-xl font-bold truncate" style={{ color: "var(--app-text1)" }}>

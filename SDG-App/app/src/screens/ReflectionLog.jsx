@@ -200,7 +200,7 @@ export default function ReflectionLog() {
 
     return (
       readingItemsBySdg[selectedSdgNumber] ??
-      (selectedSdg ? [{ id: 2, title: `Read: ${selectedSdg.title} Facts`, href: "https://www.youtube.com" }] : [])
+      (selectedSdg ? [{ id: 1, title: `Read: ${selectedSdg.title} Facts`, href: "https://www.youtube.com" }] : [])
     );
   }, [selectedSdgNumber, selectedSdg]);
 

@@ -75,8 +75,12 @@ export default function Dashboard() {
         transition={{ duration: 0.4 }}
         className="relative overflow-hidden rounded-3xl"
         style={{
-          background: 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)',
-          boxShadow: '0 4px 24px rgba(54,101,107,0.25)',
+          background: isDark
+            ? 'linear-gradient(135deg, #102519 0%, #183928 35%, #2C7565 72%, #57B4D8 100%)'
+            : 'linear-gradient(135deg, #1A3B2E 0%, #36656B 100%)',
+          boxShadow: isDark
+            ? '0 18px 44px rgba(11,20,16,0.4), 0 0 0 1px rgba(94,200,138,0.15)'
+            : '0 4px 24px rgba(54,101,107,0.25)',
         }}
       >
 
@@ -85,7 +89,10 @@ export default function Dashboard() {
           <div className="flex items-center gap-2.5 mb-4">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.15)' }}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.15)',
+                boxShadow: isDark ? '0 0 0 1px rgba(255,255,255,0.08)' : 'none',
+              }}
             >
               <Globe className="w-4 h-4 text-white" />
             </div>
@@ -106,7 +113,15 @@ export default function Dashboard() {
             <Link to="/sdg-cards">
               <button
                 className="px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95"
-                style={{ background: '#fff', color: '#36656B', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(135deg, #F4F7F5 0%, #DFF5E6 100%)'
+                    : '#fff',
+                  color: isDark ? '#1B4432' : '#36656B',
+                  boxShadow: isDark
+                    ? '0 14px 24px rgba(13,25,19,0.28)'
+                    : '0 2px 8px rgba(0,0,0,0.15)',
+                }}
               >
                 Explore SDGs
               </button>
@@ -114,7 +129,15 @@ export default function Dashboard() {
             <Link to="/progress">
               <button
                 className="px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95"
-                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(87,180,216,0.14) 100%)'
+                    : 'rgba(255,255,255,0.15)',
+                  color: '#fff',
+                  border: isDark
+                    ? '1px solid rgba(255,255,255,0.18)'
+                    : '1px solid rgba(255,255,255,0.25)',
+                }}
               >
                 View Progress
               </button>
@@ -124,11 +147,11 @@ export default function Dashboard() {
           {/* Decorative circles */}
           <div
             className="absolute -right-8 -top-8 w-40 h-40 rounded-full"
-            style={{ background: 'rgba(255,255,255,0.05)' }}
+            style={{ background: isDark ? 'rgba(87,180,216,0.12)' : 'rgba(255,255,255,0.05)' }}
           />
           <div
             className="absolute -right-4 bottom-4 w-24 h-24 rounded-full"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            style={{ background: isDark ? 'rgba(94,200,138,0.14)' : 'rgba(255,255,255,0.04)' }}
           />
         </div>
       </motion.div>

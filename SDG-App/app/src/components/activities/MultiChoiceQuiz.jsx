@@ -207,7 +207,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
     }
 
     return (
-        <div className="flex flex-col h-full max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl" style={{ background: THEME.pageBg }}>
+        <div className="flex flex-col h-full w-full p-4 sm:p-5 rounded-2xl" style={{ background: THEME.pageBg }}>
             {/* Header with Progress */}
             <div className="mb-7">
                 <h1 className="text-lg sm:text-xl font-bold mb-2" style={{ color: THEME.textMain }}>{title}</h1>

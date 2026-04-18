@@ -2,15 +2,15 @@ import QuizContent from "./quizcontent";
 
 export const quizItemsBySdg = {
   1: [
-    { position: 1, title: "Intsssro Quiz" },
-    { position: 4, title: "Simulation: Budgeting" },
+    { position: 1, title: "Poverty Basics" },
+    { position: 2, title: "How to Address Poverty" },
   ],
   2: [
     { position: 1, title: "Intro Quiz" },
   ],
   3: [
-    { position: 1, title: "Intsssro Quiz" },
-    { position: 4, title: "Simulation: Budgeting" },
+    { position: 1, title: "Intro Quiz" },
+    { position: 2, title: "Simulation: Budgeting" },
   ],
 };
 

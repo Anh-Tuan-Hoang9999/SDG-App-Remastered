@@ -1,5 +1,49 @@
 import MultiChoiceQuiz from "../components/activities/MultiChoiceQuiz";
 
+export const quizContentBySdg = {
+  1: {
+    1: {
+      title: "SDG 1 Mock Quiz: No Poverty Basics",
+      questions: [
+        {
+          questionText: "What is the core aim of SDG 1?",
+          options: [
+            "End poverty in all its forms everywhere",
+            "Increase private sector profit only",
+            "Build more highways globally",
+            "Focus only on food imports",
+          ],
+          correctOptionIndex: 0,
+        },
+        {
+          questionText: "Which co-op workplace action best supports SDG 1?",
+          options: [
+            "Removing paid training opportunities",
+            "Creating inclusive hiring and fair wages",
+            "Reducing access to community services",
+            "Limiting employee development",
+          ],
+          correctOptionIndex: 1,
+        },
+        {
+          questionText: "Why are social protection programs linked to SDG 1?",
+          options: [
+            "They increase inequality by design",
+            "They only benefit high-income groups",
+            "They help vulnerable people meet basic needs",
+            "They replace all employment policies",
+          ],
+          correctOptionIndex: 2,
+        },
+      ],
+    },
+  },
+};
+
+export function getQuizContent(sdgNumber, position) {
+  return quizContentBySdg[sdgNumber]?.[position] ?? null;
+}
+
 export default function QuizContent({
   quizLoading,
   quizError,

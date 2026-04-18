@@ -3,6 +3,7 @@ import { SDG_DATA } from "@/data/sdgData";
 import { FileText, Save } from "lucide-react";
 import Reading, { readingItemsBySdg } from "../resource/reading";
 import Quiz, { quizItemsBySdg } from "../resource/quiz";
+import { getQuizContent } from "../resource/quizcontent";
 import { getActivityByPosition } from "../api/userActivity";
 import client from "../api/client";
 import { useAuth } from "../authContext";
@@ -211,8 +212,9 @@ export default function ReflectionLog() {
     setQuizData(null);
     setResolvedActivityId(null);
 
-    if (selectedSdg.number === 1 && position === 1) {
-      setQuizData(SDG1_MOCK_QUIZ);
+    const localContent = getQuizContent(selectedSdg.number, position);
+    if (localContent) {
+      setQuizData(localContent);
       setQuizLoading(false);
       return;
     }

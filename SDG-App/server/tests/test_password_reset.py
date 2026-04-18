@@ -113,3 +113,27 @@ class TestPasswordReset:
         response = _confirm_reset(client, email, "wrong-token")
         assert response.status_code == 400
         assert "invalid password reset session" in response.json()["detail"].lower()
+
+    def test_three_wrong_reset_code_attempts_lock_record(self, client, db):
+        email = _email()
+        _create_user(db, email)
+
+        with patch("api.auth.send_password_reset_email") as mock_send:
+            mock_send.return_value = True
+            _request_reset(client, email)
+
+        first = _verify_reset(client, email, "000000")
+        second = _verify_reset(client, email, "000000")
+        third = _verify_reset(client, email, "000000")
+
+        assert first.status_code == 400
+        assert "invalid" in first.json()["detail"].lower()
+        assert second.status_code == 400
+        assert "invalid" in second.json()["detail"].lower()
+        assert third.status_code == 400
+        assert "too many invalid verification attempts" in third.json()["detail"].lower()
+
+        record = db.query(PasswordResetCode).filter(PasswordResetCode.email == email).first()
+        db.refresh(record)
+        assert record.failed_attempts == 3
+        assert record.used is True

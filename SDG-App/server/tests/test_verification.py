@@ -161,6 +161,27 @@ class TestVerifyCode:
         db.refresh(record)
         assert record.verified is True
 
+    def test_three_wrong_attempts_lock_verification_record(self, client, db):
+        em = _email()
+        with patch("api.auth.send_verification_email"):
+            _send(client, em)
+
+        first = _verify(client, "000000", em)
+        second = _verify(client, "000000", em)
+        third = _verify(client, "000000", em)
+
+        assert first.status_code == 400
+        assert "invalid" in first.json()["detail"].lower()
+        assert second.status_code == 400
+        assert "invalid" in second.json()["detail"].lower()
+        assert third.status_code == 400
+        assert "too many invalid verification attempts" in third.json()["detail"].lower()
+
+        record = db.query(EmailVerification).filter(EmailVerification.email == em).first()
+        db.refresh(record)
+        assert record.failed_attempts == 3
+        assert record.used is True
+
 
 # ---------------------------------------------------------------------------
 # register — with verification gate enabled

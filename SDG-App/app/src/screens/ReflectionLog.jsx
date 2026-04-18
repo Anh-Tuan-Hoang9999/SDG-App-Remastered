@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { SDG_DATA } from "@/data/sdgData";
-import { FileText, Save, BookOpen } from "lucide-react";
-import CardData from "../data/CardData";
-import MultiChoiceQuiz from "../components/activities/MultiChoiceQuiz";
+import { FileText, Save } from "lucide-react";
+import Reading, { readingItemsBySdg } from "../resource/reading";
+import Quiz, { quizItemsBySdg } from "../resource/quiz";
 import { getActivityByPosition } from "../api/userActivity";
 import client from "../api/client";
 import { useAuth } from "../authContext";
@@ -189,30 +189,19 @@ export default function ReflectionLog() {
 
   const selectedSdg = sortedSdgData.find((sdg) => sdg.number === selectedSdgNumber) ?? null;
   const selectedText = selectedSdg ? (reflectionsBySdg[selectedSdg.number] ?? "") : "";
-  const selectedCard = useMemo(
-    () => CardData.find((card) => card.id === selectedSdgNumber) ?? null,
-    [selectedSdgNumber]
-  );
   const selectedSdgQuizzes = useMemo(() => {
-    if (!selectedCard) return [];
+    if (!selectedSdgNumber) return [];
 
-    const path = selectedCard.learningPath ?? [{ id: 1, type: "activity", title: "Intro Quiz" }];
-    const quizItems = path
-      .filter((item) => item.type === "activity")
-      .map((item) => ({ position: item.id, title: item.title || `Quiz ${item.id}` }));
-
-    return quizItems.length > 0 ? quizItems : [{ position: 1, title: "Intro Quiz" }];
-  }, [selectedCard]);
+    return quizItemsBySdg[selectedSdgNumber] ?? [{ position: 1, title: "Intro Quiz" }];
+  }, [selectedSdgNumber]);
   const selectedSdgReadings = useMemo(() => {
-    if (!selectedCard) return [];
+    if (!selectedSdgNumber) return [];
 
-    const path = selectedCard.learningPath ?? [{ id: 2, type: "learning", title: "Read: SDG Overview" }];
-    const readingItems = path
-      .filter((item) => item.type === "learning")
-      .map((item) => ({ id: item.id, title: item.title || `Reading ${item.id}` }));
-
-    return readingItems.length > 0 ? readingItems : [{ id: 2, title: `Read: ${selectedCard.title} Facts` }];
-  }, [selectedCard]);
+    return (
+      readingItemsBySdg[selectedSdgNumber] ??
+      (selectedSdg ? [{ id: 2, title: `Read: ${selectedSdg.title} Facts`, href: "https://www.youtube.com" }] : [])
+    );
+  }, [selectedSdgNumber, selectedSdg]);
 
   const loadQuizByPosition = async (position) => {
     if (!selectedSdg) return;
@@ -266,6 +255,15 @@ export default function ReflectionLog() {
     const next = !showReading;
     setShowReading(next);
     setShowPractice(false);
+  };
+
+  const handleQuizBack = () => {
+    setShowPractice(false);
+    setSelectedQuizPosition(null);
+    setQuizData(null);
+    setResolvedActivityId(null);
+    setQuizError("");
+    setQuizLoading(false);
   };
 
   useEffect(() => {
@@ -426,120 +424,24 @@ export default function ReflectionLog() {
             )}
 
             {showReading && (
-              <div
-                className="p-4 rounded-xl"
-                style={{ background: "var(--app-muted)", border: "1px solid var(--app-border)" }}
-              >
-                <div className="flex items-center justify-between gap-3 mb-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
-                    Reading
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleReadingClick}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
-                    style={{ background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
-                  >
-                    Back to Reflection
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {selectedSdgReadings.map((reading) => (
-                    <a
-                      key={reading.id}
-                      href="https://www.youtube.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block rounded-3xl px-5 py-4 transition-all active:scale-[0.99]"
-                      style={{ background: "var(--app-card)", border: "1px solid var(--app-border)", boxShadow: "var(--app-shadow-card)" }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <BookOpen className="w-9 h-9 shrink-0" style={{ color: "#E73E45" }} />
-                        <div className="min-w-0">
-                          <p className="text-xs sm:text-sm uppercase tracking-wide font-semibold" style={{ color: "#E73E45" }}>
-                            {reading.id} · Reading
-                          </p>
-                          <p className="text-xl font-bold truncate" style={{ color: "var(--app-text1)" }}>
-                            {reading.title}
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
+              <Reading selectedSdgReadings={selectedSdgReadings} onBack={handleReadingClick} />
             )}
 
             {showPractice && (
-              <div
-                className="p-4 rounded-xl"
-                style={{ background: "var(--app-muted)", border: "1px solid var(--app-border)" }}
-              >
-                <div className="flex items-center justify-between gap-3 mb-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--app-text2)" }}>
-                    Quiz Practice
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handlePracticeClick}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
-                    style={{ background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
-                  >
-                    Back to Reflection
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {selectedSdgQuizzes.map((quiz) => (
-                    <button
-                      key={quiz.position}
-                      type="button"
-                      onClick={() => {
-                        setSelectedQuizPosition(quiz.position);
-                        loadQuizByPosition(quiz.position);
-                      }}
-                      className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all"
-                      style={
-                        selectedQuizPosition === quiz.position
-                          ? { background: selectedSdg.colour, color: "#fff", border: `1px solid ${selectedSdg.colour}` }
-                          : { background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }
-                      }
-                    >
-                      {quiz.title}
-                    </button>
-                  ))}
-                </div>
-
-                {quizLoading && (
-                  <p className="text-sm" style={{ color: "var(--app-text2)" }}>
-                    Loading quiz...
-                  </p>
-                )}
-
-                {quizError && !quizLoading && (
-                  <div
-                    className="px-3 py-2 rounded-lg text-sm"
-                    style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#B91C1C" }}
-                  >
-                    {quizError}
-                  </div>
-                )}
-
-                {!quizLoading && !quizError && quizData && (
-                  <div className="rounded-xl overflow-hidden" style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}>
-                    <MultiChoiceQuiz
-                      data={quizData}
-                      activityId={resolvedActivityId ?? undefined}
-                      onBack={() => {
-                        setQuizData(null);
-                        setResolvedActivityId(null);
-                        setSelectedQuizPosition(null);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
+              <Quiz
+                selectedSdg={selectedSdg}
+                selectedSdgQuizzes={selectedSdgQuizzes}
+                selectedQuizPosition={selectedQuizPosition}
+                onSelectQuiz={(position) => {
+                  setSelectedQuizPosition(position);
+                  loadQuizByPosition(position);
+                }}
+                quizLoading={quizLoading}
+                quizError={quizError}
+                quizData={quizData}
+                resolvedActivityId={resolvedActivityId}
+                onBack={handleQuizBack}
+              />
             )}
           </div>
         </SectionCard>

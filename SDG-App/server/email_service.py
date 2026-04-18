@@ -3,6 +3,7 @@ Email service abstraction for sending verification codes.
 
 Supported providers (set via EMAIL_PROVIDER env var):
   resend  — Resend API (set RESEND_API_KEY and optionally RESEND_FROM_EMAIL)
+  brevo   — Brevo Email API (set BREVO_API_KEY and BREVO_SENDER_EMAIL)
   smtp    — SMTP relay (set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
   none    — console / log only (default; useful for local dev and tests)
 
@@ -62,6 +63,8 @@ def _send_code_email(to_email: str, code: str, *, subject: str, intro: str) -> b
 
     if EMAIL_PROVIDER == "resend":
         return _send_via_resend(to_email, subject, body)
+    if EMAIL_PROVIDER == "brevo":
+        return _send_via_brevo(to_email, subject, body)
     if EMAIL_PROVIDER == "smtp":
         return _send_via_smtp(to_email, subject, body)
     return _console_log(to_email, code)
@@ -90,6 +93,40 @@ def _send_via_resend(to_email: str, subject: str, body: str) -> bool:
         return True
     except Exception as exc:
         logger.error("Resend error: %s", exc)
+        return False
+
+
+def _send_via_brevo(to_email: str, subject: str, body: str) -> bool:
+    api_key = os.getenv("BREVO_API_KEY", "")
+    sender_email = os.getenv("BREVO_SENDER_EMAIL", "")
+    sender_name = os.getenv("BREVO_SENDER_NAME", "SDG Co-op Portal")
+    if not api_key or not sender_email:
+        logger.error("Brevo not fully configured — cannot send email via Brevo")
+        return False
+    try:
+        import httpx  # httpx is already a project dependency
+
+        r = httpx.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={
+                "accept": "application/json",
+                "api-key": api_key,
+                "content-type": "application/json",
+            },
+            json={
+                "sender": {"name": sender_name, "email": sender_email},
+                "to": [{"email": to_email}],
+                "subject": subject,
+                "textContent": body,
+            },
+            timeout=10,
+        )
+        if r.status_code not in (200, 201, 202):
+            logger.error("Brevo returned %s: %s", r.status_code, r.text)
+            return False
+        return True
+    except Exception as exc:
+        logger.error("Brevo error: %s", exc)
         return False
 
 

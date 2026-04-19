@@ -125,3 +125,60 @@ def test_header_nav_reaches_dashboard():
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Welcome back')]")))
     finally:
         driver.quit()
+
+
+def test_theme_toggle_in_dropdown_flips_label():
+    """
+    The theme toggle button in the profile dropdown flips between
+    'Dark mode' (light→dark) and 'Light mode' (dark→light).
+
+    The button's aria-label is the stable anchor:
+      light mode → aria-label="Switch to dark mode"
+      dark mode  → aria-label="Switch to light mode"
+    Clicking the button should flip the aria-label.
+    The dropdown stays open after clicking the toggle (by design).
+    """
+    driver = build_driver()
+    try:
+        wait = WebDriverWait(driver, 20)
+        email_value, _ = login(driver, wait)
+
+        open_profile_menu(driver, wait, email_value)
+
+        # Locate the toggle by its stable aria-label prefix
+        toggle_btn = wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[starts-with(@aria-label,'Switch to')]")
+            )
+        )
+        initial_aria = toggle_btn.get_attribute("aria-label")
+        assert initial_aria in (
+            "Switch to dark mode",
+            "Switch to light mode",
+        ), f"Unexpected aria-label: {initial_aria}"
+
+        toggle_btn.click()
+
+        # The dropdown stays open; the aria-label should now be the opposite value
+        expected_aria = (
+            "Switch to light mode"
+            if initial_aria == "Switch to dark mode"
+            else "Switch to dark mode"
+        )
+        wait.until(
+            lambda d: d.find_element(
+                By.XPATH, "//button[starts-with(@aria-label,'Switch to')]"
+            ).get_attribute("aria-label") == expected_aria
+        )
+
+        # Toggle back so we don't leave the account in dark mode
+        driver.find_element(
+            By.XPATH, "//button[starts-with(@aria-label,'Switch to')]"
+        ).click()
+        wait.until(
+            lambda d: d.find_element(
+                By.XPATH, "//button[starts-with(@aria-label,'Switch to')]"
+            ).get_attribute("aria-label") == initial_aria
+        )
+    finally:
+        driver.quit()

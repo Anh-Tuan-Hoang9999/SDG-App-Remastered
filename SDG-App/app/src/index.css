@@ -156,12 +156,34 @@ html.dark {
   --app-shadow-sm:    0 1px 8px rgba(0,0,0,0.05);
   --app-shadow-card:  0 1px 4px rgba(0,0,0,0.04);
   --app-shadow-dropdown: 0 8px 40px rgba(0,0,0,0.13), 0 0 0 1px #DDE6DD;
+  --app-accent:       #4A8A70;
+  --app-accent-2:     #57B4D8;
+  --app-accent-gold:  #C8A951;
+  --app-glow:         rgba(74,138,112,0.18);
+  --app-bg-gradient:
+    radial-gradient(circle at top right, rgba(87,180,216,0.08), transparent 28%),
+    radial-gradient(circle at top left, rgba(74,138,112,0.08), transparent 24%),
+    linear-gradient(180deg, #F4F7F5 0%, #EEF2EE 100%);
   /* Force-reset the Tailwind tokens too */
   --color-background:       #F4F7F5;
   --color-foreground:       #1A2E1A;
   --color-card:             #ffffff;
+  --color-card-foreground:  #1A2E1A;
+  --color-primary:          #36656B;
+  --color-primary-foreground:#FFFFFF;
+  --color-secondary:        #EEF2EE;
+  --color-secondary-foreground:#1A2E1A;
   --color-muted:            #EEF2EE;
+  --color-muted-foreground: #637063;
+  --color-accent:           #C8A951;
+  --color-accent-foreground:#1A2E1A;
   --color-border:           #DDE6DD;
+  --color-surface:          #F4F7F5;
+  --color-surface-card:     #ffffff;
+  --color-surface-muted:    #EEF2EE;
+  --color-text-primary:     #1A2E1A;
+  --color-text-muted:       #637063;
+  --color-text-faint:       #9BAA9B;
   color: #1A2E1A;
   background: #F4F7F5;
 }

@@ -39,10 +39,29 @@ def _ensure_sqlite_user_progress_columns() -> None:
             conn.execute(text("ALTER TABLE user_progress ADD COLUMN last_reset_date VARCHAR(10)"))
 
 
+def _ensure_sqlite_verification_columns() -> None:
+    if engine.url.get_backend_name() != "sqlite":
+        return
+
+    with engine.begin() as conn:
+        verification_cols = {
+            row[1] for row in conn.execute(text("PRAGMA table_info(email_verifications)")).fetchall()
+        }
+        if "failed_attempts" not in verification_cols:
+            conn.execute(text("ALTER TABLE email_verifications ADD COLUMN failed_attempts INTEGER NOT NULL DEFAULT 0"))
+
+        reset_cols = {
+            row[1] for row in conn.execute(text("PRAGMA table_info(password_reset_codes)")).fetchall()
+        }
+        if "failed_attempts" not in reset_cols:
+            conn.execute(text("ALTER TABLE password_reset_codes ADD COLUMN failed_attempts INTEGER NOT NULL DEFAULT 0"))
+
+
 # Auto-create all tables on startup
 Base.metadata.create_all(bind=engine)
 _ensure_sqlite_user_profile_columns()
 _ensure_sqlite_user_progress_columns()
+_ensure_sqlite_verification_columns()
 
 app = FastAPI(title="SDG App API", version="2.0.0")
 

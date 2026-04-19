@@ -33,6 +33,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 # ---------------------------------------------------------------------------
 CODE_EXPIRY_MINUTES = 10
 RESEND_COOLDOWN_SECONDS = 60
+MAX_CODE_ATTEMPTS = 3
 # Set SKIP_EMAIL_VERIFICATION=true in the test environment to bypass the check
 # so existing tests don't need to seed verification records.
 _ALLOWED_DOMAIN = "@trentu.ca"
@@ -48,6 +49,10 @@ def _generate_code() -> str:
 
 def _generate_reset_token() -> str:
     return secrets.token_urlsafe(24)
+
+
+def _too_many_attempts(record) -> bool:
+    return (record.failed_attempts or 0) >= MAX_CODE_ATTEMPTS
 
 
 # ---------------------------------------------------------------------------
@@ -128,12 +133,35 @@ def verify_code(body: schemas.VerifyCodeIn, db: DbDep):
     )
 
     if not record:
+        locked_record = (
+            db.query(EmailVerification)
+            .filter(
+                EmailVerification.email == email,
+                EmailVerification.used == True,
+            )
+            .order_by(EmailVerification.created_at.desc())
+            .first()
+        )
+        if locked_record and _too_many_attempts(locked_record):
+            raise HTTPException(
+                status_code=400,
+                detail="Too many invalid verification attempts. Please request a new code.",
+            )
         raise HTTPException(status_code=400, detail="No pending verification found. Please request a new code.")
 
     if datetime.now(timezone.utc) > record.expires_at.replace(tzinfo=timezone.utc):
         raise HTTPException(status_code=400, detail="Verification code has expired. Please request a new code.")
 
     if not pwd_context.verify(body.code, record.code_hash):
+        record.failed_attempts = (record.failed_attempts or 0) + 1
+        if _too_many_attempts(record):
+            record.used = True
+            db.commit()
+            raise HTTPException(
+                status_code=400,
+                detail="Too many invalid verification attempts. Please request a new code.",
+            )
+        db.commit()
         raise HTTPException(status_code=400, detail="Invalid verification code.")
 
     record.verified = True
@@ -224,12 +252,35 @@ def verify_password_reset_code(body: schemas.PasswordResetVerifyIn, db: DbDep):
     )
 
     if not record:
+        locked_record = (
+            db.query(PasswordResetCode)
+            .filter(
+                PasswordResetCode.email == email,
+                PasswordResetCode.used == True,
+            )
+            .order_by(PasswordResetCode.created_at.desc())
+            .first()
+        )
+        if locked_record and _too_many_attempts(locked_record):
+            raise HTTPException(
+                status_code=400,
+                detail="Too many invalid verification attempts. Please request a new code.",
+            )
         raise HTTPException(status_code=400, detail="No pending password reset found. Please request a new code.")
 
     if datetime.now(timezone.utc) > record.expires_at.replace(tzinfo=timezone.utc):
         raise HTTPException(status_code=400, detail="Password reset code has expired. Please request a new code.")
 
     if not pwd_context.verify(body.code, record.code_hash):
+        record.failed_attempts = (record.failed_attempts or 0) + 1
+        if _too_many_attempts(record):
+            record.used = True
+            db.commit()
+            raise HTTPException(
+                status_code=400,
+                detail="Too many invalid verification attempts. Please request a new code.",
+            )
+        db.commit()
         raise HTTPException(status_code=400, detail="Invalid verification code.")
 
     reset_token = _generate_reset_token()

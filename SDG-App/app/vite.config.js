@@ -19,8 +19,8 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
       },
       manifest: {
-        name: "Trent University SDG",
-        short_name: "TrentU SDG",
+        name: "SDG-Remastered",
+        short_name: "SDG-Remastered",
         description:
           "An app for Trent University students to learn about the United Nation's sustainable development goals",
         theme_color: "#00502F",

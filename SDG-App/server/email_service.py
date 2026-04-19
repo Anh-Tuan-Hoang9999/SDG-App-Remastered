@@ -22,6 +22,7 @@ from email.mime.text import MIMEText
 logger = logging.getLogger(__name__)
 
 EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "none").lower()
+_DEV_CODES: dict[str, str] = {}
 
 
 def send_verification_email(to_email: str, code: str) -> bool:
@@ -49,9 +50,14 @@ def send_password_reset_email(to_email: str, code: str) -> bool:
 # ---------------------------------------------------------------------------
 
 def _console_log(to_email: str, code: str) -> bool:
+    _DEV_CODES[to_email.lower()] = code
     print(f"\n[DEV EMAIL] To: {to_email}  |  Verification code: {code}\n", flush=True)
     logger.info("DEV email — To: %s  Code: %s", to_email, code)
     return True
+
+
+def get_dev_code(to_email: str) -> str | None:
+    return _DEV_CODES.get(to_email.lower())
 
 
 def _send_code_email(to_email: str, code: str, *, subject: str, intro: str) -> bool:

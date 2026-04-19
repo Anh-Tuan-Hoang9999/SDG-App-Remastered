@@ -18,7 +18,8 @@ from auth import (
     verify_password,
 )
 from db.database import get_db
-from email_service import send_password_reset_email, send_verification_email
+import email_service
+from email_service import get_dev_code, send_password_reset_email, send_verification_email
 from models.email_verification import EmailVerification
 from models.password_reset_code import PasswordResetCode
 from models.user import User
@@ -114,7 +115,22 @@ def send_verification_code(body: schemas.SendCodeIn, db: DbDep):
             detail="Verification email could not be sent. Email delivery is not configured correctly.",
         )
 
-    return {"message": "Verification code sent. Check your inbox."}
+    response = {"message": "Verification code sent. Check your inbox."}
+    if email_service.EMAIL_PROVIDER == "none":
+        response["dev_code"] = code
+    return response
+
+
+@router.get("/dev-verification-code")
+def get_dev_verification_code(email: str):
+    if email_service.EMAIL_PROVIDER != "none":
+        raise HTTPException(status_code=404, detail="Dev verification codes are unavailable.")
+
+    code = get_dev_code(email)
+    if not code:
+        raise HTTPException(status_code=404, detail="No dev verification code found for that email.")
+
+    return {"dev_code": code}
 
 
 @router.post("/verify-code")
@@ -225,9 +241,12 @@ def request_password_reset(body: schemas.PasswordResetRequestIn, db: DbDep):
             detail="Password reset email could not be sent. Email delivery is not configured correctly.",
         )
 
-    return {
+    response = {
         "message": "If an account exists for that email, a password reset code has been sent."
     }
+    if email_service.EMAIL_PROVIDER == "none":
+        response["dev_code"] = code
+    return response
 
 
 @router.post("/verify-password-reset-code")

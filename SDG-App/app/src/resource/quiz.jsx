@@ -38,7 +38,11 @@ export default function Quiz({
           type="button"
           onClick={onBack}
           className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
-          style={{ background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }}
+          style={{
+            background: "var(--app-card)",
+            color: "var(--app-text1)",
+            border: "1px solid var(--app-border)",
+          }}
         >
           Back to Reflection
         </button>
@@ -54,7 +58,11 @@ export default function Quiz({
             style={
               selectedQuizPosition === quiz.position
                 ? { background: selectedSdg.colour, color: "#fff", border: `1px solid ${selectedSdg.colour}` }
-                : { background: "var(--app-card)", color: "#5E9B7B", border: "1px solid var(--app-border)" }
+                : {
+                    background: "var(--app-card)",
+                    color: "var(--app-text1)",
+                    border: "1px solid var(--app-border)",
+                  }
             }
           >
             {quiz.title}

@@ -6,12 +6,24 @@ import {
 } from '../../api/userActivity'
 
 const THEME = {
-    brand: '#36656B',
-    brandDark: '#2D5358',
-    pageBg: '#F4F7F5',
-    cardBorder: '#DDE6DD',
-    textMain: '#1A2E1A',
-    textMuted: '#637063',
+    brand: 'var(--app-accent, #36656B)',
+    brandDark: 'color-mix(in srgb, var(--app-accent, #36656B) 72%, #0B1410 28%)',
+    pageBg: 'var(--app-card)',
+    cardBg: 'var(--app-card)',
+    cardBorder: 'var(--app-border)',
+    textMain: 'var(--app-text1)',
+    textMuted: 'var(--app-text2)',
+    textFaint: 'var(--app-text3)',
+    muted: 'var(--app-muted)',
+    optionBg: 'var(--app-card)',
+    optionHoverBg: 'color-mix(in srgb, var(--app-card) 78%, var(--app-muted) 22%)',
+    optionBorder: 'color-mix(in srgb, var(--app-border) 78%, transparent 22%)',
+    optionSelectedBg: 'color-mix(in srgb, var(--app-muted) 68%, var(--app-accent, #36656B) 32%)',
+    progressTrack: 'var(--app-muted)',
+    success: '#6ED498',
+    dangerBg: 'color-mix(in srgb, var(--app-card) 82%, #b91c1c 18%)',
+    dangerBorder: 'color-mix(in srgb, var(--app-border) 72%, #b91c1c 28%)',
+    dangerText: '#fecaca',
 };
 
 // Shuffles indices of the original array rather than the objects themselves
@@ -152,7 +164,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
             <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto p-4 sm:p-5 text-center">
                 <div
                     className="w-full rounded-2xl p-5 sm:p-7"
-                    style={{ background: '#fff', border: `1px solid ${THEME.cardBorder}`, boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
+                    style={{ background: THEME.cardBg, border: `1px solid ${THEME.cardBorder}`, boxShadow: 'var(--app-shadow-card)' }}
                 >
                     <h1 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: THEME.textMain }}>{title}</h1>
                     <h2 className="text-base sm:text-lg font-semibold mb-6" style={{ color: THEME.textMuted }}>Quiz Complete!</h2>
@@ -196,7 +208,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
                         <button
                             onClick={onBack}
                             className="w-full mt-3 py-3.5 rounded-xl font-bold text-base active:scale-95 transition-all"
-                            style={{ background: '#EEF2EE', color: THEME.brand, border: `1px solid ${THEME.cardBorder}` }}
+                            style={{ background: THEME.muted, color: THEME.textMain, border: `1px solid ${THEME.cardBorder}` }}
                         >
                             Back
                         </button>
@@ -211,7 +223,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
             {/* Header with Progress */}
             <div className="mb-7">
                 <h1 className="text-lg sm:text-xl font-bold mb-2" style={{ color: THEME.textMain }}>{title}</h1>
-                <div className="w-full rounded-full h-2.5" style={{ background: '#DDE6DD' }}>
+                <div className="w-full rounded-full h-2.5" style={{ background: THEME.progressTrack }}>
                     <div
                         className="h-2.5 rounded-full transition-all duration-300"
                         style={{ background: THEME.brand, width: `${((currentIndex + 1) / shuffledOrder.length) * 100}%` }}
@@ -236,14 +248,33 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
                                 onClick={() => handleOptionSelect(optionIndex)}
                                 className={`w-full p-4 text-left rounded-xl border-2 transition-all font-medium text-base sm:text-lg
                                     ${selectedOptionIndex === optionIndex
-                                        ? 'bg-white'
-                                        : 'bg-white hover:bg-[#FAFCFA]'
+                                        ? ''
+                                        : ''
                                     }
                                 `}
                                 style={selectedOptionIndex === optionIndex
-                                    ? { borderColor: THEME.brand, color: THEME.brand, boxShadow: '0 0 0 2px rgba(54,101,107,0.08)' }
-                                    : { borderColor: '#E7ECE7', color: THEME.textMuted }
+                                    ? {
+                                        background: THEME.optionSelectedBg,
+                                        borderColor: THEME.brand,
+                                        color: THEME.textMain,
+                                        boxShadow: '0 0 0 2px color-mix(in srgb, var(--app-accent, #36656B) 18%, transparent 82%)',
+                                    }
+                                    : {
+                                        background: THEME.optionBg,
+                                        borderColor: THEME.optionBorder,
+                                        color: THEME.textMuted,
+                                    }
                                 }
+                                onMouseEnter={(e) => {
+                                    if (selectedOptionIndex !== optionIndex) {
+                                        e.currentTarget.style.background = THEME.optionHoverBg;
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (selectedOptionIndex !== optionIndex) {
+                                        e.currentTarget.style.background = THEME.optionBg;
+                                    }
+                                }}
                             >
                                 {option}
                             </button>
@@ -253,7 +284,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="mt-8 pt-4" style={{ borderTop: '1px solid #E7ECE7' }}>
+            <div className="mt-8 pt-4" style={{ borderTop: `1px solid ${THEME.optionBorder}` }}>
                 <button
                     onClick={handleNext}
                     disabled={selectedOptionIndex === null}
@@ -265,7 +296,7 @@ const MultiChoiceQuiz = ({ data, activityId, onBack }) => {
                     `}
                     style={selectedOptionIndex !== null
                         ? { background: THEME.brand }
-                        : { background: '#DDE6DD', color: '#94A394' }
+                        : { background: THEME.muted, color: THEME.textFaint }
                     }
                 >
                     {isLastQuestion ? "Finish Quiz" : "Next Question"}

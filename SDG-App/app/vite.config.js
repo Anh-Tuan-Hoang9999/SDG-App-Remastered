@@ -26,24 +26,24 @@ export default defineConfig({
         theme_color: "#00502F",
         icons: [
           {
-            src: "/pwa/128_coloured.png",
+            src: "/LOGO_TRENT.png",
             sizes: "128x128",
             type: "image/png",
           },
           {
-            src: "/pwa/icon_192_coloured.png",
+            src: "/LOGO_TRENT.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/pwa/icon_512_coloured.png",
+            src: "/LOGO_TRENT.png",
             sizes: "512x512",
             type: "image/png",
           },
         ],
         screenshots: [
           {
-            src: "/pwa/temp_mobile_pwa.png",
+            src: "/LOGO_TRENT.png",
             sizes: "445x907",
             type: "image/png",
             form_factor: "narrow",
